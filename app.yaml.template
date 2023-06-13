@@ -20,7 +20,7 @@ static_sites:
   github:
     branch: dev
     deploy_on_push: true
-    repo: kra/apps-experimenter
+    repo: kra/transcript-conference-hell
   name: static
   source_dir: /
 services:
@@ -28,7 +28,7 @@ services:
   github:
     branch: dev
     deploy_on_push: true
-    repo: kra/apps-experimenter
+    repo: kra/transcript-conference-hell
   http_port: 6000
   instance_count: 1
   instance_size_slug: basic-xxs
