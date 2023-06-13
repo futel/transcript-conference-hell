@@ -10,8 +10,6 @@ import websockets
 import chat
 import pipeline
 import lines
-import speech
-import transcription
 import util
 
 #host = "localhost"
@@ -85,9 +83,7 @@ class Server:
 
     async def get_pipeline(self, socket):
         """ Return a client pipeline for chunk requests and responses."""
-        line = pipeline.Composer(
-            transcription.Client(), lines.Client(socket))
-        line = pipeline.Composer(line, speech.Client())
+        line = pipeline.HumanPipeline(socket)
         await line.start()
         return line
 
@@ -169,9 +165,7 @@ class Server:
         """
         Return a client pipeline for string requests and chunk responses.
         """
-        line = pipeline.Composer(
-            chat.Client(), lines.Client(socket))
-        line = pipeline.Composer(line, speech.Client())
+        line = pipeline.BotPipeline(socket)
         await line.start()
         return line
 
