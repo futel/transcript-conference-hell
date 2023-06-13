@@ -48,8 +48,9 @@ class HumanPipeline():
     """
 
     def __init__(self, socket):
-        line = Composer(transcription.Client(), lines.Client(socket))
-        self.line = Composer(line, speech.Client())
+        self.speech_line = Composer(lines.Client(socket), speech.Client())
+        self.line = Composer(
+            transcription.Client(), self.speech_line)
 
     def start(self):
         return self.line.start()
