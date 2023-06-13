@@ -1,0 +1,44 @@
+domains:
+- domain: ws.app-dev.phu73l.net
+  type: PRIMARY
+ingress:
+  rules:
+  - component:
+      name: service
+    match:
+      path:
+        prefix: /socket
+  - component:
+      name: static
+    match:
+      path:
+        prefix: /
+name: foo-app
+region: sfo
+static_sites:
+- environment_slug: html
+  github:
+    branch: dev
+    deploy_on_push: true
+    repo: kra/apps-experimenter
+  name: static
+  source_dir: /
+services:
+- environment_slug: python
+  github:
+    branch: dev
+    deploy_on_push: true
+    repo: kra/apps-experimenter
+  http_port: 6000
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  name: service
+  run_command: python server.py
+  source_dir: /
+  envs:
+  - key: GOOGLE_CREDS_JSON
+    scope: RUN_AND_BUILD_TIME
+    value: '{GOOGLE_CREDS_JSON}'
+  - key: OPENAI_API_KEY
+    scope: RUN_AND_BUILD_TIME
+    value: '{OPENAI_API_KEY}'
