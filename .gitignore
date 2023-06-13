@@ -1,0 +1,6 @@
+config.yaml
+.env
+google_creds.json
+
+*.pyc
+__pycache__/*
