@@ -1,10 +1,12 @@
-# Setup
+# Transcript Conference Hell
 
 Services used:
 
 - DigitalOcean Networking, App Platform
 - Twilio Calls API
 - OpenAI API
+
+# Setup
 
 To be done once.
 
@@ -21,6 +23,16 @@ Have:
 - config.yaml based on config.yaml.sample
 - .env based on .env.sample.
 
+Set up the app:
+
+- Install DigitalOcean GitHub app using the web GUI at https://github.com/apps/digitalocean/
+  - give it permissions for the futel/transcript-conference-hell repo
+  - continue to create the an app with the futel/transcript-conference-hell dev branch, autodeploy
+  - edit plan to Basic 1 container, $5/mo
+  - region San Francisco
+  
+App setup creates an app with an unexpected name? We probably didn't nee dto do all of those creation steps above. Anyway, remove it.
+
 # Set up dev instance
 
 Create the app, note the id.
@@ -31,7 +43,7 @@ Get the hostname from the "Default Ingress" field of the app. This may take a wh
 
     doctl --config config.yaml apps list <id>
 
-Add CNAME for ws.app-dev.phu73l.net pointing to the app's hostname in DigitalOcean domain. Wait for the domain status to be resolved in the settings page (or just wait longer than the TTL) and for the resulting deploy to finish.
+Add CNAME for ws.app-dev.phu73l.net pointing to the app's hostname in DigitalOcean domain. Wait for the domain status to be resolved in the app settings page (or just wait longer than the TTL) and for the resulting deploy to finish.
 
 # Deploy dev instance
 
