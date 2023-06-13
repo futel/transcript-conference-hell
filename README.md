@@ -8,7 +8,7 @@ Services used:
 
 To be done once.
 
-- have transcript-conference-hell repo with dev branch on github
+- have futel/transcript-conference-hell repo with dev branch on github
 - add app-dev.phu73l.net DigitalOcean domain
 
 - virtualenv -p python3 env
