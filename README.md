@@ -8,7 +8,7 @@ Services used:
 
 To be done once.
 
-- have apps-experimenter repo with dev branch on github
+- have transcript-conference-hell repo with dev branch on github
 - add app-dev.phu73l.net DigitalOcean domain
 
 - virtualenv -p python3 env
@@ -37,7 +37,7 @@ Add CNAME for ws.app-dev.phu73l.net pointing to the app's hostname in DigitalOce
 
 ## Update source
 
-If source has changed, push to apps-experimenter dev branch on github.
+If source has changed, push to transcript-conference-hell dev branch on github.
 
 ## Update config
 
