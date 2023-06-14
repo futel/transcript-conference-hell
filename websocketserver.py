@@ -16,7 +16,11 @@ import util
 #host = "localhost"
 port = 6000
 
+# The name of the bot in the transcripts.
 chat_label = "Franz"
+# Bot may nag humans if population is fewer than this.
+min_population = 3
+
 
 class Socket:
     def __init__(self, websocket):
@@ -49,6 +53,10 @@ class Server:
 
     async def bot_line(self, transcript_lines):
         """Return a line from the bot."""
+        if len(self.sockets) < min_population:
+            # Half chance of nagging.
+            if random.choice([True, False]):
+                return self.nag_string()
         return await chat.chat_line(transcript_lines)
 
     def should_bot_line(self, transcript_lines):
@@ -57,6 +65,7 @@ class Server:
         try:
             for label in [labels.pop(), labels.pop()]:
                 if label == chat_label:
+                    # The last two lines are bot lines.
                     return False
         except IndexError:
             return False
@@ -98,8 +107,33 @@ class Server:
         await line.start()
         return line
 
-    def add_hello_request(self, socket):
-        """Add a string to the speech pipeline."""
+    def nag_string(self):
+        """Return a nag string."""
+        strs = [
+            "We need more people.",
+            "We need another person.",
+            "I want another human.",
+            "I'm lonely.",
+            "I'm tired of talking to myself.",
+            "We don't have enough people.",
+            "We don't have enough humans.",
+            "Flesh. We need flesh.",
+            "I need to hear more breathing.",
+            "More breathing!",
+            "I want to talk to a human.",
+            "I want to talk to a person.",
+            "I want to talk to a real person.",
+            "I want to talk to a real human.",
+            "I want to talk to a real live human.",
+            "I want to talk to a real live person.",
+            "I want to talk to a real live human being.",
+            "More!",
+            "More people!",
+            "More humans!"]
+        return random.choice(strs)
+
+    def hello_string(self):
+        """Return a hello string."""
         strs = [
             "Hello!", "Hello.", "Hello?", "Hello...",
             "Hi!", "Hi.", "Hi?", "Hi...",
@@ -109,17 +143,21 @@ class Server:
             "Yo!", "Yo.", "Yo?", "Yo...",
             "What's up!", "What's up.", "What's up?", "What's up...",
             "OK!", "OK.", "OK?", "OK..."]
-        socket.line.lines_speech_line.add_request(random.choice(strs))
+        return random.choice(strs)
 
-    def add_goodbye_request(self, socket):
-        """Add a string to the speech pipeline."""
+    def goodbye_string(self):
+        """Return a goodbye string."""
         strs = [
             "Goodbye!", "Goodbye.", "Goodbye?", "Goodbye...",
             "Bye!", "Bye.", "Bye?", "Bye...",
             "Later!", "Later.", "Later?", "Later...",
             "Signing off!", "Signing off.",
             "Signing off?", "Signing off..."]
-        socket.line.lines_speech_line.add_request(random.choice(strs))
+        return random.choice(strs)
+
+    def add_request(self, socket, request):
+        """Add request to socket's speech pipeline."""
+        socket.line.lines_speech_line.add_request(request)
 
     async def consumer_handler(self, socket):
         """
@@ -135,7 +173,8 @@ class Server:
             elif message["event"] == "start":
                 util.log(f"websocket received event 'start': {message}")
                 socket.stream_sid = message['streamSid']
-                self.add_hello_request(socket)
+                request = self.hello_string()
+                self.add_request(socket, request)
             elif message["event"] == "media":
                 # util.log("Received event 'media'")
                 # This assumes we get messages in order, we should instead
@@ -144,7 +183,8 @@ class Server:
                 socket.line.add_request(self._message_to_chunk(message))
             elif message["event"] == "stop":
                 util.log(f"websocket received event 'stop': {message}")
-                self.add_goodbye_request(socket)
+                request = self.goodbye_string()
+                self.add_request(socket, request)
                 break
             elif message["event"] == "mark":
                 util.log(f"websocket received event 'mark': {message}")
