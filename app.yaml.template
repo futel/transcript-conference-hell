@@ -22,7 +22,8 @@ static_sites:
     deploy_on_push: true
     repo: futel/transcript-conference-hell
   name: static
-  source_dir: /
+  source_dir: public
+  index_document: index.html  
 services:
 - environment_slug: python
   github:
@@ -34,7 +35,7 @@ services:
   instance_size_slug: basic-xxs
   name: service
   run_command: python server.py
-  source_dir: /
+  source_dir: src
   envs:
   - key: GOOGLE_CREDS_JSON
     scope: RUN_AND_BUILD_TIME

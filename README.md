@@ -13,9 +13,11 @@ To be done once.
 - have futel/transcript-conference-hell repo with dev branch on github
 - add app-dev.phu73l.net DigitalOcean domain
 
+The local environment is only used for testing.
+
 - virtualenv -p python3 env
 - source env/bin/activate
-- pip install -r requirements.txt
+- pip install -r src/requirements.txt
 - pip install python-dotenv
 
 Have:

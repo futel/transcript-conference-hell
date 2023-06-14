@@ -60,6 +60,7 @@ async def chat_line(lines):
     # response = normalize_chat_line(response)
     return response
 
+
 class Client():
     """Client to pass requests directly to responses."""
     def __init__(self):

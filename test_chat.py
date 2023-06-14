@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 
-import asyncio
-import dotenv
+import sys
+sys.path.append('src')
 
+import asyncio
+
+import dotenv
 dotenv.load_dotenv()
+
 import chat
 
 lines = open("lines", 'r').readlines()
