@@ -96,3 +96,4 @@ Hit the URL on the TwiML page e.g.
 https://docs.digitalocean.com/products/app-platform/reference/app-spec/
 https://docs.digitalocean.com/tutorials/app-deploy-flask-app/
 https://github.com/digitalocean/sample-python/tree/main
+https://platform.openai.com/docs/api-reference/chat/create
