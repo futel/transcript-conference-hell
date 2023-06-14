@@ -65,11 +65,14 @@ class Server:
         try:
             for label in [labels.pop(), labels.pop()]:
                 if label == chat_label:
-                    # The last two lines are bot lines.
+                    # One of the last two lines are bot lines.
                     return False
         except IndexError:
             return False
-        return True
+        # Half chance of bot line.
+        if random.choice([True, False]):
+            return True
+        return False
 
     async def chat_requester(self):
         """
