@@ -47,19 +47,29 @@ class Server:
     #     await self.server.close()
     #     raise NotImplementedError
 
-    async def chat_requester(self):
-        """
-        Return a chat line if the latest two lines are not chat lines.
-        """
-        transcript_lines = lines.read_lines()
+    async def bot_line(self, transcript_lines):
+        """Return a line from the bot."""
+        return await chat.chat_line(transcript_lines)
+
+    def should_bot_line(self, transcript_lines):
+        """Return True if the bot should talk."""
         labels = lines.line_labels(transcript_lines)
         try:
             for label in [labels.pop(), labels.pop()]:
                 if label == chat_label:
-                    return
-            return await chat.chat_line(transcript_lines)
+                    return False
         except IndexError:
-            return
+            return False
+        return True
+
+    async def chat_requester(self):
+        """
+        Return a chat line or None.
+        """
+        transcript_lines = lines.read_lines()
+        if self.should_bot_line(transcript_lines):
+            return await self.bot_line(transcript_lines)
+        return None
 
     async def periodic_task(self):
         """Return a task to do the periodic things."""
