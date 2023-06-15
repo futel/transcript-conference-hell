@@ -24,6 +24,9 @@ def line_content(line):
 def line_labels(lines):
     return [line_label(line) for line in lines]
 
+def line_contents(lines):
+    return [line_content(line) for line in lines]
+
 
 class Client():
     def __init__(self, socket):

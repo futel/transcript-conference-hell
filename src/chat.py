@@ -10,7 +10,7 @@ import util
 
 chat_label = "Franz"
 
-prompt = """
+chat_prompt = """
 Complete this dialog by completing the last line of dialog, spoken by "{}". Add only one line.
 
 Dialog:
@@ -18,11 +18,8 @@ Dialog:
 {}:
 """
 
-# system_message = (
-#     "You are writing a script. The characters are trying to understand how to cooperate to share vital information. They are confused and wondering who is hostile, who is friendly, and who has a clue. Statements are short.. Complete the next statement as if Franz said it.")
-
-def generate_prompt(lines):
-    return prompt.format(chat_label, '\n'.join(lines), chat_label)
+def format_chat_prompt(t_lines):
+    return chat_prompt.format(chat_label, '\n'.join(t_lines), chat_label)
 
 # def generate_messages(transcript_lines):
 #     messages = [
@@ -44,22 +41,63 @@ def generate_prompt(lines):
 #         return text[len(chat_label):]
 #     return text
 
-async def chat_line(lines):
+# async def chat_line(lines):
+#     """Return a string of chat text based on lines and a prompt."""
+#     # ChatCompletion lets us use better models than Completion.
+#     # https://github.com/openai/openai-cookbook/blob/main/examples/How_to_format_inputs_to_ChatGPT_models.ipynb
+#     response = await openai.ChatCompletion.acreate(
+#         # "gpt-4" "gpt-3.5-turbo" "text-davinci-003"
+#         model="gpt-3.5-turbo",
+#         messages=generate_messages(lines),
+#         temperature=0.8)
+#     response = response.choices[0]['message']['content']
+#     return response
+
+async def chat_line(t_lines):
     """Return a string of chat text based on lines and a prompt."""
+    # Completion only allows the davinci model? Are there others?
     response = await openai.Completion.acreate(
-       model="text-davinci-003",
-       prompt=generate_prompt(lines),
-       temperature=0.6)
+        model="text-davinci-003",
+        prompt=format_chat_prompt(t_lines),
+        temperature=0.6)
     response = response.choices[0].text
-    # # ChatCompletion lets us use better models than Completion.
-    # # https://github.com/openai/openai-cookbook/blob/main/examples/How_to_format_inputs_to_ChatGPT_models.ipynb
-    # response = await openai.ChatCompletion.acreate(
-    #     # "gpt-4" "gpt-3.5-turbo" "text-davinci-003"
-    #     model="gpt-3.5-turbo",
-    #     messages=generate_messages(lines),
-    #     temperature=0.8)
-    # response = response.choices[0]['message']['content']
-    # response = normalize_chat_line(response)
+    return response
+
+async def rhyming_line(t_lines):
+    """Return a string of chat text based on lines and a prompt."""
+    t_lines = lines.line_contents(t_lines)
+    messages = [
+        {"role": "system",
+         "content": "Write me a poem by adding one line."}]
+    for line in t_lines:
+        messages.append({"role": "user", "content": line})
+    # ChatCompletion allows "gpt-4" "gpt-3.5-turbo" "text-davinci-003"?
+    response = await openai.ChatCompletion.acreate(
+        model="gpt-3.5-turbo",
+        messages=messages,
+        temperature=0.6)
+    response = response.choices[0]['message']['content']
+    return response
+
+async def rhyme_detector(t_lines):
+    """Return True if content of the last two t_lines rhyme."""
+    t_lines = t_lines[-2:]
+    t_lines = lines.line_contents(t_lines)
+    messages = [
+        {"role": "system",
+         "content": "Say 'true' if these two lines rhyme, say 'false if they do not."}]
+    for line in t_lines:
+        messages.append({"role": "user", "content": line})
+    response = await openai.ChatCompletion.acreate(
+        model="gpt-3.5-turbo",
+        messages=messages,
+        temperature=0.6)
+    response = response.choices[0]['message']['content']
+    try:
+        response = response.strip().lower().split(' ')[0]
+        response = {'true': True, 'false': False}[response]
+    except Exception:
+        return False
     return response
 
 def nag_string():

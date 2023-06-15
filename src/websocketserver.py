@@ -81,9 +81,8 @@ class ChatProgram(Program):
 
 class PoetryProgram(Program):
     """
-    Program that recites poetry with humans.
+    Recites poetry with humans.
     """
-
     async def bot_line(self, population, transcript_lines):
         """Return a line from the bot."""
         # XXX we might want to nag or contribute.
@@ -96,6 +95,7 @@ class PoetryProgram(Program):
         """
         # We always want a bot line, even if we don't return it.
         if self.recent_bot_line(transcript_lines):
+            # XXX possible success/fail notify here
             return False
         return True
 
@@ -118,7 +118,7 @@ class Server:
         self.server = None
         self.sockets = set()
         self.chat_socket = None
-        self.program = ChatProgram()
+        self.program = PoetryProgram()
 
     async def start(self):
         util.log("websocket server starting")
