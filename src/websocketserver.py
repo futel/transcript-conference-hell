@@ -21,6 +21,44 @@ chat_label = "Franz"
 # Bot may nag humans if population is fewer than this.
 min_population = 3
 
+class Program:
+    """
+    Holds methods and attributes relevant to bot interaction and
+    pipelines for bots and humans.
+    """
+
+    async def bot_line(self, population, transcript_lines):
+        """Return a line from the bot."""
+        if population < min_population:
+            # Half chance of nagging.
+            if random.choice([True, False]):
+                return chat.nag_string()
+        # We didn't nag, it's a chat line.
+        return await chat.chat_line(transcript_lines)
+
+    def should_bot_line(self, transcript_lines):
+        """Return True if the bot should talk."""
+        labels = lines.line_labels(transcript_lines)
+        try:
+            for label in [labels.pop(), labels.pop()]:
+                if label == chat_label:
+                    # One of the last two lines are bot lines.
+                    return False
+        except IndexError:
+            return False
+        # Half chance of bot line.
+        if random.choice([True, False]):
+            return True
+        return False
+
+    async def bot_line_or_none(self, population, transcript_lines):
+        """
+        Return a chat line or None.
+        """
+        if self.should_bot_line(transcript_lines):
+            return await self.bot_line(population, transcript_lines)
+        return None
+
 
 class Socket:
     def __init__(self, websocket):
@@ -40,6 +78,7 @@ class Server:
         self.server = None
         self.sockets = set()
         self.chat_socket = None
+        self.program = Program()
 
     async def start(self):
         util.log("websocket server starting")
@@ -51,43 +90,14 @@ class Server:
     #     await self.server.close()
     #     raise NotImplementedError
 
-    async def bot_line(self, transcript_lines):
-        """Return a line from the bot."""
-        if len(self.sockets) < min_population:
-            # Half chance of nagging.
-            if random.choice([True, False]):
-                return chat.nag_string()
-        return await chat.chat_line(transcript_lines)
-
-    def should_bot_line(self, transcript_lines):
-        """Return True if the bot should talk."""
-        labels = lines.line_labels(transcript_lines)
-        try:
-            for label in [labels.pop(), labels.pop()]:
-                if label == chat_label:
-                    # One of the last two lines are bot lines.
-                    return False
-        except IndexError:
-            return False
-        # Half chance of bot line.
-        if random.choice([True, False]):
-            return True
-        return False
-
-    async def chat_requester(self):
-        """
-        Return a chat line or None.
-        """
-        transcript_lines = lines.read_lines()
-        if self.should_bot_line(transcript_lines):
-            return await self.bot_line(transcript_lines)
-        return None
-
     async def periodic_task(self):
         """Return a task to do the periodic things."""
         async def p_d():
             while True:
-                line = await self.chat_requester()
+                # Send a chat line if we have one.
+                population = len(self.sockets)
+                transcript_lines = lines.read_lines()
+                line = await self.program.bot_line_or_none(population, transcript_lines)
                 if line:
                     self.chat_socket.line.add_request(line)
                 await asyncio.sleep(10)
@@ -209,11 +219,12 @@ class Server:
         # We don't clean this up, we should do that in stop().
         asyncio.create_task(self.producer_handler(socket))
 
-    async def change_program(self):
-        """Replace all pipelines with ones appropriate for the current program."""
+    async def change_program(self, program):
+        """Replace program, and all pipelines with appropriate ones."""
         self.chat_socket.line.stop()
         self.chat_socket.line = await self.get_fake_handler_pipeline(
             socket)
         for socket in self.sockets:
             socket.line.stop()
             socket.line = await self.get_pipeline(socket)
+        self.program = program

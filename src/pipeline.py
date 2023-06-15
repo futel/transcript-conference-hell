@@ -43,7 +43,7 @@ class Composer:
 
 class HumanPipeline():
     """
-    Container for a pipeline for chunk requests and responses.
+    Container for a pipelines.
     """
 
     def __init__(self, socket):
@@ -69,6 +69,8 @@ class BotPipeline():
     """
     Container for a pipeline for string requests and chunk responses.
     """
+    # This container is unnecessary, because we only call the methods
+    # which are directly passed to the composer.
 
     def __init__(self, socket):
         line = Composer(chat.Client(), lines.Client(socket))
