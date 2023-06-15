@@ -21,6 +21,7 @@ chat_label = "Franz"
 # Bot may nag humans if population is fewer than this.
 min_population = 3
 
+
 class Program:
     """
     Holds methods and attributes relevant to bot interaction and
@@ -29,12 +30,7 @@ class Program:
 
     async def bot_line(self, population, transcript_lines):
         """Return a line from the bot."""
-        if population < min_population:
-            # Half chance of nagging.
-            if random.choice([True, False]):
-                return chat.nag_string()
-        # We didn't nag, it's a chat line.
-        return await chat.chat_line(transcript_lines)
+        raise NotImplementedError
 
     def should_bot_line(self, transcript_lines):
         """Return True if the bot should talk."""
@@ -60,6 +56,39 @@ class Program:
         return None
 
 
+class ChatProgram(Program):
+    """
+    Chats with humans.
+    """
+    async def bot_line(self, population, transcript_lines):
+        """Return a line from the bot."""
+        if population < min_population:
+            # Half chance of nagging.
+            if random.choice([True, False]):
+                return chat.nag_string()
+        # We didn't nag, return a chat line.
+        return await chat.chat_line(transcript_lines)
+
+
+class PoetryProgram(Program):
+    """
+    Program that recites poetry with humans.
+    """
+
+    async def bot_line(self, population, transcript_lines):
+        """Return a line from the bot."""
+        # XXX we might want to nag or contribute.
+        # XXX testing
+        return await chat.chat_line(transcript_lines)
+
+    def should_bot_line(self, transcript_lines):
+        """
+        Return True if the bot should reply to a prompt and maybe talk.
+        """
+        # We always want a bot line, even if we don't return it.
+        return True
+
+
 class Socket:
     def __init__(self, websocket):
         self.websocket = websocket
@@ -78,7 +107,7 @@ class Server:
         self.server = None
         self.sockets = set()
         self.chat_socket = None
-        self.program = Program()
+        self.program = ChatProgram()
 
     async def start(self):
         util.log("websocket server starting")
