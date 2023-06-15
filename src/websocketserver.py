@@ -32,15 +32,24 @@ class Program:
         """Return a line from the bot."""
         raise NotImplementedError
 
-    def should_bot_line(self, transcript_lines):
-        """Return True if the bot should talk."""
+    def recent_bot_line(self, transcript_lines):
+        """
+        Return True if there aren't yet enough bot lines, or
+        the bot has a recent line, in transcript_lines.
+        """
         labels = lines.line_labels(transcript_lines)
         try:
             for label in [labels.pop(), labels.pop()]:
                 if label == chat_label:
                     # One of the last two lines are bot lines.
-                    return False
+                    return True
         except IndexError:
+            return True
+        return False
+
+    def should_bot_line(self, transcript_lines):
+        """Return True if the bot should talk."""
+        if self.recent_bot_line(transcript_lines):
             return False
         # Half chance of bot line.
         if random.choice([True, False]):
@@ -86,6 +95,8 @@ class PoetryProgram(Program):
         Return True if the bot should reply to a prompt and maybe talk.
         """
         # We always want a bot line, even if we don't return it.
+        if self.recent_bot_line(transcript_lines):
+            return False
         return True
 
 
@@ -206,6 +217,7 @@ class Server:
                     util.log(
                         f"websocket sent response from "
                         "{socket.stream_sid} to {s.stream_sid}")
+            # We could do the bot response here instead of periodically.
 
     async def handler(self, websocket):
         """
