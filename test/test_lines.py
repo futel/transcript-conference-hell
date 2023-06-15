@@ -12,7 +12,7 @@ class TestFoo(unittest.IsolatedAsyncioTestCase):
         client = lines.Client(socket)
         await client.start()
         client.add_request("foo")
-        response = await anext(client.receive_response())
+        response = await client.receive_response()
         client.stop()
         self.assertEqual(response, "foo")
 

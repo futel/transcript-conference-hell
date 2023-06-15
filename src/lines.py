@@ -39,7 +39,5 @@ class Client():
         # Q&D test, log the line.
         write_line(self.socket.stream_sid, text)
         self.recv_queue.put_nowait(text)
-    async def receive_response(self):
-        """Generator for responses."""
-        while True:
-            yield await self.recv_queue.get()
+    def receive_response(self):
+        return self.recv_queue.get()

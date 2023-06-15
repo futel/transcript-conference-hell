@@ -70,11 +70,8 @@ class Client:
             chunk = util.wav_to_chunk(response.audio_content)
             self._recv_queue.put_nowait(chunk)
 
-    async def receive_response(self):
-        """Generator for received media chunks."""
-        while True:
-            yield await self._recv_queue.get()
-            util.log(f"text to speech sent response in {self.voice.name}")
+    def receive_response(self):
+        return self._recv_queue.get()
 
     def add_request(self, text):
         """Add text to the processing queue."""

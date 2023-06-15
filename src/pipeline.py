@@ -34,12 +34,11 @@ class Composer:
         """
         Async generator to receive from producer and send to consumer.
         """
-        async for item in self.producer.receive_response():
-            self.consumer.add_request(item)
+        while True:
+            self.consumer.add_request(await self.producer.receive_response())
 
-    async def receive_response(self):
-        async for response in self.consumer.receive_response():
-            yield response
+    def receive_response(self):
+        return self.consumer.receive_response()
 
 
 class HumanPipeline():

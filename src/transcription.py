@@ -81,12 +81,11 @@ class Client:
                 break
 
     async def receive_response(self):
-        """Generator for received transcription strings."""
-        while True:
-            yield await self._recv_queue.get()
-            qsize = self._recv_queue.qsize()
-            if qsize >= recv_qsize_log:
-                util.log(f"transcription recv queue size {qsize}")
+        response = await self._recv_queue.get()
+        qsize = self._recv_queue.qsize()
+        if qsize >= recv_qsize_log:
+            util.log(f"transcription recv queue size {qsize}")
+        return response
 
     def add_request(self, buffer):
         """Add a chunk of bytes, or None, to the processing queue."""

@@ -207,7 +207,8 @@ class Server:
         Iterate over messages from socket's line, and send them to
         the other websockets.
         """
-        async for chunk in socket.line.receive_response():
+        while True:
+            chunk = await socket.line.receive_response()
             for s in self.sockets:
                 if s != socket:
                     await self.send(s, chunk)
@@ -222,8 +223,7 @@ class Server:
         """
         util.log("websocket connection opened")
         socket = Socket(websocket)
-        line = await self.get_pipeline(socket)
-        socket.line = line
+        socket.line = await self.get_pipeline(socket)
         self.sockets.add(socket)
         util.log("websocket connections: {}".format(len(self.sockets)))
         done, pending = await asyncio.wait(
@@ -232,7 +232,7 @@ class Server:
             return_when=asyncio.FIRST_COMPLETED)
         for task in pending:
             task.cancel()
-        line.stop()
+        socket.line.stop()
         self.sockets.remove(socket)
         util.log("websocket connection closed")
 
@@ -252,8 +252,7 @@ class Server:
         # callback. The fake chat_socket recives requests directly from
         # a task.
         socket = FakeSocket()
-        line = await self.get_fake_handler_pipeline(socket)
-        socket.line = line
+        socket.line = await self.get_fake_handler_pipeline(socket)
         self.chat_socket = socket
         # We don't clean this up, we should do that in stop().
         asyncio.create_task(self.producer_handler(socket))

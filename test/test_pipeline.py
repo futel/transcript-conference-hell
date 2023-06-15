@@ -21,16 +21,16 @@ class TestPipeline(unittest.IsolatedAsyncioTestCase):
         client = Client("foo")
         await client.start()
         client.add_request("one")
-        self.assertEqual(await anext(client.receive_response()), "fooone")
+        self.assertEqual(await client.receive_response(), "fooone")
         client.add_request("two")
         client.add_request("three")
         self.assertEqual(
-            await anext(client.receive_response()), "footwo")
+            await client.receive_response(), "footwo")
         self.assertEqual(
-            await anext(client.receive_response()), "foothree")
+            await client.receive_response(), "foothree")
         try:
             await asyncio.wait_for(
-                anext(client.receive_response()), timeout=1)
+                client.receive_response(), timeout=1)
         except asyncio.TimeoutError:
             pass
 
@@ -41,16 +41,16 @@ class TestPipeline(unittest.IsolatedAsyncioTestCase):
         await client.start()
         client.add_request("one")
         self.assertEqual(
-            await anext(client.receive_response()), "barfooone")
+            await client.receive_response(), "barfooone")
         client.add_request("two")
         client.add_request("three")
         self.assertEqual(
-            await anext(client.receive_response()), "barfootwo")
+            await client.receive_response(), "barfootwo")
         self.assertEqual(
-            await anext(client.receive_response()), "barfoothree")
+            await client.receive_response(), "barfoothree")
         try:
             await asyncio.wait_for(
-                anext(client.receive_response()), timeout=1)
+                client.receive_response(), timeout=1)
         except asyncio.TimeoutError:
             pass
 

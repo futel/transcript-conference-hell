@@ -71,8 +71,5 @@ class Client():
         util.log("chatbot client stopped")
     def add_request(self, text):
         self.recv_queue.put_nowait(text)
-    async def receive_response(self):
-        """Generator for responses."""
-        while True:
-            yield await self.recv_queue.get()
-            util.log(f"chatbot sent response")
+    def receive_response(self):
+        return self.recv_queue.get()

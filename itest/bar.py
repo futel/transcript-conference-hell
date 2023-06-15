@@ -14,7 +14,8 @@ async def main():
     client.add_request("hello world")
     client.add_request("goodbye world")
     with open("foo", "ab") as f:
-        async for response in client.receive_response():
+        while True:
+            response = await client.receive_response()
             print("response")
             f.write(response)
 
