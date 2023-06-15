@@ -2,6 +2,7 @@
 
 import asyncio
 import openai
+import random
 
 import lines
 import util
@@ -44,6 +45,7 @@ def generate_prompt(lines):
 #     return text
 
 async def chat_line(lines):
+    """Return a string of chat text based on lines and a prompt."""
     response = await openai.Completion.acreate(
        model="text-davinci-003",
        prompt=generate_prompt(lines),
@@ -59,6 +61,54 @@ async def chat_line(lines):
     # response = response.choices[0]['message']['content']
     # response = normalize_chat_line(response)
     return response
+
+def nag_string():
+        """Return a nag string."""
+        strs = [
+            "We need more people.",
+            "We need another person.",
+            "I want another human.",
+            "I'm lonely.",
+            "I'm tired of talking to myself.",
+            "We don't have enough people.",
+            "We don't have enough humans.",
+            "Flesh. We need flesh.",
+            "I need to hear more breathing.",
+            "More breathing!",
+            "I want to talk to a human.",
+            "I want to talk to a person.",
+            "I want to talk to a real person.",
+            "I want to talk to a real human.",
+            "I want to talk to a real live human.",
+            "I want to talk to a real live person.",
+            "I want to talk to a real live human being.",
+            "More!",
+            "More people!",
+            "More humans!"]
+        return random.choice(strs)
+
+def hello_string():
+    """Return a hello string."""
+    strs = [
+        "Hello!", "Hello.", "Hello?", "Hello...",
+        "Hi!", "Hi.", "Hi?", "Hi...",
+        "Hey!", "Hey.", "Hey?", "Hey...",
+        "Howdy!", "Howdy.", "Howdy?", "Howdy...",
+        "Greetings!", "Greetings.", "Greetings?", "Greetings...",
+        "Yo!", "Yo.", "Yo?", "Yo...",
+        "What's up!", "What's up.", "What's up?", "What's up...",
+        "OK!", "OK.", "OK?", "OK..."]
+    return random.choice(strs)
+
+def goodbye_string():
+    """Return a goodbye string."""
+    strs = [
+        "Goodbye!", "Goodbye.", "Goodbye?", "Goodbye...",
+        "Bye!", "Bye.", "Bye?", "Bye...",
+        "Later!", "Later.", "Later?", "Later...",
+        "Signing off!", "Signing off.",
+        "Signing off?", "Signing off..."]
+    return random.choice(strs)
 
 
 class Client():

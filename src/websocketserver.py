@@ -56,7 +56,7 @@ class Server:
         if len(self.sockets) < min_population:
             # Half chance of nagging.
             if random.choice([True, False]):
-                return self.nag_string()
+                return chat.nag_string()
         return await chat.chat_line(transcript_lines)
 
     def should_bot_line(self, transcript_lines):
@@ -110,54 +110,6 @@ class Server:
         await line.start()
         return line
 
-    def nag_string(self):
-        """Return a nag string."""
-        strs = [
-            "We need more people.",
-            "We need another person.",
-            "I want another human.",
-            "I'm lonely.",
-            "I'm tired of talking to myself.",
-            "We don't have enough people.",
-            "We don't have enough humans.",
-            "Flesh. We need flesh.",
-            "I need to hear more breathing.",
-            "More breathing!",
-            "I want to talk to a human.",
-            "I want to talk to a person.",
-            "I want to talk to a real person.",
-            "I want to talk to a real human.",
-            "I want to talk to a real live human.",
-            "I want to talk to a real live person.",
-            "I want to talk to a real live human being.",
-            "More!",
-            "More people!",
-            "More humans!"]
-        return random.choice(strs)
-
-    def hello_string(self):
-        """Return a hello string."""
-        strs = [
-            "Hello!", "Hello.", "Hello?", "Hello...",
-            "Hi!", "Hi.", "Hi?", "Hi...",
-            "Hey!", "Hey.", "Hey?", "Hey...",
-            "Howdy!", "Howdy.", "Howdy?", "Howdy...",
-            "Greetings!", "Greetings.", "Greetings?", "Greetings...",
-            "Yo!", "Yo.", "Yo?", "Yo...",
-            "What's up!", "What's up.", "What's up?", "What's up...",
-            "OK!", "OK.", "OK?", "OK..."]
-        return random.choice(strs)
-
-    def goodbye_string(self):
-        """Return a goodbye string."""
-        strs = [
-            "Goodbye!", "Goodbye.", "Goodbye?", "Goodbye...",
-            "Bye!", "Bye.", "Bye?", "Bye...",
-            "Later!", "Later.", "Later?", "Later...",
-            "Signing off!", "Signing off.",
-            "Signing off?", "Signing off..."]
-        return random.choice(strs)
-
     def add_request(self, socket, request):
         """Add request to socket's speech pipeline."""
         socket.line.lines_speech_line.add_request(request)
@@ -176,7 +128,7 @@ class Server:
             elif message["event"] == "start":
                 util.log(f"websocket received event 'start': {message}")
                 socket.stream_sid = message['streamSid']
-                request = self.hello_string()
+                request = chat.hello_string()
                 self.add_request(socket, request)
             elif message["event"] == "media":
                 # util.log("Received event 'media'")
@@ -186,7 +138,7 @@ class Server:
                 socket.line.add_request(self._message_to_chunk(message))
             elif message["event"] == "stop":
                 util.log(f"websocket received event 'stop': {message}")
-                request = self.goodbye_string()
+                request = chat.goodbye_string()
                 self.add_request(socket, request)
                 break
             elif message["event"] == "mark":
@@ -256,3 +208,12 @@ class Server:
         self.chat_socket = socket
         # We don't clean this up, we should do that in stop().
         asyncio.create_task(self.producer_handler(socket))
+
+    async def change_program(self):
+        """Replace all pipelines with ones appropriate for the current program."""
+        self.chat_socket.line.stop()
+        self.chat_socket.line = await self.get_fake_handler_pipeline(
+            socket)
+        for socket in self.sockets:
+            socket.line.stop()
+            socket.line = await self.get_pipeline(socket)
