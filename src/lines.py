@@ -22,7 +22,7 @@ def line_content(line):
     return line.split(':')[1]
 
 def line_labels(lines):
-    return [line_label(line) for line in read_lines()]
+    return [line_label(line) for line in lines]
 
 
 class Client():
