@@ -23,7 +23,8 @@ poetry_lines = [
 
 async def main():
     program = websocketserver.PoetryProgram()
-    print(await program.has_rhyme(poetry_lines))
+    #print(await program.has_rhyme(poetry_lines))
+    print(await program.bot_line_or_none(666, poetry_lines))
 
 
 asyncio.run(main())

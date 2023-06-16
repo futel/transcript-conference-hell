@@ -90,7 +90,6 @@ class PoetryProgram(Program):
         """
         # There is also the pronouncing library and NLTK for this.
         if not await chat.rhyme_detector(transcript_lines):
-            print('xxx foo', transcript_lines)
             if not await chat.rhyme_detector(transcript_lines[:-1]):
                 return False
         return True

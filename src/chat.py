@@ -42,20 +42,10 @@ def format_chat_prompt(t_lines):
 #         return text[len(chat_label):]
 #     return text
 
-# async def chat_line(lines):
-#     """Return a string of chat text based on lines and a prompt."""
-#     # ChatCompletion lets us use better models than Completion.
-#     # https://github.com/openai/openai-cookbook/blob/main/examples/How_to_format_inputs_to_ChatGPT_models.ipynb
-#     response = await openai.ChatCompletion.acreate(
-#         # "gpt-4" "gpt-3.5-turbo" "text-davinci-003"
-#         model="gpt-3.5-turbo",
-#         messages=generate_messages(lines),
-#         temperature=0.8)
-#     response = response.choices[0]['message']['content']
-#     return response
-
 def line_to_bool(line):
     """Return a Boolean based on a chat line."""
+    if not line:
+        return False
     try:
         response = line.translate(
             str.maketrans(
@@ -65,15 +55,34 @@ def line_to_bool(line):
     except Exception:           # We are dealing with unformatted input.
         return False
 
-async def chat_line(t_lines):
-    """Return a string of chat text based on lines and a prompt."""
+async def openai_completion(prompt):
     # Completion only allows the davinci model? Are there others?
-    response = await openai.Completion.acreate(
-        model="text-davinci-003",
-        prompt=format_chat_prompt(t_lines),
-        temperature=0.6)
-    response = response.choices[0].text
-    return response
+    try:
+        response = await openai.Completion.acreate(
+            model="text-davinci-003",
+            prompt=prompt,
+            temperature=0.6)
+        return response.choices[0].text
+    except openai.error.ServiceUnavailableError:
+        return None
+
+async def openai_chat_completion(messages):
+    try:
+        response = await openai.ChatCompletion.acreate(
+            model="gpt-3.5-turbo",
+            messages=messages,
+            temperature=0.6)
+        return response.choices[0]['message']['content']
+    except openai.error.ServiceUnavailableError:
+        return None
+
+async def chat_line(t_lines):
+    """
+    Return a string of chat text based on lines and a prompt, or None.
+    """
+    # Was having trouble using ChatCompletion for freeform chat with
+    # several back-and-forth lines.
+    return await openai_completion(prompt=format_chat_prompt(t_lines))
 
 async def rhyming_line(t_lines):
     """Return a string of chat text based on lines and a prompt."""
@@ -84,11 +93,7 @@ async def rhyming_line(t_lines):
     for line in t_lines:
         messages.append({"role": "user", "content": line})
     # ChatCompletion allows "gpt-4" "gpt-3.5-turbo" "text-davinci-003"?
-    response = await openai.ChatCompletion.acreate(
-        model="gpt-3.5-turbo",
-        messages=messages,
-        temperature=0.6)
-    response = response.choices[0]['message']['content']
+    return await openai_chat_completion(messages)
     return response
 
 async def rhyme_detector(t_lines):
@@ -103,13 +108,8 @@ async def rhyme_detector(t_lines):
          "content": "Say 'true' if these two lines rhyme, say 'false if they do not."}]
     for line in t_lines:
         messages.append({"role": "user", "content": line})
-    response = await openai.ChatCompletion.acreate(
-        model="gpt-3.5-turbo",
-        messages=messages,
-        temperature=0.6)
-    response = response.choices[0]['message']['content']
-    response = line_to_bool(response)
-    return response
+    response = await openai_chat_completion(messages)
+    return line_to_bool(response)
 
 def nag_string():
         """Return a nag string."""
