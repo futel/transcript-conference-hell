@@ -83,19 +83,41 @@ class PoetryProgram(Program):
     """
     Recites poetry with humans.
     """
-    async def bot_line(self, population, transcript_lines):
-        """Return a line from the bot."""
-        # XXX we might want to nag or contribute.
-        # XXX testing
-        return await chat.chat_line(transcript_lines)
+    async def has_rhyme(self, transcript_lines):
+        """
+        Return True ir there have been at least two rhymes among the
+        last 3 lines.
+        """
+        # There is also the pronouncing library and NLTK for this.
+        if not await chat.rhyme_detector(transcript_lines):
+            print('xxx foo', transcript_lines)
+            if not await chat.rhyme_detector(transcript_lines[:-1]):
+                return False
+        return True
+
+    async def bot_line_or_none(self, population, transcript_lines):
+        if False:
+            # XXX detect "the end" here
+            # XXX validate poem and do outcome
+            # XXX can we get away with no state changes victory/defeat?
+            # XXX just whatever we say here?
+            pass
+            return
+        elif not self.should_bot_line(transcript_lines):
+            return None
+        elif await self.has_rhyme(transcript_lines):
+            if True:             # XXX half chance
+                pass             # XXX add rhyme
+                return
+        else:
+            # We don't have a rhyme in the last 3 lines.
+            return chat.poetry_fail_string()
 
     def should_bot_line(self, transcript_lines):
         """
         Return True if the bot should reply to a prompt and maybe talk.
         """
-        # We always want a bot line, even if we don't return it.
         if self.recent_bot_line(transcript_lines):
-            # XXX possible success/fail notify here
             return False
         return True
 

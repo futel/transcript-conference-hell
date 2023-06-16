@@ -85,6 +85,7 @@ Delete the app.
 - source env/bin/activate
 - ./itest.py
 - ./test_chat.py
+- ./test_program.py
 - ./test_server.py
 
 # Smoke deployed integration test

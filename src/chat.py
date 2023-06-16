@@ -3,6 +3,7 @@
 import asyncio
 import openai
 import random
+import string
 
 import lines
 import util
@@ -53,6 +54,17 @@ def format_chat_prompt(t_lines):
 #     response = response.choices[0]['message']['content']
 #     return response
 
+def line_to_bool(line):
+    """Return a Boolean based on a chat line."""
+    try:
+        response = line.translate(
+            str.maketrans(
+                '', '', string.punctuation)).strip().lower().split(' ')[0]
+        response = {'true': True, 'false': False}[response]
+        return response
+    except Exception:           # We are dealing with unformatted input.
+        return False
+
 async def chat_line(t_lines):
     """Return a string of chat text based on lines and a prompt."""
     # Completion only allows the davinci model? Are there others?
@@ -81,7 +93,10 @@ async def rhyming_line(t_lines):
 
 async def rhyme_detector(t_lines):
     """Return True if content of the last two t_lines rhyme."""
-    t_lines = t_lines[-2:]
+    try:
+        t_lines = reversed([t_lines.pop(), t_lines.pop()])
+    except IndexError:
+        return False
     t_lines = lines.line_contents(t_lines)
     messages = [
         {"role": "system",
@@ -93,11 +108,7 @@ async def rhyme_detector(t_lines):
         messages=messages,
         temperature=0.6)
     response = response.choices[0]['message']['content']
-    try:
-        response = response.strip().lower().split(' ')[0]
-        response = {'true': True, 'false': False}[response]
-    except Exception:
-        return False
+    response = line_to_bool(response)
     return response
 
 def nag_string():
@@ -146,6 +157,19 @@ def goodbye_string():
         "Later!", "Later.", "Later?", "Later...",
         "Signing off!", "Signing off.",
         "Signing off?", "Signing off..."]
+    return random.choice(strs)
+
+def poetry_fail_string():
+    """Return a poetry fail string."""
+    strs = [
+        "That is not a poem. I want a poem.",
+        "You can do better than that. Tell me a poem.",
+        "Tell me a poem. Try again.",
+        "I demand a poem.",
+        "I want a poem.",
+        "I want a poem. Give me a poem.",
+        "I want a poem. Try again.",
+        "Please give me a poem. Try again."]
     return random.choice(strs)
 
 

@@ -27,10 +27,10 @@ async def add_poetry_line():
     print(line)
 
 async def main():
-    print(await chat.chat_line(lines))
+    #print(await chat.chat_line(lines))
     for i in range(5):
         await add_poetry_line()
     print(poetry_lines)
-    print(await chat.rhyme_detector_line(poetry_lines))
+    print(await chat.rhyme_detector(poetry_lines))
 
 asyncio.run(main())
