@@ -37,7 +37,7 @@ class Program:
         Return True if there aren't yet enough bot lines, or
         the bot has a recent line, in transcript_lines.
         """
-        labels = lines.line_labels(transcript_lines)
+        labels = [line.label for line in transcript_lines]
         try:
             for label in [labels.pop(), labels.pop()]:
                 if label == chat_label:
@@ -76,7 +76,7 @@ class ChatProgram(Program):
             if random.choice([True, False]):
                 return chat.nag_string()
         # We didn't nag, return a chat line.
-        return await chat.chat_line(transcript_lines)
+        return await chat.openai_chat_line(transcript_lines)
 
 
 class PoetryProgram(Program):

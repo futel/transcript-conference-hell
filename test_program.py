@@ -8,25 +8,29 @@ import asyncio
 import dotenv
 dotenv.load_dotenv()
 
+import lines
 import websocketserver
 
 poetry_lines = [
-    "Franz: Are we ready?",
-    "xyzzy: Let's begin, I will start.",
-    "xyzzy: I shot an arrrow in the air.",
-    "Franz: It fell to Earth I know not where."]
+    lines.line_from_str(s) for s in [
+        "Franz: Are we ready?",
+        "xyzzy: Let's begin, I will start.",
+        "xyzzy: I shot an arrrow in the air.",
+        "Franz: It fell to Earth I know not where."]]
 
 poetry_fail_lines = [
-    "Franz: Are we ready?",
-    "xyzzy: Let's begin, I will start.",
-    "xyzzy: I shot an arrrow in the air.",
-    "foobar: It fell to Earth hello hello."]
+    lines.line_from_str(s) for s in [
+        "Franz: Are we ready?",
+        "xyzzy: Let's begin, I will start.",
+        "xyzzy: I shot an arrrow in the air.",
+        "foobar: It fell to Earth hello hello."]]
 
 poetry_succeed_lines = [
-    "Franz: Are we ready?",
-    "xyzzy: Let's begin, I will start.",
-    "xyzzy: I shot an arrrow in the air.",
-    "foobar: It fell to Earth I know not where."]
+    lines.line_from_str(s) for s in [
+        "Franz: Are we ready?",
+        "xyzzy: Let's begin, I will start.",
+        "xyzzy: I shot an arrrow in the air.",
+        "foobar: It fell to Earth I know not where."]]
 
 # async def add_poetry_line():
 #     line = await chat.rhyming_line(poetry_lines)

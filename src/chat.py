@@ -5,7 +5,6 @@ import openai
 import random
 import string
 
-import lines
 import util
 
 
@@ -78,7 +77,7 @@ async def openai_chat_completion(messages):
         util.log('openai ServiceUnavailableError')
         return None
 
-async def chat_line(t_lines):
+async def openai_chat_line(t_lines):
     """
     Return a string of chat text based on lines and a prompt, or None.
     """
@@ -88,12 +87,11 @@ async def chat_line(t_lines):
 
 async def openai_rhyming_line(t_lines):
     """Return a string of chat text based on lines and a prompt."""
-    t_lines = lines.line_contents(t_lines)
     messages = [
         {"role": "system",
          "content": "Write me a poem by adding one line."}]
     for line in t_lines:
-        messages.append({"role": "user", "content": line})
+        messages.append({"role": "user", "content": line.content})
     # ChatCompletion allows "gpt-4" "gpt-3.5-turbo" "text-davinci-003"?
     return await openai_chat_completion(messages)
     return response
@@ -104,12 +102,11 @@ async def rhyme_detector(t_lines):
         t_lines = reversed([t_lines[-1:][0], t_lines[-2:-1][0]])
     except IndexError:
         return False
-    t_lines = lines.line_contents(t_lines)
     messages = [
         {"role": "system",
          "content": "Say 'true' if these two lines rhyme, say 'false if they do not."}]
     for line in t_lines:
-        messages.append({"role": "user", "content": line})
+        messages.append({"role": "user", "content": line.content})
     response = await openai_chat_completion(messages)
     return line_to_bool(response)
 

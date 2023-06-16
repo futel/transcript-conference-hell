@@ -4,31 +4,38 @@ import asyncio
 
 import util
 
-def write_line(sid, text):
+def write_line(line):
     # Q&D test, log the line.
-    util.log("{}: {}".format(sid, text), 'lines')
+    util.log("{}: {}".format(line.label, line.content), 'lines')
 
 def read_lines():
     try:
         with open('/tmp/lines', 'r') as f:
-            return f.readlines()
+            return [line_from_str(line) for line in f.readlines()]
     except FileNotFoundError:
         return []
 
-def line_label(line):
-    return line.split(':')[0]
+def line_from_str(text):
+    (label, content) = text.split(':')
+    label = label.strip()
+    content = content.strip()
+    return Line(label, content)
 
-def line_content(line):
-    return line.split(':')[1]
 
-def line_labels(lines):
-    return [line_label(line) for line in lines]
+class Line():
+    """A transcript line."""
+    def __init__(self, label, content, ordinal=None):
+        self.label = label
+        self.content = content
+        self.ordinal = ordinal
 
-def line_contents(lines):
-    return [line_content(line) for line in lines]
+    def __str__(self):
+        # Q&D, log the line.
+        util.log("{}: {}".format(self.label, self.content), 'lines')
 
 
 class Client():
+    """Client to write transcript lines."""
     def __init__(self, socket):
         # We only want the stream_sid, but we have to store the socket
         # because it doesn't have it yet.
@@ -40,7 +47,7 @@ class Client():
         pass
     def add_request(self, text):
         # Q&D test, log the line.
-        write_line(self.socket.stream_sid, text)
+        write_line(Line(self.socket.stream_sid, text))
         self.recv_queue.put_nowait(text)
     def receive_response(self):
         return self.recv_queue.get()
