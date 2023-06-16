@@ -86,7 +86,7 @@ async def chat_line(t_lines):
     # several back-and-forth lines.
     return await openai_completion(prompt=format_chat_prompt(t_lines))
 
-async def rhyming_line(t_lines):
+async def openai_rhyming_line(t_lines):
     """Return a string of chat text based on lines and a prompt."""
     t_lines = lines.line_contents(t_lines)
     messages = [
@@ -101,7 +101,7 @@ async def rhyming_line(t_lines):
 async def rhyme_detector(t_lines):
     """Return True if content of the last two t_lines rhyme."""
     try:
-        t_lines = reversed([t_lines.pop(), t_lines.pop()])
+        t_lines = reversed([t_lines[-1:][0], t_lines[-2:-1][0]])
     except IndexError:
         return False
     t_lines = lines.line_contents(t_lines)

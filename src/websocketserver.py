@@ -106,8 +106,7 @@ class PoetryProgram(Program):
             return None
         elif await self.has_rhyme(transcript_lines):
             if True:             # XXX half chance
-                pass             # XXX add rhyme
-                return
+                return await chat.openai_rhyming_line(transcript_lines)
         else:
             # We don't have a rhyme in the last 3 lines.
             return chat.poetry_fail_string()
