@@ -64,6 +64,7 @@ async def openai_completion(prompt):
             temperature=0.6)
         return response.choices[0].text
     except openai.error.ServiceUnavailableError:
+        util.log('openai ServiceUnavailableError')
         return None
 
 async def openai_chat_completion(messages):
@@ -74,6 +75,7 @@ async def openai_chat_completion(messages):
             temperature=0.6)
         return response.choices[0]['message']['content']
     except openai.error.ServiceUnavailableError:
+        util.log('openai ServiceUnavailableError')
         return None
 
 async def chat_line(t_lines):
