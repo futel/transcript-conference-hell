@@ -1,3 +1,4 @@
+import itertools
 import random
 
 import chat
@@ -37,13 +38,13 @@ class Program:
             return True
         return False
 
-    async def bot_line_or_none(self, population, transcript_lines):
+    async def bot_lines(self, population, transcript_lines):
         """
-        Return a chat line or None.
+        Return a list of zero or more chat lines.
         """
         if self.should_bot_line(transcript_lines):
-            return await self.bot_line(population, transcript_lines)
-        return None
+            return [await self.bot_line(population, transcript_lines)]
+        return []
 
 
 class ChatProgram(Program):
@@ -67,38 +68,84 @@ class PoetryProgram(Program):
     def __init__(self):
         self.poem_start = None
 
-    async def has_rhyme(self, transcript_lines):
+    async def latest_rhyme(self, t_lines):
         """
-        Return True if there have been at least two consecutive rhymes
-        among the last three lines.
+        Return the most recent consecutive rhyming lines, or None
         """
         # There is also the pronouncing library and NLTK for this.
-        rhyme_lines = transcript_lines[-2:]
-        if len(rhyme_lines) == 2:
-            if await chat.rhyme_detector(rhyme_lines):
-                return True
-                rhyme_lines = transcript_lines[-3:-1]
-                if len(rhyme_lines) == 2:
-                    if await chat.rhyme_detector(rhyme_lines):
-                        return True
-        return False
-
-    async def bot_line_or_none(self, population, transcript_lines):
-        if False:
-            # XXX detect "the end" here
-            # XXX validate poem and do outcome
-            # XXX can we get away with no state changes victory/defeat?
-            # XXX just whatever we say here?
-            pass
-            return
-        elif not self.should_bot_line(transcript_lines):
+        #max_count = 3
+        t_lines = reversed(t_lines)
+        counter = itertools.count()
+        try:
+            previous = next(t_lines)
+            this = next(t_lines)
+            count = next(counter)
+            while True: #count < max_count:
+                if await chat.rhyme_detector(
+                        chat.last_word(this.content),
+                        chat.last_word(previous.content)):
+                    return (this, previous)
+                previous = this
+                this = next(t_lines)
+                count = next(counter)
+        except StopIteration:
             return None
-        elif await self.has_rhyme(transcript_lines):
-            if True:             # XXX half chance
-                return await chat.openai_rhyming_line(transcript_lines)
-        else:
-            # We don't have a rhyme in the last 3 lines.
-            return chat.poetry_fail_string()
+
+    # async def poem_lines(self, poem_start, poem_end):
+    #     poem_end = await self.latest_rhyme(t_lines)
+    #     if poem_end is not None:
+    #         if poem_start is not None:
+    #             # We have a poem going.
+    #             # The poem may be continuing, or it may have ended a line ago.
+    #             return t_lines[poem_start:-poem_end]
+    #         else:
+    #             # This is the first rhyme.
+    #             return t_lines[-poem_end-1:-poem_end]
+    #     return []               # We don't have a poem going.
+
+    async def bot_lines(self, population, t_lines):
+        latest_rhyme = await self.latest_rhyme(t_lines)
+        if self.poem_start is None:
+            if latest_rhyme is None:
+                return ["nag"]
+            self.poem_start = latest_rhyme[0].ordinal
+            #print("xxx poem start", self.poem_start)
+            return ["starting"]
+        # XXX We should have detected a rhyme, since we did earlier. But we might
+        #     need to try again, because chatgpt.
+        if latest_rhyme[1].ordinal < len(t_lines) - 2:
+            # There have been no rhymes for 2 lines.
+            #print('xxx poem', self.poem_start, latest_rhyme[1].ordinal)
+            return ["ended"]
+        #print('xxx poem', self.poem_start, latest_rhyme[1].ordinal)
+        return ["continuing"]
+
+        # latest_rhyme = await self.latest_rhyme(t_lines)
+        # print("xxx latest_rhyme", latest_rhyme)
+        # if self.poem_start is not None:
+        #     print("xxx poem_start", self.poem_start)
+        #     # We have a poem going.
+        #     if latest_rhyme is not None:
+        #         if True:             # XXX make this half chance or less
+        #             return await chat.openai_rhyming_line(t_lines)
+        #         return []       # Human's turn to talk.
+        #     else:
+        #         # We don't have a rhyme in the last 3 lines, and we did
+        #         # before, so the last line doesn't rhyme.
+        #         poem = t_lines[self.poem_start:-latest_rhyme]
+        #         print("xxx poem", poem)
+        #         self.poem_start = None
+        #         if len(poem) > 3:
+        #             out = [chat.poetry_success_string()]
+        #             out.extend(poem)
+        #             return out
+        #         return [chat.poetry_fail_string()]
+        # # We don't have a poem going.
+        # if latest_rhyme is not None:
+        #     self.poem_start = len(t_lines) - latest_rhyme
+        #     return []
+        # # Prompt the human to start a poem.
+        # return [chat.poetry_fail_string()]
 
     def should_bot_line(self, transcript_lines):
         """

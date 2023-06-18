@@ -33,7 +33,9 @@ async def main():
     print(await chat.rhyme_detector("giggle", "wiggle"))
     print(await chat.rhyme_detector("cringe", "impinge"))
     print(await chat.rhyme_detector("air", "where"))
-    print(await chat.rhyme_detector("start", "where"))
+    print(await chat.rhyme_detector("where", "sound"))
+    print(await chat.rhyme_detector("three", "me"))
+    print(await chat.rhyme_detector("sound", "found"))
 
     # for i in range(5):
     #     await add_poetry_line()

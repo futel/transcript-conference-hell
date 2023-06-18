@@ -7,20 +7,21 @@ import program
 
 class TestProgram(unittest.IsolatedAsyncioTestCase):
 
-    async def test_bot_line_or_none_none(self):
+    async def test_bot_lines(self):
         prog = program.Program()
-        self.assertEqual(await prog.bot_line_or_none(666, []), None)
+        self.assertEqual(await prog.bot_lines(666, []), [])
 
 
 class TestPoetryProgram(unittest.IsolatedAsyncioTestCase):
 
-    async def test_bot_line_or_none_none(self):
+    async def test_bot_lines(self):
         prog = program.PoetryProgram()
-        self.assertEqual(await prog.bot_line_or_none(666, []), None)
+        bot_lines = await prog.bot_lines(666, [])
+        self.assertTrue(isinstance(bot_lines.pop(), str))
 
-    async def test_has_rhyme(self):
+    async def test_latest_rhyme(self):
         prog = program.PoetryProgram()
-        self.assertEqual(await prog.has_rhyme([]), False)
+        self.assertEqual(await prog.latest_rhyme([]), None)
 
 
 if __name__ == '__main__':
