@@ -57,9 +57,8 @@ class Server:
                 # Send a chat line if we have one.
                 population = len(self.sockets)
                 transcript_lines = lines.read_lines()
-                line = await self.program.bot_line_or_none(
-                    population, transcript_lines)
-                if line:
+                for line in await self.program.bot_lines(
+                        population, transcript_lines):
                     self.chat_socket.line.add_request(line)
                 await asyncio.sleep(10)
         return asyncio.create_task(p_d())
