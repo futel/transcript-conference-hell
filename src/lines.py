@@ -1,6 +1,7 @@
-"""Client to write attibuted transcription lines."""
+"""Read and write transcription lines."""
 
 import asyncio
+import itertools
 import json
 
 import util
@@ -10,9 +11,14 @@ def write_line(line):
     util.log(str(line), 'lines')
 
 def read_lines():
+    counter = itertools.count()
+    def ordinaler(line):
+        line.ordinal = next(counter)
+        return line
     try:
         with open('/tmp/lines', 'r') as f:
-            return [line_from_str(line) for line in f.readlines()]
+            return [
+                ordinaler(line_from_str(line)) for line in f.readlines()]
     except FileNotFoundError:
         return []
 
