@@ -7,6 +7,8 @@ import string
 
 import util
 
+#openai_attempts = 2
+#openai_delay = 0.5
 
 chat_label = "Franz"
 
@@ -54,28 +56,36 @@ def line_to_bool(line):
     except Exception:           # We are dealing with unformatted input.
         return False
 
+
+def openai_retry(f):
+    async def wrapper(*args, **kwargs):
+        try:
+            return await f(*args, **kwargs)
+        except (openai.error.ServiceUnavailableError, openai.error.RateLimitError) as e:
+            util.log(str(e))
+            return None
+    return wrapper
+
+@openai_retry
 async def openai_completion(prompt):
     # Completion only allows the davinci model? Are there others?
-    try:
-        response = await openai.Completion.acreate(
-            model="text-davinci-003",
-            prompt=prompt,
-            temperature=0.6)
+    response = await openai.Completion.acreate(
+        model="text-davinci-003",
+        prompt=prompt,
+        temperature=0.6)
+    if response:
         return response.choices[0].text
-    except openai.error.ServiceUnavailableError:
-        util.log('openai ServiceUnavailableError')
-        return None
+    return None
 
+@openai_retry
 async def openai_chat_completion(messages):
-    try:
-        response = await openai.ChatCompletion.acreate(
-            model="gpt-3.5-turbo",
-            messages=messages,
-            temperature=0.6)
+    response = await openai.ChatCompletion.acreate(
+        model="gpt-3.5-turbo",
+        messages=messages,
+        temperature=0.6)
+    if response:
         return response.choices[0]['message']['content']
-    except openai.error.ServiceUnavailableError:
-        util.log('openai ServiceUnavailableError')
-        return None
+    return None
 
 async def openai_chat_line(t_lines):
     """
@@ -165,6 +175,18 @@ def poetry_fail_string():
         "I want a poem. Give me a poem.",
         "I want a poem. Try again.",
         "Please give me a poem. Try again."]
+    return random.choice(strs)
+
+def poetry_succeed_string():
+    """Return a poetry succeed string."""
+    strs = [
+        "That is a poem. Thank you.",
+        "Thank you for the poem.",
+        "Thank you for the poem. I like it.",
+        "Thank you for the poem. I like you.",
+        "That is a poem!",
+        "Poem collection successful!",
+        "Poem status: affirmitve."]
     return random.choice(strs)
 
 
