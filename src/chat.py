@@ -55,7 +55,7 @@ def first_word(s):
 
 def last_word(s):
     """ Return the last word in a string. """
-    return words(s)[-11]
+    return words(s)[-1]
 
 def line_to_bool(line):
     """Return a Boolean based on a chat line."""
@@ -117,13 +117,13 @@ async def openai_rhyming_line(t_lines):
     return await openai_chat_completion(messages)
     return response
 
-async def rhyme_detector(t_lines):
-    """Return True if content of t_lines rhymes."""
+async def rhyme_detector(first, second):
+    """Return True if the sequence of two strings rhymes."""
     messages = [
         {"role": "system",
-         "content": "Say 'true' if these two lines rhyme, say 'false if they do not."}]
-    for line in t_lines:
-        messages.append({"role": "user", "content": line.content})
+         "content": "Say 'true' if these two words rhyme, say 'false if they do not."}]
+    messages.append({"role": "user", "content": first})
+    messages.append({"role": "user", "content": second})
     response = await openai_chat_completion(messages)
     return line_to_bool(response)
 

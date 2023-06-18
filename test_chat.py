@@ -29,21 +29,13 @@ async def add_poetry_line():
     print(line)
 
 async def main():
-    print(await chat.rhyme_detector(
-        [lines.Line("xyzzy", "I shot an arrrow in the air."),
-         lines.Line("Franz", "It fell to Earth I know not where.")]))
-    print(await chat.rhyme_detector(
-        [lines.Line("xyzzy", "Let's begin, I will start."),
-         lines.Line("xyzzy", "I shot an arrrow in the air."),
-         lines.Line("Franz", "It fell to Earth I know not where.")]))
-    print(await chat.rhyme_detector(
-        [lines.Line("xyzzy", "Let's begin, I will start."),
-         lines.Line("xyzzy", "I shot an arrrow in the air."),
-         lines.Line("Franz", "It fell to Earth I know not where."),
-         lines.Line("Franz", "Hello hello one two three.")]))
+    print(await chat.rhyme_detector("dog", "frog"))
+    print(await chat.rhyme_detector("giggle", "wiggle"))
+    print(await chat.rhyme_detector("cringe", "impinge"))
+    print(await chat.rhyme_detector("air", "where"))
+    print(await chat.rhyme_detector("start", "where"))
 
-    for i in range(5):
-        await add_poetry_line()
-    print(await chat.rhyme_detector(poetry_lines))
+    # for i in range(5):
+    #     await add_poetry_line()
 
 asyncio.run(main())
