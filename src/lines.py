@@ -1,6 +1,7 @@
 """Client to write attibuted transcription lines."""
 
 import asyncio
+import json
 
 import util
 
@@ -30,7 +31,8 @@ class Line():
         self.ordinal = ordinal
 
     def __str__(self):
-        return "{}: {}".format(self.label, self.content)
+        return json.dumps(
+            {'label': self.label, 'content': self.content})
 
 
 class Client():
