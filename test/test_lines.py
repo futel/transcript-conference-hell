@@ -5,7 +5,11 @@ from unittest import mock
 import lines
 
 
-class TestFoo(unittest.IsolatedAsyncioTestCase):
+class TestLines(unittest.IsolatedAsyncioTestCase):
+
+    async def test_str(self):
+        line = lines.Line("label", "content")
+        self.assertEqual(str(line), "label: content")
 
     async def test_add_request_one(self):
         socket = mock.Mock()

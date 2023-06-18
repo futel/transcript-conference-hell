@@ -6,7 +6,7 @@ import util
 
 def write_line(line):
     # Q&D test, log the line.
-    util.log("{}: {}".format(line.label, line.content), 'lines')
+    util.log(str(line), 'lines')
 
 def read_lines():
     try:
@@ -30,8 +30,7 @@ class Line():
         self.ordinal = ordinal
 
     def __str__(self):
-        # Q&D, log the line.
-        util.log("{}: {}".format(self.label, self.content), 'lines')
+        return "{}: {}".format(self.label, self.content)
 
 
 class Client():
