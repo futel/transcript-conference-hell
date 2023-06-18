@@ -91,18 +91,6 @@ class PoetryProgram(Program):
         except StopIteration:
             return None
 
-    # async def poem_lines(self, poem_start, poem_end):
-    #     poem_end = await self.latest_rhyme(t_lines)
-    #     if poem_end is not None:
-    #         if poem_start is not None:
-    #             # We have a poem going.
-    #             # The poem may be continuing, or it may have ended a line ago.
-    #             return t_lines[poem_start:-poem_end]
-    #         else:
-    #             # This is the first rhyme.
-    #             return t_lines[-poem_end-1:-poem_end]
-    #     return []               # We don't have a poem going.
-
     async def bot_lines(self, population, t_lines):
         latest_rhyme = await self.latest_rhyme(t_lines)
         if self.poem_start is None:
@@ -111,17 +99,14 @@ class PoetryProgram(Program):
                     return [chat.poetry_fail_string()]
                 return []       # Give the human time.
             self.poem_start = latest_rhyme[0].ordinal
-            #print("xxx poem start", self.poem_start)
             return []           # Human's turn to talk.
         # XXX We should have detected a rhyme, since we did earlier. But we might
         #     need to try again, because chatgpt.
         if latest_rhyme[1].ordinal < len(t_lines) - 2:
             # There have been no rhymes for 2 lines.
-            #print('xxx poem', self.poem_start, latest_rhyme[1].ordinal)
             out = [chat.poetry_succeed_string()]
             out.extend(t_lines[self.poem_start:latest_rhyme[1].ordinal+1])
             return out
-        #print('xxx poem', self.poem_start, latest_rhyme[1].ordinal)
         if random.choice([True, False]): # Half chance of bot line.
             return [await chat.openai_rhyming_line(t_lines)]
         return []               # Human's turn to talk.
