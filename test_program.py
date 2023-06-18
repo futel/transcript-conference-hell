@@ -9,7 +9,7 @@ import dotenv
 dotenv.load_dotenv()
 
 import lines
-import websocketserver
+import program
 
 poetry_lines = [
     lines.line_from_str(s) for s in [
@@ -38,10 +38,10 @@ poetry_succeed_lines = [
 #     print(line)
 
 async def main():
-    program = websocketserver.PoetryProgram()
-    #print(await program.has_rhyme(poetry_lines))
-    print(await program.bot_line_or_none(666, poetry_fail_lines))
-    print(await program.bot_line_or_none(666, poetry_succeed_lines))
+    prog = program.PoetryProgram()
+    #print(await prog.has_rhyme(poetry_lines))
+    print(await prog.bot_line_or_none(666, poetry_fail_lines))
+    print(await prog.bot_line_or_none(666, poetry_succeed_lines))
 
 
 asyncio.run(main())
