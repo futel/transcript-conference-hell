@@ -69,14 +69,19 @@ class PoetryProgram(Program):
 
     async def has_rhyme(self, transcript_lines):
         """
-        Return True ir there have been at least two rhymes among the
-        last 3 lines.
+        Return True if there have been at least two consecutive rhymes
+        among the last three lines.
         """
         # There is also the pronouncing library and NLTK for this.
-        if not await chat.rhyme_detector(transcript_lines):
-            if not await chat.rhyme_detector(transcript_lines[:-1]):
-                return False
-        return True
+        rhyme_lines = transcript_lines[-2:]
+        if len(rhyme_lines) == 2:
+            if await chat.rhyme_detector(rhyme_lines):
+                return True
+                rhyme_lines = transcript_lines[-3:-1]
+                if len(rhyme_lines) == 2:
+                    if await chat.rhyme_detector(rhyme_lines):
+                        return True
+        return False
 
     async def bot_line_or_none(self, population, transcript_lines):
         if False:

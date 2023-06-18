@@ -97,11 +97,7 @@ async def openai_rhyming_line(t_lines):
     return response
 
 async def rhyme_detector(t_lines):
-    """Return True if content of the last two t_lines rhyme."""
-    try:
-        t_lines = reversed([t_lines[-1:][0], t_lines[-2:-1][0]])
-    except IndexError:
-        return False
+    """Return True if content of t_lines rhymes."""
     messages = [
         {"role": "system",
          "content": "Say 'true' if these two lines rhyme, say 'false if they do not."}]

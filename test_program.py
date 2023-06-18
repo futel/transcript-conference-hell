@@ -39,7 +39,8 @@ poetry_succeed_lines = [
 
 async def main():
     prog = program.PoetryProgram()
-    #print(await prog.has_rhyme(poetry_lines))
+    print(await prog.has_rhyme(poetry_lines))
+    print(await prog.has_rhyme(poetry_fail_lines))
     print(await prog.bot_line_or_none(666, poetry_fail_lines))
     print(await prog.bot_line_or_none(666, poetry_succeed_lines))
 
