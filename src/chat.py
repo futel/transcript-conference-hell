@@ -43,19 +43,30 @@ def format_chat_prompt(t_lines):
 #         return text[len(chat_label):]
 #     return text
 
+def words(s):
+    """ Return a sequence of words in string."""
+    return s.translate(
+        str.maketrans(
+            '', '', string.punctuation)).strip().lower().split(' ')
+
+def first_word(s):
+    """ Return the first word in a string. """
+    return words(s)[0]
+
+def last_word(s):
+    """ Return the last word in a string. """
+    return words(s)[-11]
+
 def line_to_bool(line):
     """Return a Boolean based on a chat line."""
     if not line:
         return False
     try:
-        response = line.translate(
-            str.maketrans(
-                '', '', string.punctuation)).strip().lower().split(' ')[0]
+        response = first_word(line)
         response = {'true': True, 'false': False}[response]
         return response
     except Exception:           # We are dealing with unformatted input.
         return False
-
 
 def openai_retry(f):
     async def wrapper(*args, **kwargs):
