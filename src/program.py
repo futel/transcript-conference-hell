@@ -132,3 +132,24 @@ class PoetryProgram(Program):
         if self.recent_bot_line(transcript_lines):
             return False
         return True
+
+
+class PoetryAppreciatorProgram(PoetryProgram):
+    """
+    Appreciates poetry when found.
+    """
+    async def bot_lines(self, population, t_lines):
+        latest_rhyme = await self.latest_rhyme(t_lines)
+        if self.poem_start is None:
+            if latest_rhyme is not None:
+                self.poem_start = latest_rhyme[0].ordinal
+                return []           # Human's turn to talk.
+        # XXX We should have detected a rhyme, since we did earlier.
+        #     But we might need to try again, because chatgpt.
+        if latest_rhyme[1].ordinal < len(t_lines) - 2:
+            # There have been no rhymes for 2 lines.
+            out = [chat.poetry_succeed_string()]
+            out.extend(t_lines[self.poem_start:latest_rhyme[1].ordinal+1])
+            return out
+        return []               # Human's turn to talk.
+
