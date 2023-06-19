@@ -26,6 +26,10 @@ class Socket:
         self.line = None
         self.stream_sid = None
 
+    async def get_pipeline(self, prog):
+        self.line = prog.get_pipeline(self)
+        await self.line.start()
+
     def add_request(self, request):
         return self.line.add_request(request)
 
@@ -42,6 +46,10 @@ class Socket:
 class FakeSocket:
     """Object to hold a line and a stream_sid identifier."""
     stream_sid = chat.chat_label
+
+    async def get_pipeline(self):
+        self.line = pipeline.BotPipeline(self)
+        await self.line.start()
 
     def add_request(self, request):
         return self.line.add_request(request)
@@ -156,7 +164,7 @@ class Server:
         """
         util.log("websocket connection opened")
         socket = Socket(websocket)
-        socket.line = await self.program.get_pipeline(socket)
+        await socket.get_pipeline(self.program)
         self.sockets.add(socket)
         util.log("websocket connections: {}".format(len(self.sockets)))
         done, pending = await asyncio.wait(
@@ -169,14 +177,6 @@ class Server:
         self.sockets.remove(socket)
         util.log("websocket connection closed")
 
-    async def get_fake_handler_pipeline(self, socket):
-        """
-        Return a client pipeline for string requests and chunk responses.
-        """
-        line = pipeline.BotPipeline(socket)
-        await line.start()
-        return line
-
     async def fake_handler(self):
         """
         Set up and run a producer task without a consumer.
@@ -185,18 +185,17 @@ class Server:
         # callback. The fake chat_socket recives requests directly from
         # a task.
         socket = FakeSocket()
-        socket.line = await self.get_fake_handler_pipeline(socket)
+        await socket.get_pipeline()
         self.chat_socket = socket
         # We don't clean this up, we should do that in stop().
         asyncio.create_task(self.producer_handler(socket))
 
-    async def change_program(self, program):
+    async def change_program(self, prog):
         """Replace program, and all pipelines with appropriate ones."""
+        self.program = prog
         self.chat_socket.stop()
-        self.chat_socket.line = await self.get_fake_handler_pipeline(
-            socket)
+        await self.chat_socket.get_pipeline()
         for socket in self.sockets:
             socket.stop()
-            socket.line = await program.get_pipeline(socket)
-        self.program = program
+            await socket.get_pipeline(self.program)
 

@@ -11,11 +11,9 @@ class Program:
     pipelines for bots and humans.
     """
 
-    async def get_pipeline(self, socket):
+    def get_pipeline(self, socket):
         """ Return a client pipeline for chunk requests and responses."""
-        line = pipeline.HumanPipeline(socket)
-        await line.start()
-        return line
+        return pipeline.HumanPipeline(socket)
 
     async def bot_line(self, population, transcript_lines):
         """Return a line from the bot."""
