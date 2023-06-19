@@ -26,11 +26,31 @@ class Socket:
         self.line = None
         self.stream_sid = None
 
+    def add_request(self, request):
+        return self.line.add_request(request)
+
+    def add_speech_request(self, request):
+        return self.line.lines_speech_line.add_request(request)
+
+    def receive_response(self):
+        return self.line.receive_response()
+
+    def stop(self):
+        return self.line.stop()
+
 
 class FakeSocket:
     """Object to hold a line and a stream_sid identifier."""
     stream_sid = chat.chat_label
 
+    def add_request(self, request):
+        return self.line.add_request(request)
+
+    def stop(self):
+        return self.line.stop()
+
+    def receive_response(self):
+        return self.line.receive_response()
 
 class Server:
     def __init__(self):
@@ -59,7 +79,7 @@ class Server:
                 transcript_lines = lines.read_lines()
                 for line in await self.program.bot_lines(
                         population, transcript_lines):
-                    self.chat_socket.line.add_request(line)
+                    self.chat_socket.add_request(line)
                 await asyncio.sleep(10)
         return asyncio.create_task(p_d())
 
@@ -73,10 +93,6 @@ class Server:
     #     return {"event": "mark",
     #             "streamSid": self._stream_sid,
     #             "mark": {"name": uuid.uuid4().hex}}
-
-    def add_speech_request(self, socket, request):
-        """Add request to socket's speech pipeline."""
-        socket.line.lines_speech_line.add_request(request)
 
     async def consumer_handler(self, socket):
         """
@@ -93,16 +109,16 @@ class Server:
                 util.log(f"websocket received event 'start': {message}")
                 socket.stream_sid = message['streamSid']
                 request = chat.hello_string()
-                self.add_speech_request(socket, request)
+                socket.add_speech_request(request)
             elif message["event"] == "media":
                 # This assumes we get messages in order, we should instead
                 # verify the sequence numbers? Or just skip?
                 # message["sequenceNumber"]
-                socket.line.add_request(self._message_to_chunk(message))
+                socket.add_request(self._message_to_chunk(message))
             elif message["event"] == "stop":
                 util.log(f"websocket received event 'stop': {message}")
                 request = chat.goodbye_string()
-                self.add_speech_request(socket, request)
+                socket.add_speech_request(request)
                 break
             elif message["event"] == "mark":
                 util.log(f"websocket received event 'mark': {message}")
@@ -123,7 +139,7 @@ class Server:
         the other websockets.
         """
         while True:
-            chunk = await socket.line.receive_response()
+            chunk = await socket.receive_response()
             for s in self.sockets:
                 if s != socket:
                     await self.send(s, chunk)
@@ -148,7 +164,7 @@ class Server:
             return_when=asyncio.FIRST_COMPLETED)
         for task in pending:
             task.cancel()
-        socket.line.stop()
+        socket.stop()
         self.sockets.remove(socket)
         util.log("websocket connection closed")
 
@@ -175,10 +191,10 @@ class Server:
 
     async def change_program(self, program):
         """Replace program, and all pipelines with appropriate ones."""
-        self.chat_socket.line.stop()
+        self.chat_socket.stop()
         self.chat_socket.line = await self.get_fake_handler_pipeline(
             socket)
         for socket in self.sockets:
-            socket.line.stop()
+            socket.stop()
             socket.line = await self.get_pipeline(socket)
         self.program = program
