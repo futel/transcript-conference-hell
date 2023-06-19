@@ -74,12 +74,6 @@ class Server:
     #             "streamSid": self._stream_sid,
     #             "mark": {"name": uuid.uuid4().hex}}
 
-    async def get_pipeline(self, socket):
-        """ Return a client pipeline for chunk requests and responses."""
-        line = pipeline.HumanPipeline(socket)
-        await line.start()
-        return line
-
     def add_request(self, socket, request):
         """Add request to socket's speech pipeline."""
         socket.line.lines_speech_line.add_request(request)
@@ -146,7 +140,7 @@ class Server:
         """
         util.log("websocket connection opened")
         socket = Socket(websocket)
-        socket.line = await self.get_pipeline(socket)
+        socket.line = await self.program.get_pipeline(socket)
         self.sockets.add(socket)
         util.log("websocket connections: {}".format(len(self.sockets)))
         done, pending = await asyncio.wait(

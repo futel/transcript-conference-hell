@@ -2,6 +2,7 @@ import itertools
 import random
 
 import chat
+import pipeline
 
 
 class Program:
@@ -9,6 +10,12 @@ class Program:
     Holds methods and attributes relevant to bot interaction and
     pipelines for bots and humans.
     """
+
+    async def get_pipeline(self, socket):
+        """ Return a client pipeline for chunk requests and responses."""
+        line = pipeline.HumanPipeline(socket)
+        await line.start()
+        return line
 
     async def bot_line(self, population, transcript_lines):
         """Return a line from the bot."""
