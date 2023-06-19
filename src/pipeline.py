@@ -35,7 +35,8 @@ class Composer:
         Async generator to receive from producer and send to consumer.
         """
         while True:
-            self.consumer.add_request(await self.producer.receive_response())
+            self.consumer.add_request(
+                await self.producer.receive_response())
 
     def receive_response(self):
         return self.consumer.receive_response()

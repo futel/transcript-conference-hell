@@ -95,7 +95,6 @@ class Server:
                 request = chat.hello_string()
                 self.add_request(socket, request)
             elif message["event"] == "media":
-                # util.log("Received event 'media'")
                 # This assumes we get messages in order, we should instead
                 # verify the sequence numbers? Or just skip?
                 # message["sequenceNumber"]
