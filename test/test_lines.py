@@ -17,6 +17,10 @@ class TestLines(unittest.IsolatedAsyncioTestCase):
 
 class TestClient(unittest.IsolatedAsyncioTestCase):
 
+    async def test_line_from_str(self):
+        l = lines.Line("label", "content")
+        self.assertEqual(str(lines.line_from_str(str(l))), str(l))
+
     @mock.patch.object(
         lines, 'util', new_callable=mock.Mock)
     async def test_client_add_request_one(self, mock_util):

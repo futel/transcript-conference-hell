@@ -23,10 +23,11 @@ def read_lines():
         return []
 
 def line_from_str(text, ordinal=None):
-    (label, content) = text.split(':')
-    label = label.strip()
-    content = content.strip()
-    return Line(label, content, ordinal)
+    return Line(**json.loads(text), ordinal=ordinal)
+    #(label, content) = text.split(':')
+    #label = label.strip()
+    #content = content.strip()
+    #return Line(label, content, ordinal)
 
 
 class Line():
