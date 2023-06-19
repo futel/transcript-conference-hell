@@ -80,7 +80,8 @@ class Client:
     async def request_generator(self):
         while True:
             text = await self._send_queue.get()
-            util.log(f"text to speech received request: {text}")
+            util.log(
+                f"text to speech received request: {text}")
             yield self.text_to_request(text)
 
     def text_to_request(self, text):
