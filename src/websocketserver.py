@@ -83,12 +83,13 @@ class Server:
         """Return a task to do the periodic things."""
         async def p_d():
             while True:
-                # Send a chat line if we have one.
                 population = len(self.sockets)
-                transcript_lines = lines.read_lines()
-                for text in await self.program.bot_lines(
-                        population, transcript_lines):
-                    self.chat_socket.add_request({'text': text})
+                if population:
+                    # Send a chat line if we have one.
+                    transcript_lines = lines.read_lines()
+                    for line in await self.program.bot_lines(
+                            population, transcript_lines):
+                        self.chat_socket.add_request(line)
                 await asyncio.sleep(10)
         return asyncio.create_task(p_d())
 
