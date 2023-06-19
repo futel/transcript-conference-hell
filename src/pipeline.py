@@ -73,8 +73,10 @@ class BotPipeline():
     # which are directly passed to the composer.
 
     def __init__(self, socket):
-        line = Composer(chat.Client(), lines.Client(socket))
-        self.line = Composer(line, speech.Client())
+        self.lines_speech_line = Composer(
+            lines.Client(socket), speech.Client())
+        self.line = Composer(
+            chat.Client(), self.lines_speech_line)
 
     def start(self):
         return self.line.start()
