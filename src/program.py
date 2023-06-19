@@ -107,8 +107,8 @@ class PoetryProgram(Program):
                 return []       # Give the human time.
             self.poem_start = latest_rhyme[0].ordinal
             return []           # Human's turn to talk.
-        # XXX We should have detected a rhyme, since we did earlier. But we might
-        #     need to try again, because chatgpt.
+        # XXX We should have detected a rhyme, since we did earlier.
+        #     But we might need to try again, because chatgpt.
         if latest_rhyme[1].ordinal < len(t_lines) - 2:
             # There have been no rhymes for 2 lines.
             out = [chat.poetry_succeed_string()]
