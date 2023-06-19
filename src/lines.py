@@ -31,18 +31,17 @@ def line_from_str(text, ordinal=None):
 
 class Line():
     """A transcript line."""
-    def __init__(self, label, content, ordinal=None):
+    def __init__(self, label, content, ordinal=None, **attributes):
         self.label = label
         self.content = content
         self.ordinal = ordinal
-
-    def __str__(self):
-        return json.dumps(
-            {'label': self.label, 'content': self.content})
+        self.attributes = attributes
 
     def __repr__(self):
         return json.dumps(
-            {'label': self.label, 'content': self.content})
+            dict(label=self.label, content=self.content, **self.attributes))
+    def __str__(self):
+        return self.__repr__()
 
 
 class Client():
