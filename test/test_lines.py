@@ -11,6 +11,9 @@ class TestLines(unittest.IsolatedAsyncioTestCase):
         line = lines.Line("label", "content")
         self.assertEqual(
             str(line), '{"label": "label", "content": "content"}')
+        line = lines.Line("label", "content", foo="foo")
+        self.assertEqual(
+            str(line), '{"label": "label", "content": "content", "foo": "foo"}')
 
     @mock.patch.object(
         lines, 'util', new_callable=mock.Mock)
