@@ -206,10 +206,30 @@ class Client():
     def __init__(self):
         self.recv_queue = asyncio.Queue()
     async def start(self):
-        util.log("chatbot client starting")
+        pass
     def stop(self):
-        util.log("chatbot client stopped")
+        pass
     def add_request(self, request):
         self.recv_queue.put_nowait(request)
     def receive_response(self):
         return self.recv_queue.get()
+
+
+class BotClient():
+    """Client to receive text and respond with bot text."""
+    def __init__(self):
+        self.recv_queue = asyncio.Queue()
+
+    async def start(self):
+        pass
+
+    def stop(self):
+        pass
+
+    def add_request(self, request):
+        # XXX replace with bot text here
+        self._send_queue.put_nowait(request['text'])
+
+    async def receive_response(self):
+        return {'text': await self._recv_queue.get()}
+

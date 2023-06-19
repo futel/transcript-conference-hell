@@ -33,18 +33,6 @@ class TestClient(unittest.IsolatedAsyncioTestCase):
         client.stop()
         self.assertEqual(response, {'text': "foo"})
 
-    @mock.patch.object(
-        lines, 'util', new_callable=mock.Mock)
-    async def test_replicant_client_add_request_one(self, mock_util):
-        socket = mock.Mock()
-        socket.stream_sid = "stream_sid"
-        client = lines.ReplicantClient(socket, bot=True)
-        await client.start()
-        client.add_request({'text': "foo"})
-        response = await client.receive_response()
-        client.stop()
-        self.assertEqual(response, {'text': "foo"})
-
 
 if __name__ == '__main__':
     unittest.main()

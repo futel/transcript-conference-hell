@@ -48,7 +48,7 @@ class Line():
 class Client():
     """
     Client to write transcript lines using given text,
-    and pass text or alt_text to the response.
+    and pass text to the response.
     """
     def __init__(self, socket, **attributes):
         # We only want the stream_sid, but we have to store the socket
@@ -63,29 +63,6 @@ class Client():
     def add_request(self, request):
         text = request['text']
         write_line(Line(self.socket.stream_sid, text, self.attributes))
-        if request.get('alt_text'):
-            self.recv_queue.put_nowait(request['alt_text'])
-        else:
-            self.recv_queue.put_nowait(text)
-    async def receive_response(self):
-        return {'text': await self.recv_queue.get()}
-
-
-class ReplicantClient():
-    """Client to write transcript lines."""
-    def __init__(self, socket, **attributes):
-        # We only want the stream_sid, but we have to store the socket
-        # because it doesn't have it yet.
-        self.socket = socket
-        self.recv_queue = asyncio.Queue()
-        self.attributes = attributes
-    async def start(self):
-        pass
-    def stop(self):
-        pass
-    def add_request(self, request):
-        write_line(
-            Line(self.socket.stream_sid, request['text'], self.attributes))
-        self.recv_queue.put_nowait(request['text'])
+        self.recv_queue.put_nowait(text)
     async def receive_response(self):
         return {'text': await self.recv_queue.get()}

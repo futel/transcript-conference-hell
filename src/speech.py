@@ -70,8 +70,8 @@ class Client:
             chunk = util.wav_to_chunk(response.audio_content)
             self._recv_queue.put_nowait(chunk)
 
-    def receive_response(self):
-        return {'chunk': self._recv_queue.get()}
+    async def receive_response(self):
+        return {'chunk': await self._recv_queue.get()}
 
     def add_request(self, request):
         """Add text to the processing queue."""

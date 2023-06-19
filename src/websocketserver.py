@@ -149,7 +149,8 @@ class Server:
         the other websockets.
         """
         while True:
-            chunk = await socket.receive_response()['chunk']
+            chunk = await socket.receive_response()
+            chunk = chunk['chunk']
             for s in self.sockets:
                 if s != socket:
                     await self.send(s, chunk)

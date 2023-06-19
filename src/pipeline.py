@@ -44,7 +44,7 @@ class Composer:
 
 class HumanPipeline():
     """
-    Container for a pipelines.
+    Container for pipelines.
     """
 
     def __init__(self, socket):
@@ -64,6 +64,37 @@ class HumanPipeline():
 
     def receive_response(self):
         return self.line.receive_response()
+
+
+class ReplicantPipeline():
+    """
+    Container for pipelines.
+    """
+
+    def __init__(self, socket):
+
+        # Line to transcribe chunks to lines, and not output anything.
+        self.lines_line = lines.Client(socket, silent=True)
+        # Line to create bot text, transcribe to lines, and output chunks.
+        self.lines_speech_line = Composer(
+            lines.Client(socket, bot=True), speech.Client())
+        self.bot_line = Composer(
+            chat.BotClient(), self.lines_speech_line)
+
+    async def start(self):
+        await self.lines_line.start()
+        await self.bot_line.start()
+
+    def stop(self):
+        self.lines_line.stop()
+        self.bot_line.stop()
+
+    def add_request(self, request):
+        self.line_line.add_request(request)
+        self.bot_line.add_request(request)
+
+    def receive_response(self):
+        return self.bot_line.receive_response()
 
 
 class BotPipeline():
