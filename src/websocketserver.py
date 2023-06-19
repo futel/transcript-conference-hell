@@ -74,7 +74,7 @@ class Server:
     #             "streamSid": self._stream_sid,
     #             "mark": {"name": uuid.uuid4().hex}}
 
-    def add_request(self, socket, request):
+    def add_speech_request(self, socket, request):
         """Add request to socket's speech pipeline."""
         socket.line.lines_speech_line.add_request(request)
 
@@ -93,7 +93,7 @@ class Server:
                 util.log(f"websocket received event 'start': {message}")
                 socket.stream_sid = message['streamSid']
                 request = chat.hello_string()
-                self.add_request(socket, request)
+                self.add_speech_request(socket, request)
             elif message["event"] == "media":
                 # This assumes we get messages in order, we should instead
                 # verify the sequence numbers? Or just skip?
@@ -102,7 +102,7 @@ class Server:
             elif message["event"] == "stop":
                 util.log(f"websocket received event 'stop': {message}")
                 request = chat.goodbye_string()
-                self.add_request(socket, request)
+                self.add_speech_request(socket, request)
                 break
             elif message["event"] == "mark":
                 util.log(f"websocket received event 'mark': {message}")
