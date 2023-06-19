@@ -52,7 +52,7 @@ class TestStringMethods(unittest.IsolatedAsyncioTestCase):
         in_val = 1
         bridge = transcription.Client()
         await bridge.start()
-        bridge.add_request(in_val)
+        bridge.add_request({'chunk': in_val})
         out_val = await anext(bridge.audio_generator())
         self.assertEqual(bytes(in_val), out_val)
         self.assertTrue(await self.check_audio_generator_empty(bridge))
@@ -72,7 +72,7 @@ class TestStringMethods(unittest.IsolatedAsyncioTestCase):
         bridge = transcription.Client()
         await bridge.start()
         for i in in_vals:
-            bridge.add_request(i)
+            bridge.add_request({'chunk': i})
         out_val = await anext(bridge.audio_generator())
         self.assertEqual(b"".join(bytes(i) for i in in_vals), out_val)
         self.assertTrue(await self.check_audio_generator_empty(bridge))

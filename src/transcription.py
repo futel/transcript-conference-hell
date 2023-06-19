@@ -85,13 +85,12 @@ class Client:
         qsize = self._recv_queue.qsize()
         if qsize >= recv_qsize_log:
             util.log(f"transcription recv queue size {qsize}")
-        return response
+        return {'text': response}
 
-    def add_request(self, buffer):
+    def add_request(self, request):
         """Add a chunk of bytes, or None, to the processing queue."""
-        if buffer is not None:
-            buffer = bytes(buffer)
-        self._send_queue.put_nowait(buffer)
+        chunk = bytes(request['chunk'])
+        self._send_queue.put_nowait(chunk)
         qsize = self._send_queue.qsize()
         if qsize >= send_qsize_log:
             util.log(f"transcription send queue size {qsize}")
@@ -103,7 +102,6 @@ class Client:
         """
         yield speech_v1.StreamingRecognizeRequest(streaming_config=streaming_config)
         async for content in self.audio_generator():
-            #util.log("transcription request")
             yield speech_v1.StreamingRecognizeRequest(audio_content=content)
 
     async def audio_generator(self):

@@ -28,10 +28,10 @@ class TestClient(unittest.IsolatedAsyncioTestCase):
         socket.stream_sid = "stream_sid"
         client = lines.Client(socket)
         await client.start()
-        client.add_request("foo")
+        client.add_request({'text': "foo"})
         response = await client.receive_response()
         client.stop()
-        self.assertEqual(response, "foo")
+        self.assertEqual(response, {'text': "foo"})
 
     @mock.patch.object(
         lines, 'util', new_callable=mock.Mock)
@@ -40,10 +40,10 @@ class TestClient(unittest.IsolatedAsyncioTestCase):
         socket.stream_sid = "stream_sid"
         client = lines.ReplicantClient(socket, bot=True)
         await client.start()
-        client.add_request("foo", "bar")
+        client.add_request({'text': "foo"})
         response = await client.receive_response()
         client.stop()
-        self.assertEqual(response, "bar")
+        self.assertEqual(response, {'text': "foo"})
 
 
 if __name__ == '__main__':

@@ -209,7 +209,7 @@ class Client():
         util.log("chatbot client starting")
     def stop(self):
         util.log("chatbot client stopped")
-    def add_request(self, text):
-        self.recv_queue.put_nowait(text)
+    def add_request(self, request):
+        self.recv_queue.put_nowait(request)
     def receive_response(self):
         return self.recv_queue.get()

@@ -71,11 +71,11 @@ class Client:
             self._recv_queue.put_nowait(chunk)
 
     def receive_response(self):
-        return self._recv_queue.get()
+        return {'chunk': self._recv_queue.get()}
 
-    def add_request(self, text):
+    def add_request(self, request):
         """Add text to the processing queue."""
-        self._send_queue.put_nowait(text)
+        self._send_queue.put_nowait(request['text'])
 
     async def request_generator(self):
         while True:

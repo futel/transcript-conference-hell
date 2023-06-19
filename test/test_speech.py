@@ -15,7 +15,7 @@ class TestFoo(unittest.IsolatedAsyncioTestCase):
             return_value=client)
         speech_client = speech.Client()
         await speech_client.start()
-        speech_client.add_request("foo")
+        speech_client.add_request({'text': "foo"})
         speech_client.stop()
         response = await anext(speech_client.request_generator())
 

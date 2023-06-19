@@ -31,10 +31,10 @@ class Socket:
         await self.line.start()
 
     def add_request(self, request):
-        return self.line.add_request(request)
+        return self.line.add_request({'chunk': request['chunk']})
 
     def add_speech_request(self, request):
-        return self.line.lines_speech_line.add_request(request)
+        return self.line.lines_speech_line.add_request({'text': request['text']})
 
     def receive_response(self):
         return self.line.receive_response()
@@ -52,7 +52,7 @@ class FakeSocket:
         await self.line.start()
 
     def add_request(self, request):
-        return self.line.add_request(request)
+        return self.line.add_request({'text': request['text']})
 
     def stop(self):
         return self.line.stop()
@@ -86,9 +86,9 @@ class Server:
                 # Send a chat line if we have one.
                 population = len(self.sockets)
                 transcript_lines = lines.read_lines()
-                for line in await self.program.bot_lines(
+                for text in await self.program.bot_lines(
                         population, transcript_lines):
-                    self.chat_socket.add_request(line)
+                    self.chat_socket.add_request({'text': text})
                 await asyncio.sleep(10)
         return asyncio.create_task(p_d())
 
@@ -118,16 +118,16 @@ class Server:
                 util.log(f"websocket received event 'start': {message}")
                 socket.stream_sid = message['streamSid']
                 request = chat.hello_string()
-                socket.add_speech_request(request)
+                socket.add_speech_request({'text':request})
             elif message["event"] == "media":
                 # This assumes we get messages in order, we should instead
                 # verify the sequence numbers? Or just skip?
                 # message["sequenceNumber"]
-                socket.add_request(self._message_to_chunk(message))
+                socket.add_request({'chunk': self._message_to_chunk(message)})
             elif message["event"] == "stop":
                 util.log(f"websocket received event 'stop': {message}")
                 request = chat.goodbye_string()
-                socket.add_speech_request(request)
+                socket.add_speech_request({'text':request})
                 break
             elif message["event"] == "mark":
                 util.log(f"websocket received event 'mark': {message}")
@@ -148,7 +148,7 @@ class Server:
         the other websockets.
         """
         while True:
-            chunk = await socket.receive_response()
+            chunk = await socket.receive_response()['chunk']
             for s in self.sockets:
                 if s != socket:
                     await self.send(s, chunk)
