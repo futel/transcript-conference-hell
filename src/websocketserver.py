@@ -52,6 +52,7 @@ class FakeSocket:
     def receive_response(self):
         return self.line.receive_response()
 
+
 class Server:
     def __init__(self):
         """Yields media chunks with recieve_media()."""
@@ -196,5 +197,6 @@ class Server:
             socket)
         for socket in self.sockets:
             socket.stop()
-            socket.line = await self.get_pipeline(socket)
+            socket.line = await program.get_pipeline(socket)
         self.program = program
+
