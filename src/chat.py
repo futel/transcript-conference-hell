@@ -21,6 +21,7 @@ Dialog:
 """
 
 def format_chat_prompt(t_lines):
+    t_lines = [l.prompt_str() for l in t_lines]
     return chat_prompt.format(chat_label, '\n'.join(t_lines), chat_label)
 
 # def generate_messages(transcript_lines):
@@ -217,7 +218,8 @@ class Client():
 
 class BotClient():
     """Client to receive text and respond with bot text."""
-    def __init__(self):
+    def __init__(self, socket):
+        self.socket = socket
         self.recv_queue = asyncio.Queue()
 
     async def start(self):
@@ -228,8 +230,8 @@ class BotClient():
 
     def add_request(self, request):
         # XXX replace with bot text here
-        self._send_queue.put_nowait(request['text'])
+        self.recv_queue.put_nowait('bot test')
 
     async def receive_response(self):
-        return {'text': await self._recv_queue.get()}
+        return {'text': await self.recv_queue.get()}
 

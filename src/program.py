@@ -4,6 +4,9 @@ import random
 import chat
 import pipeline
 
+# Bot may nag humans if population is fewer than this.
+min_population = 3
+
 
 class Program:
     """
@@ -64,6 +67,12 @@ class ChatProgram(Program):
                 return chat.nag_string()
         # We didn't nag, return a chat line.
         return await chat.openai_chat_line(transcript_lines)
+
+
+class ReplicantProgram(ChatProgram):
+
+    def get_pipeline(self, socket):
+        return pipeline.ReplicantPipeline(socket)
 
 
 class PoetryProgram(Program):

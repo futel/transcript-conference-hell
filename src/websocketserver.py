@@ -16,9 +16,6 @@ import util
 #host = "localhost"
 port = 6000
 
-# Bot may nag humans if population is fewer than this.
-min_population = 3
-
 
 class Socket:
     def __init__(self, websocket):
@@ -34,7 +31,7 @@ class Socket:
         return self.line.add_request({'chunk': request['chunk']})
 
     def add_speech_request(self, request):
-        return self.line.lines_speech_line.add_request({'text': request['text']})
+        return self.line.line_speech_line.add_request({'text': request['text']})
 
     def receive_response(self):
         return self.line.receive_response()
@@ -67,7 +64,7 @@ class Server:
         self.server = None
         self.sockets = set()
         self.chat_socket = None
-        self.program = program.PoetryProgram()
+        self.program = program.ReplicantProgram()
 
     async def start(self):
         util.log("websocket server starting")

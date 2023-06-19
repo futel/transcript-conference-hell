@@ -44,6 +44,10 @@ class Line():
     def __str__(self):
         return self.__repr__()
 
+    def prompt_str(self):
+        """Return a string suitable for a chat prompt."""
+        return '{}: {}'.format(self.label, self.content)
+
 
 class Client():
     """
@@ -62,7 +66,7 @@ class Client():
         pass
     def add_request(self, request):
         text = request['text']
-        write_line(Line(self.socket.stream_sid, text, self.attributes))
+        write_line(Line(self.socket.stream_sid, text, **self.attributes))
         self.recv_queue.put_nowait(text)
     async def receive_response(self):
         return {'text': await self.recv_queue.get()}

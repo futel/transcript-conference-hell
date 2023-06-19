@@ -48,10 +48,12 @@ class HumanPipeline():
     """
 
     def __init__(self, socket):
-        self.lines_speech_line = Composer(
+        # Line for text to audio chunks which transcribes.
+        self.line_speech_line = Composer(
             lines.Client(socket), speech.Client())
+        # Line for audio chunks to text to line_speech_line
         self.line = Composer(
-            transcription.Client(), self.lines_speech_line)
+            transcription.Client(), self.line_speech_line)
 
     def start(self):
         return self.line.start()
@@ -70,31 +72,28 @@ class ReplicantPipeline():
     """
     Container for pipelines.
     """
-
     def __init__(self, socket):
-
-        # Line to transcribe chunks to lines, and not output anything.
-        self.lines_line = lines.Client(socket, silent=True)
-        # Line to create bot text, transcribe to lines, and output chunks.
-        self.lines_speech_line = Composer(
+        # Line to transcribe text to lines, and output chunks.
+        self.line_speech_line = Composer(
             lines.Client(socket, bot=True), speech.Client())
-        self.bot_line = Composer(
-            chat.BotClient(), self.lines_speech_line)
+        # Line to find transcripts and send to line_speech_line.
+        bot_speech_line = Composer(chat.BotClient(socket), self.line_speech_line)
+        # Line to transcribe text to lines and send to bot_speech_line.
+        line_bot_speech_line = Composer(lines.Client(socket, silent=True), bot_speech_line)
+        # Line to transcribe chunks send to line_bot_speech_line.
+        self.line = Composer(transcription.Client(), line_bot_speech_line)
 
-    async def start(self):
-        await self.lines_line.start()
-        await self.bot_line.start()
+    def start(self):
+        return self.line.start()
 
     def stop(self):
-        self.lines_line.stop()
-        self.bot_line.stop()
+        return self.line.stop()
 
     def add_request(self, request):
-        self.line_line.add_request(request)
-        self.bot_line.add_request(request)
+        return self.line.add_request(request)
 
     def receive_response(self):
-        return self.bot_line.receive_response()
+        return self.line.receive_response()
 
 
 class BotPipeline():
@@ -105,10 +104,10 @@ class BotPipeline():
     # which are directly passed to the composer.
 
     def __init__(self, socket):
-        self.lines_speech_line = Composer(
-            lines.Client(socket), speech.Client())
+        self.line_speech_line = Composer(
+            lines.Client(socket, bot=True), speech.Client())
         self.line = Composer(
-            chat.Client(), self.lines_speech_line)
+            chat.Client(), self.line_speech_line)
 
     def start(self):
         return self.line.start()
