@@ -5,6 +5,7 @@ Services used:
 - DigitalOcean Networking, App Platform
 - Twilio Calls API
 - OpenAI API
+- Google transcription API
 
 # Setup
 
@@ -75,24 +76,34 @@ Delete the app.
 
     doctl --config config.yaml apps delete <id>
 
-# Unit test
+# Set Up Outgoing Twilio
 
-- source env/bin/activate
-- ./test.py
+## Create the Twilio SIP Domain
 
-# Smoke integration test
+twilio api:core:sip:domains:create --domain-name conference.futel.sip.twilio.com --friendly-name conference --sip-registration --voice-method POST --voice-url 'ws.app-dev.phu73l.net'
 
-- source env/bin/activate
-- ./itest.py
-- ./test_chat.py
-- ./test_program.py
-- ./test_server.py
+## Create the Twilio Credential List
 
-# Smoke deployed integration test
+## List the Credential Lists to get the created SID
 
-Hit the URL on the TwiML page e.g.
+## Create auth registrations Credential List Mappings
 
-    wget https://ws.app-dev.phu73l.net/index.xml
+## Set voice authentication credentials for SIP Domains
+
+# Set Up Incoming Twilio
+
+## Create Twilio Application Resources (TwiML apps)
+
+    twilio api:core:applications:create \
+        --voice-method POST \
+        --voice-url conference.futel.sip.twilio.com \
+        --friendly-name "incoming-conference"
+
+## Create a phone number
+
+# Add configuration for a new SIP client
+
+## Create credential
 
 # Notes
 
@@ -102,6 +113,7 @@ https://github.com/digitalocean/sample-python/tree/main
 
 https://platform.openai.com/docs/api-reference/chat/create
 https://github.com/openai/openai-cookbook/blob/main/examples/How_to_format_inputs_to_ChatGPT_models.ipynb
+
 
 If we use 100 tokens per gpt-3.5-turbo roundtrip, $0.0002/request.
 Estimate 10 requests per minute, $0.002/minute
