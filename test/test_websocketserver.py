@@ -9,14 +9,14 @@ class TestProgram(unittest.IsolatedAsyncioTestCase):
 
     async def test_bot_lines(self):
         prog = program.Program()
-        self.assertEqual(await prog.bot_lines(666, []), [])
+        self.assertEqual(await prog.bot_lines(666, [], 'dummy'), [])
 
 
 class TestPoetryProgram(unittest.IsolatedAsyncioTestCase):
 
     async def test_bot_lines(self):
         prog = program.PoetryProgram()
-        bot_lines = await prog.bot_lines(666, [])
+        bot_lines = await prog.bot_lines(666, [], 'dummy')
         self.assertEqual(bot_lines, [])
 
     async def test_latest_rhyme(self):

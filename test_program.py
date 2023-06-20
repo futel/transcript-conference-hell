@@ -65,7 +65,7 @@ async def main():
         prog = program.PoetryProgram()
         for latest in range(len(poem)+1):
             print(poem[0:latest])
-            print(await prog.bot_lines(666, poem[0:latest]))
+            print(await prog.bot_lines(666, poem[0:latest], "dummy"))
             print
 
     #print(await prog.bot_lines(666, poetry_lines_none)) # continuing

@@ -13,14 +13,20 @@ class Program:
     Holds methods and attributes relevant to bot interaction and
     pipelines for bots and humans.
     """
-    intro_text = "Welcome to transcription hell, human!"
-
+    intro_string = "Welcome to transcription hell, human!"
+    num_human_lines = 3         # Human lines before bot talks.
 
     def get_pipeline(self, socket):
-        """ Return a client pipeline for chunk requests and responses."""
+        """
+        Return a pipeline for chunk requests and responses,
+        for human clients.
+        """
         return pipeline.HumanPipeline(socket)
 
-    async def bot_line(self, population, transcript_lines):
+    def intro_text(self, socket):
+        return self.intro_string
+
+    async def bot_line(self, population, transcript_lines, server):
         """Return a line from the bot."""
         raise NotImplementedError
 
@@ -32,7 +38,8 @@ class Program:
         t_lines = [
             l for l in transcript_lines if not hasattr(l, 'silent')]
         try:
-            for t_line in [t_lines.pop(), t_lines.pop(), t_lines.pop()]:
+            for x in range(self.num_human_lines):
+                t_line = t_lines.pop()
                 if hasattr(t_line, 'bot'):
                     # One of the last two lines are bot lines.
                     return True
@@ -49,12 +56,14 @@ class Program:
             return True
         return False
 
-    async def bot_lines(self, population, transcript_lines):
+    async def bot_lines(self, population, transcript_lines, server):
         """
         Return a list of zero or more chat lines.
         """
         if self.should_bot_line(transcript_lines):
-            return [await self.bot_line(population, transcript_lines)]
+            bot_line = await self.bot_line(population, transcript_lines, server)
+            if bot_line:
+                return [bot_line]
         return []
 
 
@@ -63,7 +72,7 @@ class ChatProgram(Program):
     Chats with humans.
     """
 
-    async def bot_line(self, population, transcript_lines):
+    async def bot_line(self, population, transcript_lines, server):
         """Return a line from the bot."""
         if population < nag_population:
             # Half chance of nagging.
@@ -73,9 +82,107 @@ class ChatProgram(Program):
         return await chat.openai_chat_line(transcript_lines)
 
 
+class ArithmeticProgram(Program):
+    intro_string = (
+        "Welcome to the arithmetic challenge! "
+        "Each human has an integer. "
+        "To succeed, state the sum of all the integers.")
+    num_human_lines = 1
+
+    def intro_text(self, socket):
+        out = "Your integer is {}.".format(self.sid_to_integer(socket.stream_sid))
+        return self.intro_string + out
+
+    def should_bot_line(self, transcript_lines):
+        """Return True if the bot should talk."""
+        if self.recent_bot_line(transcript_lines):
+            return False
+        return True
+
+    def word_to_integer(self, w):
+        """Return the integer corresponding to w, or None."""
+        # This doesn't include integers above ten, to do so,
+        # we need to do arithmetic.
+        word_integer = {
+            'zero': 0,
+            'one': 1,
+            'two': 2,
+            'three': 3,
+            'four': 4,
+            'for': 4,
+            'five': 5,
+            'six': 6,
+            'seven': 7,
+            'eight': 8,
+            'ate': 8,
+            'nine': 9}
+        return word_integer.get(w)
+
+    def line_to_integer(self, l):
+        """Return the integer corresponding to l."""
+        # In practice we get "1 2 3", but:
+        # 123
+        # 1 2 3
+        # one two three
+        # one hundred twenty three
+        # one hundred and twenty three
+        # plus puncuation
+        l = chat.words(l.content)
+        # For hundreds, we really need to translate tens and replace
+        # missing tens with 0.
+        # It should be OK since we don't expect hundreds
+        # to be correct, and the speech to text tends to turn them into
+        # integers anyway.
+        #l = [w for w in l if w not in ['hundred', 'and']]
+        l = [self.word_to_integer(w) for w in l]
+        l = [w for w in l if w is not None]
+        return sum([w * (10 ** i) for i, w in enumerate(reversed(l))])
+
+    def recent_human_lines(self, transcript_lines):
+        """Yield the lines humans have spoken since last bot line."""
+        for t_line in reversed(transcript_lines):
+            if hasattr(t_line, 'bot'):
+                break
+            yield t_line
+
+    def magic_integer(self, server):
+        """Return the integer we want humans to say."""
+        return sum(
+            [self.sid_to_integer(socket.stream_sid)
+             for socket in server.sockets])
+
+    def sid_to_integer(self, sid):
+        """Return the integer corresponding to sid."""
+        # MZ58fa2ba422c3b0c73b7e1ebe7f625a14
+        return [int(c) for c in sid if c.isdigit()].pop()
+
+    async def bot_line(self, population, transcript_lines, server):
+        """Return a line from the bot."""
+        # Has a human spoken the number since the last bot line?
+        # If true, say victory.
+        # If false, prompt.
+        if population < nag_population:
+            # Half chance of nagging.
+            if random.choice([True, False]):
+                return chat.nag_string()
+            return None
+        magic_integer = self.magic_integer(server)
+        for h_line in self.recent_human_lines(transcript_lines):
+            if self.line_to_integer(h_line) == magic_integer:
+                return chat.arithmetic_succeed_string()
+            # Just notify about the last one.
+            return "{} is not the number I am looking for.".format(
+                self.line_to_integer(h_line))
+        return chat.arithmetic_fail_string()
+
+
 class ReplicantProgram(ChatProgram):
 
     def get_pipeline(self, socket):
+        """
+        Return a pipeline for chunk requests and responses,
+        for human clients.
+        """
         return pipeline.ReplicantPipeline(socket)
 
 
@@ -83,7 +190,7 @@ class PoetryProgram(Program):
     """
     Recites poetry with humans.
     """
-    intro_text = (
+    intro_string = (
         "Welcome to the realm of electronic poetry appreciators, human! "
         "Great rewards await those who can recite poetry to the machine.")
 
@@ -113,7 +220,7 @@ class PoetryProgram(Program):
         except StopIteration:
             return None
 
-    async def bot_lines(self, population, t_lines):
+    async def bot_lines(self, population, t_lines, server):
         latest_rhyme = await self.latest_rhyme(t_lines)
         if self.poem_start is None:
             if latest_rhyme is None:
@@ -146,7 +253,7 @@ class PoetryAppreciatorProgram(PoetryProgram):
     """
     Appreciates poetry when found.
     """
-    async def bot_lines(self, population, t_lines):
+    async def bot_lines(self, population, t_lines, server):
         latest_rhyme = await self.latest_rhyme(t_lines)
         if self.poem_start is None:
             if latest_rhyme is not None:

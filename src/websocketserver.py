@@ -95,7 +95,8 @@ class Server:
         self.server = None
         self.sockets = set()
         self.chat_socket = None
-        self.program = program.ChatProgram()
+        self.program = program.ArithmeticProgram()
+        #self.program = program.ChatProgram()
 
     async def start(self):
         util.log("websocket server starting")
@@ -119,7 +120,7 @@ class Server:
                     # Send a chat line if we have one.
                     transcript_lines = lines.read_lines()
                     for line in await self.program.bot_lines(
-                            population, transcript_lines):
+                            population, transcript_lines, self):
                         self.chat_socket.add_request({'text': line})
                 await asyncio.sleep(period)
         return asyncio.create_task(p_d())
@@ -147,7 +148,7 @@ class Server:
                 pass
             elif message["event"] == "start":
                 socket.stream_sid = message['streamSid']
-                socket.add_self_speech_request({'text': self.program.intro_text})
+                socket.add_self_speech_request({'text': self.program.intro_text(socket)})
                 request = chat.hello_string()
                 socket.add_speech_request({'text':request})
             elif message["event"] == "media":
@@ -218,4 +219,4 @@ class Server:
         for socket in self.sockets:
             socket.stop()
             await socket.start(self.program)
-            socket.add_self_speech_request({'text': prog.intro_text})
+            socket.add_self_speech_request({'text': prog.intro_text(socket)})
