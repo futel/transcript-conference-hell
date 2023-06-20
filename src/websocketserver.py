@@ -16,6 +16,8 @@ import util
 #host = "localhost"
 port = 6000
 
+# Seconds between periodic task runs.
+period = 20
 
 class Socket:
     def __init__(self, websocket):
@@ -88,7 +90,7 @@ class Server:
                     for line in await self.program.bot_lines(
                             population, transcript_lines):
                         self.chat_socket.add_request({'text': line})
-                await asyncio.sleep(10)
+                await asyncio.sleep(period)
         return asyncio.create_task(p_d())
 
     def _message_to_chunk(self, message):
