@@ -13,7 +13,7 @@ always skip the firmware check: selected
 fxs port
 account active: yes
 primary sip server: futel-conference.sip.twilio.com
-nat traversal: no
+nat traversal: keep-alive
 sip user id: <extension>
 authenticate id: <extension>
 authenticate password: <password>
