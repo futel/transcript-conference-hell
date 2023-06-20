@@ -11,6 +11,7 @@ import chat
 import pipeline
 import program
 import lines
+import speech
 import util
 
 #host = "localhost"
@@ -25,9 +26,15 @@ class Socket:
         self.line = None
         self.stream_sid = None
 
-    async def get_pipeline(self, prog):
+    async def start(self, prog):
+        self.speech = speech.Client()
+        await self.speech.start()
         self.line = prog.get_pipeline(self)
         await self.line.start()
+
+    def stop(self):
+        self.speech.stop()
+        self.line.stop()
 
     def add_request(self, request):
         return self.line.add_request({'chunk': request['chunk']})
@@ -39,15 +46,30 @@ class Socket:
     def receive_response(self):
         return self.line.receive_response()
 
-    def stop(self):
-        return self.line.stop()
+    def send(self, chunk):
+        """Send chunk to websocket in a media message."""
+        payload = base64.b64encode(chunk).decode()
+        return self.websocket.send(
+            json.dumps(
+                {"event": "media",
+                 "streamSid": self.stream_sid,
+                 "media": {"payload": payload}}))
+
+    # async def send_speech(self, text):
+    #     """Send text to this socket."""
+    #     self.speech.add_request({'text': text})
+    #     XXX this assumes we get one chunk, we probably need a task loop
+    #     chunk = await self.speech.receive_response()
+    #     await self.send(chunk)
 
 
 class FakeSocket:
     """Object to hold a line and a stream_sid identifier."""
+    # This is not a stream SID. We have no stream. The real sockets
+    # re-use this as a label in the transcript.
     stream_sid = chat.chat_label
 
-    async def get_pipeline(self):
+    async def start(self):
         self.line = pipeline.BotPipeline(self)
         await self.line.start()
 
@@ -55,7 +77,8 @@ class FakeSocket:
         return self.line.add_request({'text': request['text']})
 
     def stop(self):
-        return self.line.stop()
+        self.speech.stop()
+        self.line.stop()
 
     def receive_response(self):
         return self.line.receive_response()
@@ -77,11 +100,10 @@ class Server:
         util.log("websocket server started")
 
     async def stop(self):
-        # Hopefully this never happens, we probably leak.
+        # Hopefully this never happens, we leak everything.
         util.log("websocket server stopping")
         await self.server.close()
         util.log("websocket server stopped")
-    #     raise NotImplementedError
 
     async def periodic_task(self):
         """Return a task to do the periodic things."""
@@ -135,15 +157,6 @@ class Server:
                 pass
         util.log("websocket connection closed")
 
-    async def send(self, socket, chunk):
-        """Send chunk to websocket in a media message."""
-        payload = base64.b64encode(chunk).decode()
-        await socket.websocket.send(
-            json.dumps(
-                {"event": "media",
-                 "streamSid": socket.stream_sid,
-                 "media": {"payload": payload}}))
-
     async def producer_handler(self, socket):
         """
         Iterate over messages from socket's line, and send them to
@@ -154,7 +167,7 @@ class Server:
             chunk = chunk['chunk']
             for s in self.sockets:
                 if s != socket:
-                    await self.send(s, chunk)
+                    await s.send(chunk)
             # We could do the bot response here instead of periodically.
 
     async def handler(self, websocket):
@@ -164,7 +177,7 @@ class Server:
         """
         util.log("websocket connection opened")
         socket = Socket(websocket)
-        await socket.get_pipeline(self.program)
+        await socket.start(self.program)
         self.sockets.add(socket)
         util.log("websocket connections: {}".format(len(self.sockets)))
         done, pending = await asyncio.wait(
@@ -186,7 +199,7 @@ class Server:
         # callback. The fake chat_socket recives requests directly from
         # a task.
         socket = FakeSocket()
-        await socket.get_pipeline()
+        await socket.start()
         self.chat_socket = socket
         # We don't clean this up, we should do that in stop().
         asyncio.create_task(self.producer_handler(socket))
@@ -195,8 +208,8 @@ class Server:
         """Replace program, and all pipelines with appropriate ones."""
         self.program = prog
         self.chat_socket.stop()
-        await self.chat_socket.get_pipeline()
+        await self.chat_socket.start(prog)
         for socket in self.sockets:
             socket.stop()
-            await socket.get_pipeline(self.program)
+            await socket.start(self.program)
 
