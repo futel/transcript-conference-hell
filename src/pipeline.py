@@ -77,9 +77,11 @@ class ReplicantPipeline():
         self.line_speech_line = Composer(
             lines.Client(socket, bot=True), speech.Client())
         # Line to find transcripts and send to line_speech_line.
-        bot_speech_line = Composer(chat.BotClient(socket), self.line_speech_line)
+        bot_speech_line = Composer(
+            chat.BotClient(socket), self.line_speech_line)
         # Line to transcribe text to lines and send to bot_speech_line.
-        line_bot_speech_line = Composer(lines.Client(socket, silent=True), bot_speech_line)
+        line_bot_speech_line = Composer(
+            lines.Client(socket, silent=True), bot_speech_line)
         # Line to transcribe chunks send to line_bot_speech_line.
         self.line = Composer(transcription.Client(), line_bot_speech_line)
 

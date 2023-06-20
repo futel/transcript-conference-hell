@@ -31,7 +31,8 @@ class Socket:
         return self.line.add_request({'chunk': request['chunk']})
 
     def add_speech_request(self, request):
-        return self.line.line_speech_line.add_request({'text': request['text']})
+        return self.line.line_speech_line.add_request(
+            {'text': request['text']})
 
     def receive_response(self):
         return self.line.receive_response()
@@ -86,7 +87,7 @@ class Server:
                     transcript_lines = lines.read_lines()
                     for line in await self.program.bot_lines(
                             population, transcript_lines):
-                        self.chat_socket.add_request(line)
+                        self.chat_socket.add_request({'text': line})
                 await asyncio.sleep(10)
         return asyncio.create_task(p_d())
 
