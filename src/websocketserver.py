@@ -113,10 +113,8 @@ class Server:
         async for message in socket.websocket:
             message = json.loads(message)
             if message["event"] == "connected":
-                util.log(
-                    f"websocket received event 'connected': {message}")
+                pass
             elif message["event"] == "start":
-                util.log(f"websocket received event 'start': {message}")
                 socket.stream_sid = message['streamSid']
                 request = chat.hello_string()
                 socket.add_speech_request({'text':request})
@@ -126,12 +124,11 @@ class Server:
                 # message["sequenceNumber"]
                 socket.add_request({'chunk': self._message_to_chunk(message)})
             elif message["event"] == "stop":
-                util.log(f"websocket received event 'stop': {message}")
                 request = chat.goodbye_string()
                 socket.add_speech_request({'text':request})
                 break
             elif message["event"] == "mark":
-                util.log(f"websocket received event 'mark': {message}")
+                pass
         util.log("websocket connection closed")
 
     async def send(self, socket, chunk):
@@ -154,9 +151,6 @@ class Server:
             for s in self.sockets:
                 if s != socket:
                     await self.send(s, chunk)
-                    util.log(
-                        f"websocket sent response from "
-                        "{socket.stream_sid} to {s.stream_sid}")
             # We could do the bot response here instead of periodically.
 
     async def handler(self, websocket):
@@ -178,6 +172,7 @@ class Server:
         socket.stop()
         self.sockets.remove(socket)
         util.log("websocket connection closed")
+        util.log("websocket connections: {}".format(len(self.sockets)))
 
     async def fake_handler(self):
         """

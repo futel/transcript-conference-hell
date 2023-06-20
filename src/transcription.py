@@ -25,7 +25,7 @@ import util
 # }
 # language_code: "en-us"
 
-send_qsize_log = 4
+send_qsize_log = 16
 recv_qsize_log = 1
 
 # https://cloud.google.com/speech-to-text/docs/reference/rest/v1/RecognitionConfig
@@ -60,7 +60,6 @@ class Client:
         """
         Process our requests and yield the responses until we are stopped.
         """
-        util.log("transcription client starting")
         self.client = speech_v1.SpeechAsyncClient()
         self.response_task = asyncio.create_task(self.response_iter())
 
@@ -69,7 +68,6 @@ class Client:
         # We should clear the queue also.
         self.response_task.cancel()
         self.client = None
-        util.log("transcription client stopped")
 
     async def response_iter(self):
         """ Call on_transcription_response for each response from our client."""
@@ -133,7 +131,6 @@ class Client:
             yield b"".join(data)
 
     async def on_transcription_response(self, response):
-        #util.log(f"transcription received response")
         if not response.results:
             # We get this when the transcriber times out. Is that the
             # only time we get it?
@@ -148,8 +145,7 @@ class Client:
             return None
         result = response.results[0]
         if not result.alternatives:
-            util.log("no alternatives")
+            util.log("no transcription alternatives")
             return
         transcript = result.alternatives[0].transcript
-        util.log(f"transcription received final response: {transcript}")
         self._recv_queue.put_nowait(transcript)

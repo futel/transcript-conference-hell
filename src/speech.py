@@ -52,7 +52,6 @@ class Client:
         """
         Process our requests and enqueue chunk response.
         """
-        util.log("text to speech client starting")
         self._client = texttospeech_v1.TextToSpeechAsyncClient()
         self.response_task = asyncio.create_task(self.response_iter())
 
@@ -61,7 +60,6 @@ class Client:
         # We should clear the queue also.
         self.response_task.cancel()
         self._client = None
-        util.log("text to speech client stopped")
 
     async def response_iter(self):
         async for request in self.request_generator():
@@ -80,8 +78,6 @@ class Client:
     async def request_generator(self):
         while True:
             text = await self._send_queue.get()
-            util.log(
-                f"text to speech received request: {text}")
             yield self.text_to_request(text)
 
     def text_to_request(self, text):
