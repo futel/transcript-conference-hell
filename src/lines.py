@@ -22,8 +22,8 @@ def read_lines():
     except FileNotFoundError:
         return []
 
-def line_from_str(text, ordinal=None):
-    return Line(**json.loads(text), ordinal=ordinal)
+def line_from_str(text):
+    return Line(**json.loads(text))
     #(label, content) = text.split(':')
     #label = label.strip()
     #content = content.strip()
@@ -36,11 +36,12 @@ class Line():
         self.label = label
         self.content = content
         self.ordinal = ordinal
-        self.attributes = attributes
+        for attr in attributes:
+            setattr(self, attr, attributes[attr])
 
     def __repr__(self):
-        return json.dumps(
-            dict(label=self.label, content=self.content, **self.attributes))
+        return json.dumps(self.__dict__)
+
     def __str__(self):
         return self.__repr__()
 
