@@ -30,7 +30,7 @@ class Program:
         t_lines = [
             l for l in transcript_lines if not hasattr(l, 'silent')]
         try:
-            for t_line in [t_lines.pop(), t_lines.pop()]:
+            for t_line in [t_lines.pop(), t_lines.pop(), t_lines.pop()]:
                 if hasattr(t_line, 'bot'):
                     # One of the last two lines are bot lines.
                     return True
