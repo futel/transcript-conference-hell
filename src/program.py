@@ -27,10 +27,11 @@ class Program:
         Return True if there aren't yet enough bot lines, or
         the bot has a recent line, in transcript_lines.
         """
-        labels = [line.label for line in transcript_lines]
+        t_lines = [
+            l for l in transcript_lines if not hasattr(l, 'silent')]
         try:
-            for label in [labels.pop(), labels.pop()]:
-                if label == chat.chat_label:
+            for t_line in [t_lines.pop(), t_liness.pop()]:
+                if hasattr(t_line, 'bot'):
                     # One of the last two lines are bot lines.
                     return True
         except IndexError:
