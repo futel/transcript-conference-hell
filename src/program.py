@@ -5,7 +5,7 @@ import chat
 import pipeline
 
 # Bot may nag humans if population is fewer than this.
-min_population = 3
+nag_population = 2
 
 
 class Program:
@@ -62,7 +62,7 @@ class ChatProgram(Program):
     """
     async def bot_line(self, population, transcript_lines):
         """Return a line from the bot."""
-        if population < min_population:
+        if population < nag_population:
             # Half chance of nagging.
             if random.choice([True, False]):
                 return chat.nag_string()
