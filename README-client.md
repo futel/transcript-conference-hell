@@ -1,8 +1,33 @@
-# Requirements
+# Set up Grandstream HT701
 
-- Have Credential List 'experimenter' with credential 'experimenter'
-- Have SIP Domain 'futel-experimenter' with SIP registartion enabled, voice authentication and SIP registration for 'experimenter' Credential List
-- Have a Twilio phone number
+basic settings
+telnet server: no
+
+advanced settings
+admin password:
+firmware server path: blank
+config server path: blank
+automatic upgrade: no
+always skip the firmware check: selected
+
+fxs port
+account active: yes
+primary sip server: futel-conference.sip.twilio.com
+nat traversal: no
+sip user id: <extension>
+authenticate id: <extension>
+authenticate password: <password>
+sip registration: yes
+unregister on reboot: no
+outgoing call without registration: yes
+Disable Call-Waiting: yes
+Disable Call-Waiting Caller ID: yes
+Disable Call-Waiting Tone: yes
+Use # As Dial Key: no
+Offhook Auto-Dial: 1
+Offhook Auto-Dial Delay: 0
+Hook Flash Timing: minimum: 500 maximum: 500
+ 
 
 # Test
 

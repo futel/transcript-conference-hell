@@ -86,8 +86,8 @@ Delete the app.
         --domain-name futel-conference.sip.twilio.com \
         --friendly-name futel-conference \
         --sip-registration \
-        --voice-method POST \
-        --voice-url 'https://ws.app-dev.phu73l.net'
+        --voice-method GET \
+        --voice-url 'https://ws.app-dev.phu73l.net/index.xml'
 
 ## Create the Twilio Credential List
 
