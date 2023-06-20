@@ -64,7 +64,7 @@ class Server:
         self.server = None
         self.sockets = set()
         self.chat_socket = None
-        self.program = program.ReplicantProgram()
+        self.program = program.ChatProgram()
 
     async def start(self):
         util.log("websocket server starting")
