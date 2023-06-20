@@ -1,5 +1,8 @@
 import asyncio
 
+import sys
+sys.path.append('src')
+
 import dotenv
 dotenv.load_dotenv()
 
@@ -18,8 +21,11 @@ def list_voices():
     voices = client.list_voices()
 
     for voice in voices.voices:
-        if 'en-US' not in voice.language_codes:
+        # en-GB en=US en-AU en-IN en-CA en-IE en-ZA
+        if not [c for c in voice.language_codes if c.startswith('en-')]:
             continue
+        #if 'en-US' not in 
+        #    continue
         if 'Wavenet' in voice.name:
             continue
         if 'Neural2' in voice.name:

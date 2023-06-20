@@ -13,6 +13,8 @@ class Program:
     Holds methods and attributes relevant to bot interaction and
     pipelines for bots and humans.
     """
+    intro_text = "Welcome to transcription hell, human!"
+
 
     def get_pipeline(self, socket):
         """ Return a client pipeline for chunk requests and responses."""
@@ -60,6 +62,7 @@ class ChatProgram(Program):
     """
     Chats with humans.
     """
+
     async def bot_line(self, population, transcript_lines):
         """Return a line from the bot."""
         if population < nag_population:
@@ -80,6 +83,10 @@ class PoetryProgram(Program):
     """
     Recites poetry with humans.
     """
+    intro_text = (
+        "Welcome to the realm of electronic poetry appreciators, human! "
+        "Great rewards await those who can recite poetry to the machine.")
+
     def __init__(self):
         self.poem_start = None
 

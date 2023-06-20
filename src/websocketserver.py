@@ -20,6 +20,7 @@ port = 6000
 # Seconds between periodic task runs.
 period = 20
 
+
 class Socket:
     def __init__(self, websocket):
         self.websocket = websocket
@@ -27,13 +28,15 @@ class Socket:
         self.stream_sid = None
 
     async def start(self, prog):
-        self.speech = speech.Client()
-        await self.speech.start()
         self.line = prog.get_pipeline(self)
         await self.line.start()
+        self.speech = speech.Client()
+        self.speech_handler_task = asyncio.create_task(self.consumer_handler())
+        await self.speech.start()
 
     def stop(self):
         self.speech.stop()
+        self.speech_handler_task.cancel()
         self.line.stop()
 
     def add_request(self, request):
@@ -42,6 +45,9 @@ class Socket:
     def add_speech_request(self, request):
         return self.line.line_speech_line.add_request(
             {'text': request['text']})
+
+    def add_self_speech_request(self, request):
+        return self.speech.add_request({'text': request['text']})
 
     def receive_response(self):
         return self.line.receive_response()
@@ -55,12 +61,11 @@ class Socket:
                  "streamSid": self.stream_sid,
                  "media": {"payload": payload}}))
 
-    # async def send_speech(self, text):
-    #     """Send text to this socket."""
-    #     self.speech.add_request({'text': text})
-    #     XXX this assumes we get one chunk, we probably need a task loop
-    #     chunk = await self.speech.receive_response()
-    #     await self.send(chunk)
+    async def consumer_handler(self):
+        """Send all responses for my personal speech line to myself."""
+        while True:
+            response = await self.speech.receive_response()
+            await self.send(response['chunk'])
 
 
 class FakeSocket:
@@ -142,6 +147,7 @@ class Server:
                 pass
             elif message["event"] == "start":
                 socket.stream_sid = message['streamSid']
+                socket.add_self_speech_request({'text': self.program.intro_text})
                 request = chat.hello_string()
                 socket.add_speech_request({'text':request})
             elif message["event"] == "media":
@@ -212,4 +218,4 @@ class Server:
         for socket in self.sockets:
             socket.stop()
             await socket.start(self.program)
-
+            socket.add_self_speech_request({'text': prog.intro_text})
