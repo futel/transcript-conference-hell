@@ -74,9 +74,13 @@ class Server:
         await self.fake_handler()
         await self.periodic_task()
         self.server = await websockets.serve(self.handler, port=port)
+        util.log("websocket server started")
 
-    # async def stop(self):
-    #     await self.server.close()
+    async def stop(self):
+        # Hopefully this never happens, we probably leak.
+        util.log("websocket server stopping")
+        await self.server.close()
+        util.log("websocket server stopped")
     #     raise NotImplementedError
 
     async def periodic_task(self):
