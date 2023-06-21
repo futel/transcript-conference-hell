@@ -219,7 +219,10 @@ class Server:
         self.program = prog
         self.chat_socket.stop()
         await self.chat_socket.start(prog)
+        succeed_str = chat.general_succeed_string()
         for socket in self.sockets:
             socket.stop()
             await socket.start(self.program)
-            socket.add_self_speech_request({'text': prog.intro_text(socket)})
+            socket.add_self_speech_request({'text': succeed_str})
+            socket.add_self_speech_request(
+                {'text': prog.intro_text(socket)})

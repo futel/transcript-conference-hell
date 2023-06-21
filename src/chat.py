@@ -223,6 +223,18 @@ def arithmetic_succeed_string():
     ]
     return random.choice(strs)
 
+def general_succeed_string():
+    strs = [
+        "Victory!",
+        "Success!",
+        "Sweet victory!",
+        "Sweet success!",
+        "Hail to the champions!",
+        "Hail to the victors!",
+        "You have shown skill in satisfying the machine."
+    ]
+    return random.choice(strs)
+
 
 class Client():
     """Client to pass requests directly to responses."""
