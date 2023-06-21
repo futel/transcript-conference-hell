@@ -1,14 +1,17 @@
 """Read and write transcription lines."""
 
 import asyncio
+import copy
+import datetime
 import itertools
 import json
 
 import util
 
 def write_line(line):
-    # Q&D test, log the line.
-    util.log(str(line), 'lines')
+    d = copy.copy(line.__dict__)
+    d['timestamp'] = datetime.datetime.now().isoformat()
+    util.write_line(str(line), 'lines')
 
 def read_lines():
     counter = itertools.count()

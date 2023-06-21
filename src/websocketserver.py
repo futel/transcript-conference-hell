@@ -31,7 +31,8 @@ class Socket:
         self.line = prog.get_pipeline(self)
         await self.line.start()
         self.speech = speech.Client()
-        self.speech_handler_task = asyncio.create_task(self.consumer_handler())
+        self.speech_handler_task = asyncio.create_task(
+            self.consumer_handler())
         await self.speech.start()
 
     def stop(self):
@@ -175,6 +176,8 @@ class Server:
             for s in self.sockets:
                 if s != socket:
                     await s.send(chunk)
+                    util.log("sent chunk from {} to {}".format(
+                        socket.stream_sid, s.stream_sid))
             # We could do the bot response here instead of periodically.
 
     async def handler(self, websocket):

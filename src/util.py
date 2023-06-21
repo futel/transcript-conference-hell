@@ -1,14 +1,20 @@
+import datetime
 import os
 
-def log(msg, logname=None):
+
+def write_line(s, logname=None):
     if not logname:
         logname = 'foo'
     logfile = '/tmp/' + logname
-    print(msg)
+    print(s)
     # q&d temporary log file
     with open(logfile, 'a') as f:
-        f.write(msg)
+        f.write(s)
         f.write('\n')
+
+def log(msg, logname=None):
+    msg = "{} {}".format(datetime.datetime.now().isoformat(), msg)
+    return write_line(msg, logname)
 
 def wav_to_chunk(b):
     """Return wav bytes with header removed."""
