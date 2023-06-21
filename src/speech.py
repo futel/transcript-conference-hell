@@ -7,6 +7,9 @@ from google.cloud import texttospeech_v1
 
 import util
 
+send_qsize_log = 4
+recv_qsize_log = 1
+
 # voices = [
 #     "en-US-Standard-A",
 #     "en-US-Standard-B",
@@ -111,11 +114,18 @@ class Client:
             self._recv_queue.put_nowait(chunk)
 
     async def receive_response(self):
-        return {'chunk': await self._recv_queue.get()}
+        response = await self._recv_queue.get()
+        qsize = self._recv_queue.qsize()
+        if qsize >= recv_qsize_log:
+            util.log(f"speech recv queue size {qsize}")
+        return {'chunk': response}
 
     def add_request(self, request):
         """Add text to the processing queue."""
         self._send_queue.put_nowait(request['text'])
+        qsize = self._send_queue.qsize()
+        if qsize >= send_qsize_log:
+            util.log(f"speech send queue size {qsize}")
 
     async def request_generator(self):
         while True:

@@ -171,7 +171,6 @@ class ArithmeticProgram(Program):
         return ints.pop()
 
     def recent_ints(self, transcript_lines):
-        print('xxx', self.recent_human_lines(transcript_lines))
         ints = [self.line_to_integer(h_line)
                 for h_line in self.recent_human_lines(transcript_lines)]
         return [i for i in ints if i is not None]
@@ -188,7 +187,6 @@ class ArithmeticProgram(Program):
                 return [chat.nag_string()]
             return []
         ints = self.recent_ints(transcript_lines)
-        print('xxx recent ints',  ints)
         if not ints:
             # XXX don't always do this
             return [chat.arithmetic_fail_string()]
