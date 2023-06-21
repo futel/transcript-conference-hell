@@ -103,6 +103,8 @@ class ArithmeticProgram(Program):
         """Return the integer corresponding to w, or None."""
         # This doesn't include integers above ten, to do so,
         # we need to do arithmetic.
+        if w.isdigit():
+            return int(w)
         word_integer = {
             'zero': 0,
             'one': 1,
@@ -119,7 +121,7 @@ class ArithmeticProgram(Program):
         return word_integer.get(w)
 
     def line_to_integer(self, l):
-        """Return the integer corresponding to l."""
+        """Return the integer corresponding to l, or None."""
         # In practice we get "1 2 3", but:
         # 123
         # 1 2 3
@@ -136,6 +138,8 @@ class ArithmeticProgram(Program):
         #l = [w for w in l if w not in ['hundred', 'and']]
         l = [self.word_to_integer(w) for w in l]
         l = [w for w in l if w is not None]
+        if not l:
+            return None
         return sum([w * (10 ** i) for i, w in enumerate(reversed(l))])
 
     def recent_human_lines(self, transcript_lines):
@@ -156,24 +160,44 @@ class ArithmeticProgram(Program):
         # MZ58fa2ba422c3b0c73b7e1ebe7f625a14
         return [int(c) for c in sid if c.isdigit()].pop()
 
-    async def bot_line(self, population, transcript_lines, server):
+    def check_lines(self, ints, magic_integer):
+        """
+        Return True if magic integer is in ints.
+        If another integer is in ints, return one of them.
+        """
+        for i in ints:
+            if i == magic_integer:
+                return True
+        return ints.pop()
+
+    def recent_ints(self, transcript_lines):
+        print('xxx', self.recent_human_lines(transcript_lines))
+        ints = [self.line_to_integer(h_line)
+                for h_line in self.recent_human_lines(transcript_lines)]
+        return [i for i in ints if i is not None]
+
+    async def bot_lines(self, population, transcript_lines, server):
         """Return a line from the bot."""
+        # XXX after victory be different
         # Has a human spoken the number since the last bot line?
         # If true, say victory.
         # If false, prompt.
         if population < nag_population:
             # Half chance of nagging.
             if random.choice([True, False]):
-                return chat.nag_string()
-            return None
-        magic_integer = self.magic_integer(server)
-        for h_line in self.recent_human_lines(transcript_lines):
-            if self.line_to_integer(h_line) == magic_integer:
-                return chat.arithmetic_succeed_string()
-            # Just notify about the last one.
-            return "{} is not the number I am looking for.".format(
-                self.line_to_integer(h_line))
-        return chat.arithmetic_fail_string()
+                return [chat.nag_string()]
+            return []
+        ints = self.recent_ints(transcript_lines)
+        print('xxx recent ints',  ints)
+        if not ints:
+            # XXX don't always do this
+            return [chat.arithmetic_fail_string()]
+        check = self.check_lines(
+            ints, self.magic_integer(server))
+        if check is True:
+            return [chat.arithmetic_succeed_string()]
+        # Just notify about the last one.
+        return ["{} is not the number I am looking for.".format(check)]
 
 
 class ReplicantProgram(ChatProgram):
