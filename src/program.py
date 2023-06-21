@@ -3,6 +3,7 @@ import random
 
 import chat
 import pipeline
+import util
 
 # Bot may nag humans if population is fewer than this.
 nag_population = 2
@@ -15,6 +16,11 @@ class Program:
     """
     intro_string = "Welcome to transcription hell, human!"
     num_human_lines = 3         # Human lines before bot talks.
+
+    def __init__(self):
+        util.log('Initializing program {}'.format(
+            self.__class__.__name__))
+        self.victory = False
 
     def get_pipeline(self, socket):
         """
@@ -90,7 +96,8 @@ class ArithmeticProgram(Program):
     num_human_lines = 1
 
     def intro_text(self, socket):
-        out = "Your integer is {}.".format(self.sid_to_integer(socket.stream_sid))
+        out = "Your integer is {}.".format(
+            self.sid_to_integer(socket.stream_sid))
         return self.intro_string + out
 
     def should_bot_line(self, transcript_lines):
@@ -199,6 +206,7 @@ class ArithmeticProgram(Program):
         check = self.check_lines(
             ints, self.magic_integer(server))
         if check is True:
+            self.victory = True
             return [chat.arithmetic_succeed_string()]
         # Just notify about the last one.
         return ["{} is not the number I am looking for.".format(check)]
@@ -223,6 +231,7 @@ class PoetryProgram(Program):
         "Great rewards await those who can recite poetry to the machine.")
 
     def __init__(self):
+        super().__init__()
         self.poem_start = None
 
     async def latest_rhyme(self, t_lines):
@@ -281,18 +290,29 @@ class PoetryAppreciatorProgram(PoetryProgram):
     """
     Appreciates poetry when found.
     """
-    async def bot_lines(self, population, t_lines, server):
-        latest_rhyme = await self.latest_rhyme(t_lines)
+    async def bot_lines(self, population, transcript_lines, server):
+        if self.recent_bot_line(transcript_lines):
+            return []
+        latest_rhyme = await self.latest_rhyme(transcript_lines)
         if self.poem_start is None:
             if latest_rhyme is not None:
                 self.poem_start = latest_rhyme[0].ordinal
                 return []           # Human's turn to talk.
         # XXX We should have detected a rhyme, since we did earlier.
         #     But we might need to try again, because chatgpt.
-        if latest_rhyme[1].ordinal < len(t_lines) - 2:
+        if latest_rhyme[1].ordinal < len(transcript_lines) - 2:
             # There have been no rhymes for 2 lines.
             out = [chat.poetry_succeed_string()]
-            out.extend(t_lines[self.poem_start:latest_rhyme[1].ordinal+1])
+            out.extend(
+                transcript_lines[
+                    self.poem_start:latest_rhyme[1].ordinal+1])
             return out
         return []               # Human's turn to talk.
 
+
+programs = [ChatProgram, ArithmeticProgram, PoetryAppreciatorProgram]
+
+def next_program():
+    """Yield programs."""
+    for i in itertools.cycle(programs):
+        yield i

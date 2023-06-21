@@ -8,6 +8,11 @@ import program
 
 class TestProgram(unittest.IsolatedAsyncioTestCase):
 
+    def test_next_program(self):
+        program_cycle = program.next_program()
+        self.assertEqual(next(program_cycle), program.ChatProgram)
+        self.assertEqual(next(program_cycle), program.ArithmeticProgram)
+
     async def test_recent_bot_line(self):
         prog = program.Program()
         t_lines = [

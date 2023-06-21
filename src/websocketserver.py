@@ -20,6 +20,8 @@ port = 6000
 # Seconds between periodic task runs.
 period = 20
 
+program_cycle = program.next_program()
+
 
 class Socket:
     def __init__(self, websocket):
@@ -83,7 +85,6 @@ class FakeSocket:
         return self.line.add_request({'text': request['text']})
 
     def stop(self):
-        self.speech.stop()
         self.line.stop()
 
     def receive_response(self):
@@ -97,7 +98,6 @@ class Server:
         self.sockets = set()
         self.chat_socket = None
         self.program = program.ArithmeticProgram()
-        #self.program = program.ChatProgram()
 
     async def start(self):
         util.log("websocket server starting")
@@ -118,11 +118,14 @@ class Server:
             while True:
                 population = len(self.sockets)
                 if population:
-                    # Send a chat line if we have one.
-                    transcript_lines = lines.read_lines()
-                    for line in await self.program.bot_lines(
-                            population, transcript_lines, self):
-                        self.chat_socket.add_request({'text': line})
+                    if self.program.victory:
+                        await self.change_program(next(program_cycle))
+                    else:
+                        # Send a chat line if we have one.
+                        transcript_lines = lines.read_lines()
+                        for line in await self.program.bot_lines(
+                                population, transcript_lines, self):
+                            self.chat_socket.add_request({'text': line})
                 await asyncio.sleep(period)
         return asyncio.create_task(p_d())
 
@@ -199,7 +202,10 @@ class Server:
         socket.stop()
         self.sockets.remove(socket)
         util.log("websocket connection closed")
-        util.log("websocket connections: {}".format(len(self.sockets)))
+        population = len(self.sockets)
+        util.log("websocket connections: {}".format(population))
+        if not population:
+            await self.change_program(next(program_cycle))
 
     async def fake_handler(self):
         """
@@ -214,15 +220,15 @@ class Server:
         # We don't clean this up, we should do that in stop().
         asyncio.create_task(self.producer_handler(socket))
 
-    async def change_program(self, prog):
+    async def change_program(self, prog_class):
         """Replace program, and all pipelines with appropriate ones."""
-        self.program = prog
+        self.program = prog_class()
         self.chat_socket.stop()
-        await self.chat_socket.start(prog)
+        await self.chat_socket.start()
         succeed_str = chat.general_succeed_string()
         for socket in self.sockets:
             socket.stop()
             await socket.start(self.program)
             socket.add_self_speech_request({'text': succeed_str})
             socket.add_self_speech_request(
-                {'text': prog.intro_text(socket)})
+                {'text': self.program.intro_text(socket)})
