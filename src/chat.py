@@ -207,6 +207,7 @@ def arithmetic_fail_string():
         "That is not correct. Try again. I believe in you.",
         "You have failed.",
         "You have failed. Try again. I believe in you.",
+        "Your arithmetic skills are inferior.",
     ]
     return random.choice(strs)
 
@@ -217,8 +218,8 @@ def arithmetic_succeed_string():
         "You have succeeded.",
         "You have completed the challenge.",
         "You have completed the challenge. Thank you for your service.",
-        "Your arithmetic skill are superior.",
-        "Your arithmetic skill are superior. Thank you for your service.",
+        "Your arithmetic skills are superior.",
+        "Your arithmetic skills are superior. Thank you for your service.",
     ]
     return random.choice(strs)
 

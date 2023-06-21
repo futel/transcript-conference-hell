@@ -177,19 +177,25 @@ class ArithmeticProgram(Program):
 
     async def bot_lines(self, population, transcript_lines, server):
         """Return a line from the bot."""
-        # XXX after victory be different
         # Has a human spoken the number since the last bot line?
         # If true, say victory.
         # If false, prompt.
         if population < nag_population:
-            # Half chance of nagging.
-            if random.choice([True, False]):
-                return [chat.nag_string()]
+            if self.should_bot_line(transcript_lines):
+                # Half chance of nagging.
+                if random.choice([True, False]):
+                    return [chat.nag_string()]
             return []
         ints = self.recent_ints(transcript_lines)
         if not ints:
-            # XXX don't always do this
-            return [chat.arithmetic_fail_string()]
+            if self.should_bot_line(transcript_lines):
+                if random.choice([True, False]):
+                    # Half chance of a chat line.
+                    return [await chat.openai_chat_line(transcript_lines)]
+                # Half again chance of failure notification.
+                if random.choice([True, False]):
+                    return [chat.arithmetic_fail_string()]
+            return []
         check = self.check_lines(
             ints, self.magic_integer(server))
         if check is True:
