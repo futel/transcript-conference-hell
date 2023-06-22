@@ -41,9 +41,9 @@ class Program:
                 return chat.nag_string()
         return None
 
-    async def bot_line(self, population, transcript_lines, server):
-        """Return a line from the bot."""
-        raise NotImplementedError
+    # async def bot_line(self, population, transcript_lines, server):
+    #     """Return a line from the bot."""
+    #     raise NotImplementedError
 
     def recent_bot_line(self, transcript_lines):
         """
@@ -72,31 +72,31 @@ class Program:
             return True
         return False
 
-    async def bot_lines(self, population, transcript_lines, server):
-        """
-        Return a list of zero or more chat lines.
-        """
-        if self.should_bot_line(transcript_lines):
-            bot_line = await self.bot_line(population, transcript_lines, server)
-            if bot_line:
-                return [bot_line]
-        return []
+    # async def bot_lines(self, population, transcript_lines, server):
+    #     """
+    #     Return a list of zero or more chat lines.
+    #     """
+    #     if self.should_bot_line(transcript_lines):
+    #         bot_line = await self.bot_line(population, transcript_lines, server)
+    #         if bot_line:
+    #             return [bot_line]
+    #     return []
 
 
 class ChatProgram(Program):
     """
     Chats with humans.
     """
-    async def bot_line(self, population, transcript_lines, server):
-        """Return a line from the bot."""
-        if self.nag_line(population):
-            # Half chance of nag line.
-            if random.choice([True, False]):
-                return chat.nag_string()
-        # We didn't nag, return a chat line.
-        util.log('bot returning chat line')
-        return await chat.openai_chat_line(transcript_lines)
-
+    async def bot_lines(self, population, transcript_lines, server):
+        if self.should_bot_line(transcript_lines):
+            if self.nag_line(population):
+                # Half chance of nag line.
+                if random.choice([True, False]):
+                    return [chat.nag_string()]
+            # We didn't nag, return a chat line.
+            util.log('bot returning chat line')
+            return await [chat.openai_chat_line(transcript_lines)]
+        return []
 
 class ArithmeticProgram(Program):
     intro_string = (
