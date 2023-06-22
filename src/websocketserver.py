@@ -28,6 +28,7 @@ class Socket:
     def __init__(self, websocket):
         self.websocket = websocket
         self.line = None
+        self.speech = speech.Client()
         self.stream_sid = None
         self.line = pipeline.HumanPipeline(self)
 
@@ -35,7 +36,6 @@ class Socket:
         # XXX we have to handle replacing the pipeline to do this
         #self.line = prog.get_pipeline(self)
         await self.line.start()
-        self.speech = speech.Client()
         self.speech_handler_task = asyncio.create_task(
             self.consumer_handler())
         await self.speech.start()

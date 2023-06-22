@@ -16,15 +16,17 @@ class Composer:
     def __init__(self, producer, consumer):
         self.producer = producer
         self.consumer = consumer
-        self.step_task = asyncio.create_task(self.step_generator())
 
     async def start(self):
         await self.consumer.start()
         await self.producer.start()
+        # We should probably do this on init and not cancel?
+        self.step_task = asyncio.create_task(self.step_generator())
 
     def stop(self):
         self.producer.stop()
         self.consumer.stop()
+        # We should probably not cancel?
         self.step_task.cancel()
 
     def add_request(self, request):
