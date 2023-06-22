@@ -9,9 +9,13 @@ import pipeline
 class Client(chat.Client):
     def __init__(self, name):
         self.name = name
+        self.send_queue = asyncio.Queue()
         self.recv_queue = asyncio.Queue()
     def add_request(self, request):
         self.recv_queue.put_nowait(self.name + request)
+    async def receive_response(self):
+        response = await self.recv_queue.get()
+        return response
 
 
 class TestPipeline(unittest.IsolatedAsyncioTestCase):
@@ -53,6 +57,9 @@ class TestPipeline(unittest.IsolatedAsyncioTestCase):
                 client.receive_response(), timeout=1)
         except asyncio.TimeoutError:
             pass
+
+    async def test_stop_start():
+        pass
 
 if __name__ == '__main__':
     unittest.main()
