@@ -15,44 +15,39 @@ class TestProgram(unittest.IsolatedAsyncioTestCase):
 
     async def test_recent_bot_line(self):
         prog = program.Program()
-        t_lines = [
-            lines.Line('label', 'content'),
-            lines.Line('label', 'content')]
-        self.assertEqual(prog.recent_bot_line(t_lines), True)
-        t_lines.append(lines.Line('label', 'content'))
-        t_lines.append(lines.Line('label', 'content'))
-        t_lines.append(lines.Line('label', 'content'))
-        t_lines.append(lines.Line('label', 'content'))
-        t_lines.append(lines.Line('label', 'content'))
-        self.assertEqual(prog.recent_bot_line(t_lines), False)
-        t_lines.append(lines.Line('label', 'content', silent=True))
-        self.assertEqual(prog.recent_bot_line(t_lines), False)
-        t_lines.append(lines.Line('label', 'content', bot=True))
-        self.assertEqual(prog.recent_bot_line(t_lines), True)
-        t_lines.append(lines.Line('label', 'content'))
-        self.assertEqual(prog.recent_bot_line(t_lines), True)
-        t_lines.append(lines.Line('label', 'content'))
-        self.assertEqual(prog.recent_bot_line(t_lines), True)
-        t_lines.append(lines.Line('label', 'content'))
-        self.assertEqual(prog.recent_bot_line(t_lines), False)
-
-class TestArithmeticProgram(unittest.IsolatedAsyncioTestCase):
-
-    def test_recent_bot_line(self):
-        prog = program.ArithmeticProgram()
         t_lines = []
         self.assertEqual(prog.recent_bot_line(t_lines), True)
         t_lines.append(lines.Line('label', 'content'))
-        self.assertEqual(prog.recent_bot_line(t_lines), False)
+        self.assertEqual(prog.recent_bot_line(t_lines), True)
+        t_lines.append(lines.Line('label', 'content'))
+        self.assertEqual(prog.recent_bot_line(t_lines), True)
+        t_lines.append(lines.Line('label', 'content'))
+        t_lines.append(lines.Line('label', 'content'))
+        t_lines.append(lines.Line('label', 'content'))
+        t_lines.append(lines.Line('label', 'content'))
+        t_lines.append(lines.Line('label', 'content'))
+        t_lines.append(lines.Line('label', 'content'))
         self.assertEqual(prog.recent_bot_line(t_lines), False)
         t_lines.append(lines.Line('label', 'content', silent=True))
         self.assertEqual(prog.recent_bot_line(t_lines), False)
         t_lines.append(lines.Line('label', 'content', bot=True))
         self.assertEqual(prog.recent_bot_line(t_lines), True)
         t_lines.append(lines.Line('label', 'content'))
-        self.assertEqual(prog.recent_bot_line(t_lines), False)
+        self.assertEqual(prog.recent_bot_line(t_lines), True)
+        t_lines.append(lines.Line('label', 'content'))
+        self.assertEqual(prog.recent_bot_line(t_lines), True)
         t_lines.append(lines.Line('label', 'content'))
         self.assertEqual(prog.recent_bot_line(t_lines), False)
+        t_lines.append(lines.Line('label', 'content'))
+        t_lines.append(lines.Line('label', 'content'))
+        t_lines.append(lines.Line('label', 'content'))
+        t_lines.append(lines.Line('label', 'content'))
+        t_lines.append(lines.Line('label', 'content'))
+        t_lines.append(lines.Line('label', 'content'))
+        self.assertEqual(prog.recent_bot_line(t_lines), False)
+
+
+class TestArithmeticProgram(unittest.IsolatedAsyncioTestCase):
 
     def test_word_to_integer(self):
         self.assertEqual(program.ArithmeticProgram().word_to_integer("seven"), 7)
@@ -83,6 +78,23 @@ class TestArithmeticProgram(unittest.IsolatedAsyncioTestCase):
             [lines.Line('label', "1"),
              lines.Line('label', "0"),
              lines.Line('label', "2")]), [2, 0, 1])
+
+    async def test_bot_lines_false(self):
+        prog = program.ArithmeticProgram()
+        l = [
+            lines.Line('label', "foo bar baz"),
+            lines.Line('label', "foo bar baz"),
+            lines.Line('label', "foo bar baz"),
+            lines.Line('label', "foo bar baz"),
+            lines.Line('label', "foo bar baz")]
+        self.assertEqual(
+            await prog.bot_lines(0, [], 'dummy'), [])
+        self.assertEqual(
+            await prog.bot_lines(0, l, 'dummy'), [])
+        self.assertEqual(
+            await prog.bot_lines(1, [], 'dummy'), [])
+        self.assertEqual(
+            await prog.bot_lines(2, [], 'dummy'), [])
 
     def test_intro_text(self):
         socket = mock.Mock()

@@ -53,7 +53,7 @@ class Program:
             l for l in transcript_lines if not hasattr(l, 'silent')]
         try:
             for x in range(self.num_human_lines):
-                t_line = t_lines.pop(0)
+                t_line = t_lines.pop()
                 if hasattr(t_line, 'bot'):
                     # One of the recent lines are bot lines.
                     return True
@@ -105,12 +105,6 @@ class ArithmeticProgram(Program):
         out = "Your integer is {}.".format(
             self.sid_to_integer(socket.stream_sid))
         return self.intro_string + out
-
-    def should_bot_line(self, transcript_lines):
-        """Return True if the bot should talk."""
-        if self.recent_bot_line(transcript_lines):
-            return False
-        return True
 
     def word_to_integer(self, w):
         """Return the integer corresponding to w, or None."""
@@ -193,6 +187,19 @@ class ArithmeticProgram(Program):
         # Has a human spoken the number since the last bot line?
         # If true, say victory.
         # If false, prompt.
+        ints = self.recent_ints(transcript_lines)
+        if ints:
+            # We have at least one int since the last bot line.
+            check = self.check_lines(
+                ints, self.magic_integer(server))
+            if check is True:
+                self.victory = True
+                return [chat.arithmetic_succeed_string()]
+            if self.should_bot_line(transcript_lines):
+                # Just notify about the last one.
+                return [
+                    "{} is not the number I am looking for.".format(
+                        check)]
         if self.should_bot_line(transcript_lines):
             if self.nag_line(population):
                 if random.choice([True, False]):
@@ -201,23 +208,13 @@ class ArithmeticProgram(Program):
                 # Half again chance of a nag line.
                 if random.choice([True, False]):
                     return [chat.nag_string()]
-        ints = self.recent_ints(transcript_lines)
-        if not ints:
-            if self.should_bot_line(transcript_lines):
-                if random.choice([True, False]):
-                    # Half chance of a chat line.
-                    return [await chat.openai_chat_line(transcript_lines)]
-                # Half again chance of failure notification.
-                if random.choice([True, False]):
-                    return [chat.arithmetic_fail_string()]
-            return []
-        check = self.check_lines(
-            ints, self.magic_integer(server))
-        if check is True:
-            self.victory = True
-            return [chat.arithmetic_succeed_string()]
-        # Just notify about the last one.
-        return ["{} is not the number I am looking for.".format(check)]
+            if random.choice([True, False]):
+                # Half chance of a chat line.
+                return [await chat.openai_chat_line(transcript_lines)]
+            # Half again chance of failure notification.
+            if random.choice([True, False]):
+                return [chat.arithmetic_fail_string()]
+        return []
 
 
 class ReplicantProgram(ChatProgram):
