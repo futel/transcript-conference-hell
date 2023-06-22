@@ -89,8 +89,11 @@ class ChatProgram(Program):
     async def bot_line(self, population, transcript_lines, server):
         """Return a line from the bot."""
         if self.nag_line(population):
-            return chat.nag_string()
+            # Half chance of nag line.
+            if random.choice([True, False]):
+                return chat.nag_string()
         # We didn't nag, return a chat line.
+        util.log('bot returning chat line')
         return await chat.openai_chat_line(transcript_lines)
 
 
@@ -281,14 +284,6 @@ class PoetryProgram(Program):
         if random.choice([True, False]): # Half chance of bot line.
             return [await chat.openai_rhyming_line(t_lines)]
         return []               # Human's turn to talk.
-
-    def should_bot_line(self, transcript_lines):
-        """
-        Return True if the bot should reply to a prompt and maybe talk.
-        """
-        if self.recent_bot_line(transcript_lines):
-            return False
-        return True
 
 
 class PoetryAppreciatorProgram(PoetryProgram):

@@ -7,7 +7,7 @@ from google.cloud import texttospeech_v1
 
 import util
 
-send_qsize_log = 4
+send_qsize_log = 2
 recv_qsize_log = 1
 
 # voices = [
