@@ -32,6 +32,14 @@ class Program:
     def intro_text(self, socket):
         return self.intro_string
 
+    def nag_line(self, population):
+        """Retrn a nag line or None."""
+        if population < nag_population:
+            # Third chance.
+            if random.choice([True, False, False]):
+                return chat.nag_string()
+        return None
+
     async def bot_line(self, population, transcript_lines, server):
         """Return a line from the bot."""
         raise NotImplementedError
@@ -77,13 +85,10 @@ class ChatProgram(Program):
     """
     Chats with humans.
     """
-
     async def bot_line(self, population, transcript_lines, server):
         """Return a line from the bot."""
-        if population < nag_population:
-            # Half chance of nagging.
-            if random.choice([True, False]):
-                return chat.nag_string()
+        if self.nag_line(population):
+            return chat.nag_string()
         # We didn't nag, return a chat line.
         return await chat.openai_chat_line(transcript_lines)
 
@@ -187,12 +192,8 @@ class ArithmeticProgram(Program):
         # Has a human spoken the number since the last bot line?
         # If true, say victory.
         # If false, prompt.
-        if population < nag_population:
-            if self.should_bot_line(transcript_lines):
-                # Half chance of nagging.
-                if random.choice([True, False]):
-                    return [chat.nag_string()]
-            return []
+        if self.nag_line(population):
+            return [chat.nag_string()]
         ints = self.recent_ints(transcript_lines)
         if not ints:
             if self.should_bot_line(transcript_lines):
