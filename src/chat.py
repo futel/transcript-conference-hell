@@ -12,18 +12,6 @@ import util
 
 chat_label = "Franz"
 
-chat_prompt = """
-Complete this dialog by completing the last line of dialog, spoken by "{}". Add only one line.
-
-Dialog:
-{}
-{}:
-"""
-
-def format_chat_prompt(t_lines):
-    t_lines = [l.prompt_str() for l in t_lines]
-    return chat_prompt.format(chat_label, '\n'.join(t_lines), chat_label)
-
 # def generate_messages(transcript_lines):
 #     messages = [
 #         {'role': 'system',
@@ -94,6 +82,7 @@ async def openai_completion(prompt):
 
 @openai_retry
 async def openai_chat_completion(messages):
+    # ChatCompletion allows "gpt-4" "gpt-3.5-turbo" "text-davinci-003"?
     response = await openai.ChatCompletion.acreate(
         model="gpt-3.5-turbo",
         messages=messages,
@@ -102,13 +91,44 @@ async def openai_chat_completion(messages):
         return response.choices[0]['message']['content']
     return None
 
+def clean_punct_whitespace(l):
+    out = l
+    while True:
+        out = out.strip()
+        if out.startswith(tuple([x for x in string.punctuation])):
+            out = out[1:]
+        if out == l:
+            return out
+        l = out
+
+def clean_label(l):
+    try:
+        return l[l.index(':')+1:]
+    except ValueError:
+        return l
+
+def clean_chat_line(line):
+    """Remove likely chat artifact characters from line."""
+    line = line.strip()
+    line = clean_label(line)
+    line = clean_punct_whitespace(line)
+    return line
+
 async def openai_chat_line(t_lines):
     """
     Return a string of chat text based on lines and a prompt, or None.
     """
-    # Was having trouble using ChatCompletion for freeform chat with
-    # several back-and-forth lines.
-    return await openai_completion(prompt=format_chat_prompt(t_lines))
+    prompt = (
+        'You are writing a script for a play about people who need to know their darkest secrets. '
+        'Complete this dialog by adding a line of dialog, spoken by "{}". '
+        'Add only one line of dialog.').format(chat_label)
+    messages = [
+        {"role": "system",
+         "content": prompt}]
+    for line in t_lines:
+        messages.append({"role": "user", "content": line.prompt_str()})
+    out = await openai_chat_completion(messages)
+    return clean_chat_line(out)
 
 async def openai_rhyming_line(t_lines):
     """Return a string of chat text based on lines and a prompt."""

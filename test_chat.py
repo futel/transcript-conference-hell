@@ -37,19 +37,24 @@ async def add_poetry_line():
 async def add_chat_line():
     line = await chat.openai_chat_line(t_lines)
     t_lines.append(lines.Line("Franz", line))
-    print(line)
+    print(repr(line))
 
 async def main():
+    for line in t_lines:
+        print(line.prompt_str())
+    print('--')
     for i in range(5):
         await add_chat_line()
+        # XXX add human line sometimes
+        print('--')
 
-    print(await chat.rhyme_detector("dog", "frog"))
-    print(await chat.rhyme_detector("giggle", "wiggle"))
-    print(await chat.rhyme_detector("cringe", "impinge"))
-    print(await chat.rhyme_detector("air", "where"))
-    print(await chat.rhyme_detector("where", "sound"))
-    print(await chat.rhyme_detector("three", "me"))
-    print(await chat.rhyme_detector("sound", "found"))
+    # print(await chat.rhyme_detector("dog", "frog"))
+    # print(await chat.rhyme_detector("giggle", "wiggle"))
+    # print(await chat.rhyme_detector("cringe", "impinge"))
+    # print(await chat.rhyme_detector("air", "where"))
+    # print(await chat.rhyme_detector("where", "sound"))
+    # print(await chat.rhyme_detector("three", "me"))
+    # print(await chat.rhyme_detector("sound", "found"))
 
 
 asyncio.run(main())
