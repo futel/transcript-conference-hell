@@ -22,12 +22,13 @@ class Program:
             self.__class__.__name__))
         self.victory = False
 
-    def get_pipeline(self, socket):
-        """
-        Return a pipeline for chunk requests and responses,
-        for human clients.
-        """
-        return pipeline.HumanPipeline(socket)
+    # XXX websocket server needs the line to stay the same
+    # def get_pipeline(self, socket):
+    #     """
+    #     Return a pipeline for chunk requests and responses,
+    #     for human clients.
+    #     """
+    #     return pipeline.HumanPipeline(socket)
 
     def intro_text(self, socket):
         return self.intro_string

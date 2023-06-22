@@ -29,9 +29,11 @@ class Socket:
         self.websocket = websocket
         self.line = None
         self.stream_sid = None
-        self.line = prog.get_pipeline(self)
+        self.line = pipeline.HumanPipeline(socket)
 
     async def start(self, prog):
+        # XXX we have to handle replacing the pipeline to do this
+        #self.line = prog.get_pipeline(self)
         await self.line.start()
         self.speech = speech.Client()
         self.speech_handler_task = asyncio.create_task(
