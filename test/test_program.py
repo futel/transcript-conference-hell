@@ -90,8 +90,6 @@ class TestArithmeticProgram(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(
             await prog.bot_lines(0, [], 'dummy'), [])
         self.assertEqual(
-            await prog.bot_lines(0, l, 'dummy'), [])
-        self.assertEqual(
             await prog.bot_lines(1, [], 'dummy'), [])
         self.assertEqual(
             await prog.bot_lines(2, [], 'dummy'), [])

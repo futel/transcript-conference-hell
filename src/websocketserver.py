@@ -80,8 +80,10 @@ class FakeSocket:
     # re-use this as a label in the transcript.
     stream_sid = chat.chat_label
 
-    async def start(self):
+    def __init__(self, websocket):
         self.line = pipeline.BotPipeline(self)
+
+    async def start(self):
         await self.line.start()
 
     def add_request(self, request):

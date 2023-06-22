@@ -58,8 +58,6 @@ class TestPipeline(unittest.IsolatedAsyncioTestCase):
         except asyncio.TimeoutError:
             pass
 
-    async def test_stop_start():
-        pass
 
 if __name__ == '__main__':
     unittest.main()
