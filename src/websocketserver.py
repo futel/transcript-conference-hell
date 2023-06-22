@@ -18,7 +18,8 @@ import util
 port = 6000
 
 # Seconds between periodic task runs.
-period = 20
+bot_period = 5
+victory_period = 1
 
 program_cycle = program.next_program()
 
@@ -102,7 +103,8 @@ class Server:
     async def start(self):
         util.log("websocket server starting")
         await self.fake_handler()
-        await self.periodic_task()
+        await self.bot_line_task()
+        await self.victory_task()
         self.server = await websockets.serve(self.handler, port=port)
         util.log("websocket server started")
 
@@ -112,22 +114,32 @@ class Server:
         await self.server.close()
         util.log("websocket server stopped")
 
-    async def periodic_task(self):
-        """Return a task to do the periodic things."""
-        async def p_d():
+    async def bot_line_task(self):
+        """Return a task to periodically check for and say bot lines."""
+        async def f():
+            while True:
+                population = len(self.sockets)
+                if population:
+                    # Send a chat line if we have one.
+                    transcript_lines = lines.read_lines()
+                    for line in await self.program.bot_lines(
+                            population, transcript_lines, self):
+                        self.chat_socket.add_request({'text': line})
+                await asyncio.sleep(bot_period)
+        return asyncio.create_task(f())
+
+    async def victory_task(self):
+        """
+        Return a task to periodically check for and to victory actions.
+        """
+        async def f():
             while True:
                 population = len(self.sockets)
                 if population:
                     if self.program.victory:
                         await self.change_program(next(program_cycle))
-                    else:
-                        # Send a chat line if we have one.
-                        transcript_lines = lines.read_lines()
-                        for line in await self.program.bot_lines(
-                                population, transcript_lines, self):
-                            self.chat_socket.add_request({'text': line})
-                await asyncio.sleep(period)
-        return asyncio.create_task(p_d())
+                await asyncio.sleep(victory_period)
+        return asyncio.create_task(f())
 
     def _message_to_chunk(self, message):
         return base64.b64decode(message["media"]["payload"])
@@ -152,14 +164,16 @@ class Server:
                 pass
             elif message["event"] == "start":
                 socket.stream_sid = message['streamSid']
-                socket.add_self_speech_request({'text': self.program.intro_text(socket)})
+                socket.add_self_speech_request(
+                    {'text': self.program.intro_text(socket)})
                 request = chat.hello_string()
                 socket.add_speech_request({'text':request})
             elif message["event"] == "media":
                 # This assumes we get messages in order, we should instead
                 # verify the sequence numbers? Or just skip?
                 # message["sequenceNumber"]
-                socket.add_request({'chunk': self._message_to_chunk(message)})
+                socket.add_request(
+                    {'chunk': self._message_to_chunk(message)})
             elif message["event"] == "stop":
                 request = chat.goodbye_string()
                 socket.add_speech_request({'text':request})
