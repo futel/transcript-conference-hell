@@ -120,15 +120,19 @@ class Server:
         """Return a task to periodically check for and say bot lines."""
         async def f():
             while True:
-                population = len(self.sockets)
-                if population:
-                    # Send a chat line if we have one.
-                    util.log('bot line check')
-                    transcript_lines = lines.read_lines()
-                    for line in await self.program.bot_lines(
-                            population, transcript_lines, self):
-                        util.log('sent bot line {}'.format(line))
-                        self.chat_socket.add_request({'text': line})
+                # This try/except should be handled around the task run?
+                try:
+                    population = len(self.sockets)
+                    if population:
+                        # Send a chat line if we have one.
+                        util.log('bot line check')
+                        transcript_lines = lines.read_lines()
+                        for line in await self.program.bot_lines(
+                                population, transcript_lines, self):
+                            util.log('sent bot line {}'.format(line))
+                            self.chat_socket.add_request({'text': line})
+                except Exception as e:
+                    util.log('bot line task exception {}'.format(e))
                 await asyncio.sleep(bot_period)
         return asyncio.create_task(f())
 
