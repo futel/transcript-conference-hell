@@ -29,7 +29,7 @@ class Socket:
         self.websocket = websocket
         self.line = None
         self.stream_sid = None
-        self.line = pipeline.HumanPipeline(socket)
+        self.line = pipeline.HumanPipeline(self)
 
     async def start(self, prog):
         # XXX we have to handle replacing the pipeline to do this
