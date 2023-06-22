@@ -311,7 +311,8 @@ class PoetryAppreciatorProgram(PoetryProgram):
         return []               # Human's turn to talk.
 
 
-programs = [ChatProgram, ArithmeticProgram, PoetryAppreciatorProgram]
+#programs = [ChatProgram, ArithmeticProgram, PoetryAppreciatorProgram]
+programs = [ChatProgram, ArithmeticProgram]
 
 def next_program():
     """Yield programs."""

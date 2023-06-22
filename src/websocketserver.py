@@ -80,7 +80,7 @@ class FakeSocket:
     # re-use this as a label in the transcript.
     stream_sid = chat.chat_label
 
-    def __init__(self, websocket):
+    def __init__(self):
         self.line = pipeline.BotPipeline(self)
 
     async def start(self):
@@ -236,7 +236,7 @@ class Server:
         Set up and run a producer task without a consumer.
         """
         # This isn't really a handler, because there is no consumer
-        # callback. The fake chat_socket recives requests directly from
+        # callback. The fake chat_socket recives requests direassctly from
         # a task.
         socket = FakeSocket()
         await socket.start()
