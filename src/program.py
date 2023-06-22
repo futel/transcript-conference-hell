@@ -53,11 +53,12 @@ class Program:
             l for l in transcript_lines if not hasattr(l, 'silent')]
         try:
             for x in range(self.num_human_lines):
-                t_line = t_lines.pop()
+                t_line = t_lines.pop(0)
                 if hasattr(t_line, 'bot'):
-                    # One of the last two lines are bot lines.
+                    # One of the recent lines are bot lines.
                     return True
         except IndexError:
+            # Not enough lines.
             return True
         return False
 
@@ -192,8 +193,14 @@ class ArithmeticProgram(Program):
         # Has a human spoken the number since the last bot line?
         # If true, say victory.
         # If false, prompt.
-        if self.nag_line(population):
-            return [chat.nag_string()]
+        if self.should_bot_line(transcript_lines):
+            if self.nag_line(population):
+                if random.choice([True, False]):
+                    # Half chance of a chat line.
+                    return [await chat.openai_chat_line(transcript_lines)]
+                # Half again chance of a nag line.
+                if random.choice([True, False]):
+                    return [chat.nag_string()]
         ints = self.recent_ints(transcript_lines)
         if not ints:
             if self.should_bot_line(transcript_lines):

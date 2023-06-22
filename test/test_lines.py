@@ -23,6 +23,11 @@ class TestClient(unittest.IsolatedAsyncioTestCase):
         l = lines.Line("label", "content")
         self.assertEqual(str(lines.line_from_str(str(l))), str(l))
 
+    async def test_line_from_str_bot(self):
+        s = """{"label": "Franz", "content": "We don't have enough people.", "ordinal": null, "bot": true}"""
+        l = lines.line_from_str(s)
+        self.assertTrue(hasattr(l, "bot"))
+
     @mock.patch.object(
         lines, 'util', new_callable=mock.Mock)
     async def test_client_add_request_one(self, mock_util):
