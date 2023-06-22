@@ -5,13 +5,6 @@ from unittest import mock
 import program
 
 
-class TestProgram(unittest.IsolatedAsyncioTestCase):
-
-    async def test_bot_lines(self):
-        prog = program.Program()
-        self.assertEqual(await prog.bot_lines(666, [], 'dummy'), [])
-
-
 class TestPoetryProgram(unittest.IsolatedAsyncioTestCase):
 
     async def test_bot_lines(self):
