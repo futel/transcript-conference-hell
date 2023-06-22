@@ -209,14 +209,14 @@ class ArithmeticProgram(Program):
                 if random.choice([True, False]):
                     # Half chance of a chat line.
                     return [await chat.openai_chat_line(transcript_lines)]
-                # Half again chance of a nag line.
                 if random.choice([True, False]):
+                    # Half again chance of a nag line.
                     return [chat.nag_string()]
             if random.choice([True, False]):
                 # Half chance of a chat line.
                 return [await chat.openai_chat_line(transcript_lines)]
-            # Half again chance of failure notification.
             if random.choice([True, False]):
+                # Half again chance of failure notification.
                 return [chat.arithmetic_fail_string()]
         return []
 
