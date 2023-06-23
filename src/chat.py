@@ -1,5 +1,6 @@
 """Client to output chat transcriptions."""
 
+import itertools
 import asyncio
 import openai
 import random
@@ -11,6 +12,23 @@ import util
 #openai_delay = 0.5
 
 chat_label = "Franz"
+
+prompts = [
+    ('You are writing a script for a play about people who need to know their darkest secrets. '
+     'Complete this dialog by adding a line of dialog, spoken by "{}". '
+     'Add only one line of dialog.').format(chat_label),
+    ('You are writing a script for a play. '
+     'Complete this dialog by adding a line of dialog, spoken by "{}". '
+     'Add only one line of dialog.').format(chat_label),
+    ('You are writing a script for a comedy about insane people who say wild, crazy, and goofy things. '
+     'Complete this dialog by adding a line of dialog, spoken by "{}". '
+     'Add only one line of dialog.').format(chat_label)]
+
+def next_prompt():
+    """Yield programs."""
+    for i in itertools.cycle(prompts):
+        yield i
+
 
 # def generate_messages(transcript_lines):
 #     messages = [
@@ -86,7 +104,7 @@ async def openai_chat_completion(messages):
     response = await openai.ChatCompletion.acreate(
         model="gpt-3.5-turbo",
         messages=messages,
-        temperature=0.6)
+        temperature=0.9)
     if response:
         return response.choices[0]['message']['content']
     return None
@@ -114,14 +132,10 @@ def clean_chat_line(line):
     line = clean_punct_whitespace(line)
     return line
 
-async def openai_chat_line(t_lines):
+async def openai_chat_line(prompt, t_lines):
     """
     Return a string of chat text based on lines and a prompt, or None.
     """
-    prompt = (
-        'You are writing a script for a play about people who need to know their darkest secrets. '
-        'Complete this dialog by adding a line of dialog, spoken by "{}". '
-        'Add only one line of dialog.').format(chat_label)
     messages = [
         {"role": "system",
          "content": prompt}]

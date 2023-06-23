@@ -8,6 +8,8 @@ import util
 # Bot may nag humans if population is fewer than this.
 nag_population = 2
 
+prompt_cycle = chat.next_prompt()
+
 
 class Program:
     """
@@ -20,6 +22,7 @@ class Program:
     def __init__(self):
         util.log('Initializing program {}'.format(
             self.__class__.__name__))
+        self.prompt = next(prompt_cycle)
         self.victory = False
 
     # XXX websocket server needs the line to stay the same
@@ -95,7 +98,7 @@ class ChatProgram(Program):
                     return [chat.nag_string()]
             # We didn't nag, return a chat line.
             util.log('bot returning chat line')
-            chat_line = await chat.openai_chat_line(transcript_lines)
+            chat_line = await chat.openai_chat_line(self.prompt, transcript_lines)
             if chat_line:
                 return [chat_line]
         return []
@@ -210,13 +213,13 @@ class ArithmeticProgram(Program):
             if self.nag_line(population):
                 if random.choice([True, False]):
                     # Half chance of a chat line.
-                    return [await chat.openai_chat_line(transcript_lines)]
+                    return [await chat.openai_chat_line(self.prompt, transcript_lines)]
                 if random.choice([True, False]):
                     # Half again chance of a nag line.
                     return [chat.nag_string()]
             if random.choice([True, False]):
                 # Half chance of a chat line.
-                return [await chat.openai_chat_line(transcript_lines)]
+                return [await chat.openai_chat_line(self.prompt, transcript_lines)]
             if random.choice([True, False]):
                 # Half again chance of failure notification.
                 return [chat.arithmetic_fail_string()]
