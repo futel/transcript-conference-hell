@@ -48,7 +48,7 @@ class Program:
     #     """Return a line from the bot."""
     #     raise NotImplementedError
 
-    def recent_bot_line(self, transcript_lines):
+    def recent_bot_line(self, population, transcript_lines):
         """
         Return True if there aren't yet enough bot lines, or
         the bot has a recent line, in transcript_lines.
@@ -56,7 +56,10 @@ class Program:
         t_lines = [
             l for l in transcript_lines if not hasattr(l, 'silent')]
         try:
-            for x in range(self.num_human_lines):
+            num_lines = self.num_human_lines
+            if population < 2:
+                num_lines = 1
+            for x in range(num_lines):
                 t_line = t_lines.pop()
                 if hasattr(t_line, 'bot'):
                     # One of the recent lines are bot lines.
@@ -66,9 +69,9 @@ class Program:
             return True
         return False
 
-    def should_bot_line(self, transcript_lines):
+    def should_bot_line(self, population, transcript_lines):
         """Return True if the bot should talk."""
-        if self.recent_bot_line(transcript_lines):
+        if self.recent_bot_line(population, transcript_lines):
             return False
         # Half chance of bot line.
         if random.choice([True, False]):
@@ -91,7 +94,7 @@ class ChatProgram(Program):
     Chats with humans.
     """
     async def bot_lines(self, population, transcript_lines, server):
-        if self.should_bot_line(transcript_lines):
+        if self.should_bot_line(population, transcript_lines):
             if self.nag_line(population):
                 # Half chance of nag line.
                 if random.choice([True, False]):
@@ -204,12 +207,12 @@ class ArithmeticProgram(Program):
             if check is True:
                 self.victory = True
                 return [chat.arithmetic_succeed_string()]
-            if self.should_bot_line(transcript_lines):
+            if self.should_bot_line(population, transcript_lines):
                 # Just notify about the last one.
                 return [
                     "{} is not the number I am looking for.".format(
                         check)]
-        if self.should_bot_line(transcript_lines):
+        if self.should_bot_line(population, transcript_lines):
             if self.nag_line(population):
                 if random.choice([True, False]):
                     # Half chance of a chat line.
@@ -297,7 +300,7 @@ class PoetryAppreciatorProgram(PoetryProgram):
     Appreciates poetry when found.
     """
     async def bot_lines(self, population, transcript_lines, server):
-        if self.recent_bot_line(transcript_lines):
+        if self.recent_bot_line(population, transcript_lines):
             return []
         latest_rhyme = await self.latest_rhyme(transcript_lines)
         if self.poem_start is None:

@@ -13,7 +13,7 @@ account_sid = os.environ['TWILIO_ACCOUNT_SID']
 auth_token = os.environ['TWILIO_AUTH_TOKEN']
 
 from_number = '+15032126803'
-to_addresses = [
+to_addresses_extensions = [
     'sip:demo1@futel-conference.sip.twilio.com',
     'sip:demo2@futel-conference.sip.twilio.com',
     'sip:demo3@futel-conference.sip.twilio.com',
@@ -23,9 +23,21 @@ to_addresses = [
     'sip:demo7@futel-conference.sip.twilio.com',
     'sip:demo8@futel-conference.sip.twilio.com',
     'sip:demo9@futel-conference.sip.twilio.com']
-def next_to_address():
-    for i in itertools.cycle(to_addresses):
-        yield i
+
+to_addresses_futel = [
+    '+15039266271',
+    '+15034449412',
+    '+15039266341',
+    '+17345476651',
+    '+13602282259',
+    '+15039266188',
+    '+13132469283',
+    '+15034836584',
+    '+15033889637',
+    '+15039465227',
+    '+15032945966',
+    '+15039288465',
+    '+15034448615']
 
 min_ring = 6
 max_ring = 15
@@ -57,12 +69,16 @@ async def call(to_address):
         print(to_address, call.status)
 
 async def main():
-    cycle = next_to_address()
     tasks = []
+    # Should simultaneously ring futel phones.
     while True:
-        to_address = next(cycle)
+        to_address = random.choice(to_addresses_extensions)
         tasks.append(asyncio.create_task(call(to_address)))
-        wait_secs = random.randint(min_ring+1, max_ring+3)
+        to_address = random.choice(to_addresses_futel)
+        tasks.append(asyncio.create_task(call(to_address)))
+        to_address = random.choice(to_addresses_futel)
+        tasks.append(asyncio.create_task(call(to_address)))
+        wait_secs = random.randint(min_ring+2, max_ring+5)
         await asyncio.sleep(wait_secs)
 
 asyncio.run(main())
