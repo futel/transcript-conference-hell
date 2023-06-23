@@ -8,6 +8,7 @@
 - source env/bin/activate
 - ./itest.py
 - ./test_chat.py
+- ./test_pipeline.py
 - ./test_program.py
 - ./test_server.py
 
