@@ -14,7 +14,14 @@ auth_token = os.environ['TWILIO_AUTH_TOKEN']
 
 from_number = '+15032126803'
 to_addresses = [
-    #'sip:demo8@futel-conference.sip.twilio.com',
+    'sip:demo1@futel-conference.sip.twilio.com',
+    'sip:demo2@futel-conference.sip.twilio.com',
+    'sip:demo3@futel-conference.sip.twilio.com',
+    'sip:demo4@futel-conference.sip.twilio.com',
+    'sip:demo5@futel-conference.sip.twilio.com',
+    'sip:demo6@futel-conference.sip.twilio.com',
+    'sip:demo7@futel-conference.sip.twilio.com',
+    'sip:demo8@futel-conference.sip.twilio.com',
     'sip:demo9@futel-conference.sip.twilio.com']
 def next_to_address():
     for i in itertools.cycle(to_addresses):
