@@ -11,8 +11,6 @@ dotenv.load_dotenv()
 import chat
 import lines
 
-#t_lines = open("lines", 'r').readlines()
-
 poetry_lines = [
     lines.Line("Franz", "Are we ready?"),
     lines.Line("xyzzy", "Let's begin, I will start."),
