@@ -160,3 +160,5 @@ https://github.com/openai/openai-cookbook/blob/main/examples/How_to_format_input
 
 If we use 100 tokens per gpt-3.5-turbo roundtrip, $0.0002/request.
 Estimate 10 requests per minute, $0.002/minute
+
+How to store assets? DO Spaces is $5/mo minimum. Twilio service?

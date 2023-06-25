@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+Call extensions at irregular intervals and connect them to the conference.
+"""
 
 import dotenv
 dotenv.load_dotenv()
