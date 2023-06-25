@@ -1,16 +1,16 @@
 # Unit test
 
 - source env/bin/activate
-- ./test.py
+- test/test.py
 
 # Smoke integration test
 
 - source env/bin/activate
-- ./itest.py
-- ./test_chat.py
-- ./test_pipeline.py
-- ./test_program.py
-- ./test_server.py
+- itest/itest.py
+- itest/test_chat.py
+- itest/test_pipeline.py
+- itest/test_program.py
+- itest/test_server.py
 
 # Smoke deployed integration test
 
