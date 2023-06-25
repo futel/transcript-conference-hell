@@ -11,12 +11,12 @@ import speech
 async def main():
     client = speech.Client()
     await client.start()
-    client.add_request("hello world")
-    client.add_request("goodbye world")
+    client.add_request({'text':"hello world"})
+    client.add_request({'text':"goodbye world"})
     with open("foo", "ab") as f:
         while True:
             response = await client.receive_response()
             print("response")
-            f.write(response)
+            f.write(response['chunk'])
 
 asyncio.run(main())
