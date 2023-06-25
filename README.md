@@ -3,9 +3,14 @@
 Services used:
 
 - DigitalOcean Networking, App Platform
+- Twilio Programmable Voice
 - Twilio Calls API
 - OpenAI API
 - Google transcription API
+
+- SIP clients interact with Twilio Programmable Voice components.
+- Twilio Programmable Voice components connect to a websocket server running on Digital Ocean App Platform.
+- Websocket server interfaces with OpenAI and Google Trascription components.
 
 # Setup
 
