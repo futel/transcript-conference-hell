@@ -48,6 +48,7 @@ Create the app:
 - deployment source futel/transcript-conference-hell repository
 - branch dev
 - autodeploy
+- source directories app
 
 - edit plan to Basic 1 container, $5/mo
 - region San Francisco
