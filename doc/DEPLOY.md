@@ -46,10 +46,11 @@ Create the app:
 - App Platform
 - add access to GitHub repository futel/transcript-conference-hell
 - deployment source futel/transcript-conference-hell repository
+- branch dev
+- autodeploy
 
-  - continue to create the app with the futel/transcript-conference-hell dev branch, autodeploy
-  - edit plan to Basic 1 container, $5/mo
-  - region San Francisco
+- edit plan to Basic 1 container, $5/mo
+- region San Francisco
   
 App setup creates an app with an unexpected name? We probably didn't need to do all of those creation steps above. Anyway, remove it.
 
