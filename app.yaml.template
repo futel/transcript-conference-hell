@@ -1,5 +1,5 @@
 domains:
-- domain: ws.app-dev.phu73l.net
+- domain: ws.conference-hell-dev.phu73l.net
   type: PRIMARY
 ingress:
   rules:

@@ -15,7 +15,7 @@ Services used:
 # Meta-requirements
 
 Domains should be created with DigitalOcean:
-- add conference-hell.phu73l.net
+- conference-hell-dev.phu73l.net
 
 Repo should be on GitHub
 
@@ -23,6 +23,7 @@ Repo should be on GitHub
 
 DigitalOcean GitHub app should be installed
 - https://github.com/apps/digitalocean/
+- add permissions for futel/transcript-conference-hell repository
 
 XXX Twilio? AWS?
 
@@ -30,48 +31,56 @@ XXX Twilio? AWS?
 
 - debian box (trixie, ubuntu 23)
 - Python 3.11-3.12, but this should be Python 3.10
-- XXX
+- doctl
+  - sudo snap install doctl
 
 # Setup
 
 To be done once.
 
-Populate:
+## Create deployment virtualenv
+
+- python3 -m venv venv
+- source venv/bin/activate
+- pip install -r requirements.txt
+
+## Set up doctl
+
+- https://docs.digitalocean.com/products/app-platform/how-to/create-apps
+- create access token
+  - name transcript-conference-hell
+  - no expire
+  - scopes full access XXX?
+  - save in conf
+- grant acccess with token, and use
+  - doctl auth init --context transcript-conference-hell
+  - doctl auth switch --context transcript-conference-hell
+
+## Populate config
+
 - config.yaml based on config.yaml.sample.
 - .env based on .env.sample.
 
-Create the app:
-
-- DigitalOcean Web GUI
-- App Platform
-- add access to GitHub repository futel/transcript-conference-hell
-- deployment source futel/transcript-conference-hell repository
-- branch dev
-- autodeploy
-- source directories app
-
-- edit plan to Basic 1 container, $5/mo
-- region San Francisco
-  
-App setup creates an app with an unexpected name? We probably didn't need to do all of those creation steps above. Anyway, remove it.
-
 # Set up dev instance
+
+App setup creates an app with an unexpected name? We probably didn't need to do all of those creation steps above. Anyway, remove it.
 
 Create the app, note the id.
 
-    ./make_app_yaml.py | doctl --config config.yaml apps create --spec -
+- source venv/bin/activate
+- ./make_app_yaml.py | doctl --config conf/config.yaml apps create --spec -
     
 Get the hostname from the "Default Ingress" field of the app. This may take a while before it is available.
 
-    doctl --config config.yaml apps list <id>
+    doctl --config conf/config.yaml apps list <id>
 
-Add CNAME for ws.app-dev.phu73l.net pointing to the app's hostname in DigitalOcean domain. Wait for the domain status to be resolved in the app settings page (or just wait longer than the TTL) and for the resulting deploy to finish.
+Add CNAME for ws.conference-hell-dev.phu73l.net pointing to the app's hostname in DigitalOcean domain. Wait for the domain status to be resolved in the app settings page (or just wait longer than the TTL) and for the resulting deploy to finish.
 
 # Deploy dev instance
 
 ## Update source
 
-If source has changed, push to transcript-conference-hell dev branch on github.
+If source has changed, push to dev branch of transcript-conference-hell repo.
 
 ## Update config
 
@@ -83,7 +92,7 @@ Get the app ID.
 
 Update config.
 
-    ./make_app_yaml.py | doctl --config config.yaml apps update <id> --spec -
+    ./make_app_yaml.py | doctl --config conf/config.yaml apps update <id> --spec -
 
 # Delete dev instance
 
