@@ -12,27 +12,46 @@ Services used:
 - Twilio Programmable Voice components connect to a websocket server running on Digital Ocean App Platform.
 - Websocket server interfaces with OpenAI and Google Trascription components.
 
+# Meta-requirements
+
+Domains should be created with DigitalOcean:
+- add conference-hell.phu73l.net
+
+Repo should be on GitHub
+
+- futel/transcript-conference-hell
+
+DigitalOcean GitHub app should be installed
+- https://github.com/apps/digitalocean/
+
+XXX Twilio? AWS?
+
+# Requirements
+
+- debian box (trixie, ubuntu 23)
+- Python 3.11-3.12, but this should be Python 3.10
+- XXX
+
 # Setup
 
 To be done once.
 
-- have futel/transcript-conference-hell repo with dev branch on github
-- add app-dev.phu73l.net DigitalOcean domain
-
-Have:
-
-- config.yaml based on config.yaml.sample
+Populate:
+- config.yaml based on config.yaml.sample.
 - .env based on .env.sample.
 
-Set up the app:
+Create the app:
 
-- Install DigitalOcean GitHub app using the web GUI at https://github.com/apps/digitalocean/
-  - give it permissions for the futel/transcript-conference-hell repo
-  - continue to create the an app with the futel/transcript-conference-hell dev branch, autodeploy
+- DigitalOcean Web GUI
+- App Platform
+- add access to GitHub repository futel/transcript-conference-hell
+- deployment source futel/transcript-conference-hell repository
+
+  - continue to create the app with the futel/transcript-conference-hell dev branch, autodeploy
   - edit plan to Basic 1 container, $5/mo
   - region San Francisco
   
-App setup creates an app with an unexpected name? We probably didn't nee dto do all of those creation steps above. Anyway, remove it.
+App setup creates an app with an unexpected name? We probably didn't need to do all of those creation steps above. Anyway, remove it.
 
 # Set up dev instance
 
