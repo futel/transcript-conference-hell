@@ -17,3 +17,17 @@
 Hit the URL on the TwiML page e.g.
 
     wget https://ws.conference-hell-dev.phu73l.net/index.xml
+
+# Manual test
+
+Register SIP client demo1 to conference-hell-dev.sip.twilio.com, interact.
+
+# View logs
+
+Get the app ID.
+
+- doctl --config conf/config.yaml apps list
+
+View logs
+
+- doctl apps logs <id> -f
