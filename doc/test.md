@@ -1,7 +1,7 @@
 # Unit test
 
 - source env/bin/activate
-- test/test.py
+- pytest test
 
 # Smoke integration test
 

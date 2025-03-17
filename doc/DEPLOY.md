@@ -45,7 +45,7 @@ To be done once.
 - python3 -m venv venv
 - source venv/bin/activate
 - pip install -r src/requirements.txt
-- pip install python-dotenv
+- pip install python-dotenv pytest
 
 ## Set up doctl
 
