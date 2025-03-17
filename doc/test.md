@@ -1,10 +1,3 @@
-# Setup
-
-- virtualenv -p python3 env
-- source env/bin/activate
-- pip install -r src/requirements.txt
-- pip install python-dotenv
-
 # Unit test
 
 - source env/bin/activate
@@ -23,4 +16,4 @@
 
 Hit the URL on the TwiML page e.g.
 
-    wget https://ws.app-dev.phu73l.net/index.xml
+    wget https://ws.conference-hell-dev.phu73l.net/index.xml
