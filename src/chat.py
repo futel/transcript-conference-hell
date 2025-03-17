@@ -79,10 +79,11 @@ def openai_retry(f):
     async def wrapper(*args, **kwargs):
         try:
             return await f(*args, **kwargs)
-        except (#openai.error.ServiceUnavailableError,
-                #openai.error.RateLimitError,
-                #openai.error.InvalidRequestError
-                openai.error) as e:
+        except Exception as e:
+            #openai.error.ServiceUnavailableError,
+            #openai.error.RateLimitError,
+            #openai.error.InvalidRequestError
+            #openai.error
             util.log(str(e))
             return None
     return wrapper

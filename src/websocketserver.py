@@ -134,6 +134,7 @@ class Server:
                             self.chat_socket.add_request({'text': line})
                 except Exception as e:
                     util.log('bot line task exception {}'.format(e))
+                    raise       # XXX testing
                 await asyncio.sleep(bot_period)
         return asyncio.create_task(f())
 
