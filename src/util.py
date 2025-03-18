@@ -2,12 +2,9 @@ import datetime
 import os
 
 
-def write_line(s, logname=None):
+def write_line(s, logname):
     """Write a line to a log file."""
-    if not logname:
-        logname = 'foo'
     logfile = '/tmp/' + logname
-    print(s)
     # q&d temporary log file
     with open(logfile, 'a') as f:
         f.write(s)
@@ -15,7 +12,9 @@ def write_line(s, logname=None):
 
 def log(msg, logname=None):
     msg = "{} {}".format(datetime.datetime.now().isoformat(), msg)
-    return write_line(msg, logname)
+    print(msg)
+    if logname:
+        return write_line(msg, logname)
 
 def wav_to_chunk(b):
     """Return wav bytes with header removed."""
