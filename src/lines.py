@@ -12,6 +12,7 @@ def write_line(line):
     """Format and log the line."""
     d = copy.copy(line.__dict__)
     d['timestamp'] = datetime.datetime.now().isoformat()
+    util.log('transcript line {}'.format(str(line)))
     util.write_line(str(line), 'lines')
 
 def read_lines():
@@ -71,13 +72,14 @@ class Client():
         pass
     def add_request(self, request):
         """
-        Extract text from request, write to transcript, and pass to response.
+        Extract text from websocket message, write to transcript,
+        and pass to response.
         """
-        # XXX What is this format?
+        util.log('line.Client request {} {}'.format(
+            self.socket.stream_sid, request))
         text = request['text']
         write_line(Line(self.socket.stream_sid, text, **self.attributes))
         self.recv_queue.put_nowait(text)
     async def receive_response(self):
         """When we receive text, format and return."""
-        # XXX What is this format?
         return {'text': await self.recv_queue.get()}
