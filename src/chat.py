@@ -111,6 +111,7 @@ async def openai_chat_completion(messages):
     return None
 
 def clean_punct_whitespace(l):
+    """Return stripped string with leading punctuation removed."""
     out = l
     while True:
         out = out.strip()
@@ -121,6 +122,7 @@ def clean_punct_whitespace(l):
         l = out
 
 def clean_label(l):
+    """Return string with a leading label removed."""
     try:
         return l[l.index(':')+1:]
     except ValueError:
@@ -143,6 +145,11 @@ async def openai_chat_line(prompt, t_lines):
     for line in t_lines:
         messages.append({"role": "user", "content": line.prompt_str()})
     out = await openai_chat_completion(messages)
+    if not out:
+        util.log(
+            "openai_chat_line returned nothing for messages {}.".format(
+                messages))
+        return None
     return clean_chat_line(out)
 
 async def openai_rhyming_line(t_lines):
@@ -306,4 +313,3 @@ class BotClient():
 
     async def receive_response(self):
         return {'text': await self.recv_queue.get()}
-
