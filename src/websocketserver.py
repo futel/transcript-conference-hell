@@ -49,6 +49,11 @@ class Socket:
         self.line.stop()
 
     def add_request(self, request):
+        """
+        Add audio chunk to my pipeline.
+        The client has sent a media message to the server, and the request
+        contains the chunk.
+        """
         return self.line.add_request({'chunk': request['chunk']})
 
     def add_speech_request(self, request):
@@ -59,6 +64,7 @@ class Socket:
         return self.speech.add_request({'text': request['text']})
 
     def receive_response(self):
+        """Return the response from my pipeline."""
         return self.line.receive_response()
 
     def send(self, chunk):
@@ -193,19 +199,26 @@ class Server:
             if message["event"] == "connected":
                 pass
             elif message["event"] == "start":
+                # New client enter message. Set up socket, send
+                # intro requests.
                 socket.stream_sid = message['streamSid']
+                # Send text to socket to speak to itself.
                 socket.add_self_speech_request(
                     {'text': self.program.intro_text(socket)})
+                # Send text for socket to speak to other clients.
                 request = chat.hello_string()
                 socket.add_speech_request({'text':request})
             elif message["event"] == "media":
+                # Audio chunk from client. Give it to the client's pipeline.
                 # This assumes we get messages in order, we should instead
                 # verify the sequence numbers? Or just skip?
                 # message["sequenceNumber"]
                 socket.add_request(
                     {'chunk': self._message_to_chunk(message)})
             elif message["event"] == "stop":
+                # Client exit message. Send outro request.
                 request = chat.goodbye_string()
+                # Send text for socket to speak to other clients.
                 socket.add_speech_request({'text':request})
                 break
             elif message["event"] == "mark":
