@@ -1,4 +1,7 @@
-#!/usr/bin/env python
+"""
+Websocket server. Instantiate Server, run start, wait for async events and
+tasks.
+"""
 
 import asyncio
 import base64
@@ -76,7 +79,7 @@ class Socket:
 
 class FakeSocket:
     """Object to hold a line and a stream_sid identifier."""
-    # This is not a stream SID. We have no stream. The real sockets
+    # This is not a real stream SID. We have no stream. The real sockets
     # re-use this as a label in the transcript.
     stream_sid = chat.chat_label
 
@@ -97,15 +100,29 @@ class FakeSocket:
 
 
 class Server:
+    """
+    Websocket server. Run start(), then wait for async events and tasks.
+    Holds client sockets.
+    Holds a fake chat socket to send bot chunks to sockets.
+    Holds the program, checks for victory, cycles programs.
+    """
+
     def __init__(self):
-        """Yields media chunks with recieve_media()."""
         self.server = None
         self.sockets = set()
         self.chat_socket = None
+        # Start with an arbitrary program.
         self.program = program.ArithmeticProgram()
 
     async def start(self):
+        """
+        Set up the fake chat socket to receive bot text lines and send chunks to
+        client sockets.
+        Start the task to check for victory conditions.
+        Start the server with our handler method.
+        """
         util.log("websocket server starting")
+
         await self.fake_handler()
         await self.bot_line_task()
         await self.victory_task()
@@ -119,7 +136,10 @@ class Server:
         util.log("websocket server stopped")
 
     async def bot_line_task(self):
-        """Return a task to periodically check for and say bot lines."""
+        """
+        Return a task to periodically check for and send bot text lines to our
+        chat_socket.
+        """
         async def f():
             while True:
                 # This try/except should be handled around the task run?
@@ -140,7 +160,7 @@ class Server:
 
     async def victory_task(self):
         """
-        Return a task to periodically check for and to victory actions.
+        Return a task to periodically check for and do victory actions.
         """
         async def f():
             while True:
@@ -233,14 +253,18 @@ class Server:
 
     async def fake_handler(self):
         """
-        Set up and run a producer task without a consumer.
+        Set up a FakeSocket on our chat_socket attribute, where it can receive
+        bot text lines. Run a producer task for it to send chunks to
+        the client sockets.
         """
         # This isn't really a handler, because there is no consumer
-        # callback. The fake chat_socket recives requests direassctly from
+        # callback. The fake chat_socket recives requests directly from
         # a task.
         socket = FakeSocket()
         await socket.start()
         self.chat_socket = socket
+        # Start the producer task so that when the chat_socket gets text, it
+        # sends chunks to the client sockets.
         # We don't clean this up, we should do that in stop().
         asyncio.create_task(self.producer_handler(socket))
 

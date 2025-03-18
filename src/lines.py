@@ -9,6 +9,7 @@ import json
 import util
 
 def write_line(line):
+    """Format and log the line."""
     d = copy.copy(line.__dict__)
     d['timestamp'] = datetime.datetime.now().isoformat()
     util.write_line(str(line), 'lines')
@@ -55,7 +56,7 @@ class Line():
 
 class Client():
     """
-    Client to write transcript lines using given text,
+    Client to write transcript lines with text given in request,
     and pass text to the response.
     """
     def __init__(self, socket, **attributes):
@@ -69,8 +70,14 @@ class Client():
     def stop(self):
         pass
     def add_request(self, request):
+        """
+        Extract text from request, write to transcript, and pass to response.
+        """
+        # XXX What is this format?
         text = request['text']
         write_line(Line(self.socket.stream_sid, text, **self.attributes))
         self.recv_queue.put_nowait(text)
     async def receive_response(self):
+        """When we receive text, format and return."""
+        # XXX What is this format?
         return {'text': await self.recv_queue.get()}

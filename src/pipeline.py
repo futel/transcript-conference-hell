@@ -9,7 +9,8 @@ import transcription
 class Composer:
     """
     Chains two producer/consumers together to form one
-    producer/consumer"""
+    producer/consumer.
+    """
     # There is surely a pattern for this async generator composer
     # that I just don't know the name of.
 
@@ -34,7 +35,8 @@ class Composer:
 
     async def step_generator(self):
         """
-        Async generator to receive from producer and send to consumer.
+        Async generator to await the receipt of a response from producer
+        and send it as a request to consumer.
         """
         while True:
             self.consumer.add_request(
@@ -106,10 +108,14 @@ class BotPipeline():
     """
     # This container is unnecessary, because we only call the methods
     # which are directly passed to the composer.
-
     def __init__(self, socket):
+        # Interim pipeline, receive text messages, write transcript,
+        # respond with speech chunks.
         self.line_speech_line = Composer(
             lines.Client(socket, bot=True), speech.Client())
+        # Why do we need to compose a new pipeline? Doesn't chat.Client just
+        # pass requests to responses? Is this why this container is
+        # unnecessary?
         self.line = Composer(
             chat.Client(), self.line_speech_line)
 
@@ -124,4 +130,3 @@ class BotPipeline():
 
     def receive_response(self):
         return self.line.receive_response()
-

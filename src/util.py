@@ -3,6 +3,7 @@ import os
 
 
 def write_line(s, logname=None):
+    """Write a line to a log file."""
     if not logname:
         logname = 'foo'
     logfile = '/tmp/' + logname
@@ -40,7 +41,6 @@ def cred_kluge():
     Stuff creds from env into a file, put that filename into an
     env var.
     """
-    log("cred_kluge")
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'google_creds.json'
     with open('google_creds.json', 'w') as f:
         f.write(os.environ['GOOGLE_CREDS_JSON'])
