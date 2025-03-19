@@ -21,8 +21,14 @@ def read_lines():
         return line
     try:
         with open('/tmp/lines', 'r') as f:
-            return [
-                ordinaler(line_from_str(line)) for line in f.readlines()]
+            lines = f.readlines()
+            try:
+                return [
+                    ordinaler(line_from_str(line)) for line in lines]
+            except Exception as e:
+                util.log('read_lines exception {}'.format(e))
+                util.log('read_lines lines {}'.format(lines))
+                return []
     except FileNotFoundError:
         return []
 
