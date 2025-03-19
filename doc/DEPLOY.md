@@ -27,6 +27,8 @@ DigitalOcean GitHub app should be installed
 
 Twilio should be set up as described in twilio.md.
 
+OpenAI should be set up as described in openai.md.
+
 XXX AWS? Metrics/logging?
 
 # Requirements
