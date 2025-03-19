@@ -48,7 +48,11 @@ class Composer:
 
 class HumanPipeline():
     """
-    Container for pipelines.
+    Container for pipelines. Used for input and output of human websocket
+    clients. Requests to be added are chunks of audio that the server recieved
+    from the client. Responses to be sent are chunks of audio from
+    transcription. In between, the audio gets speech to text, is logged, and the
+    text gets text to speech.
     """
 
     def __init__(self, socket):

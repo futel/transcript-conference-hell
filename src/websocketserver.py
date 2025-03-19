@@ -29,10 +29,13 @@ program_cycle = program.next_program()
 
 class Socket:
     def __init__(self, websocket):
+        # Websocket to send and receive messages to/from the client.
         self.websocket = websocket
         self.line = None
+        # Client to send speech directly to myself.
         self.speech = speech.Client()
         self.stream_sid = None
+        # Pipeline to receive my audio chunks and send responses to the server.
         self.line = pipeline.HumanPipeline(self)
 
     async def start(self, prog):
@@ -51,20 +54,30 @@ class Socket:
     def add_request(self, request):
         """
         Add audio chunk to my pipeline.
-        The client has sent a media message to the server, and the request
-        contains the chunk.
+        Called by the server when the client has sent a media message, the
+        request contains the chunk.
         """
         return self.line.add_request({'chunk': request['chunk']})
 
     def add_speech_request(self, request):
+        """
+        Send text directly to the middle of my pipeline as if the pipeline made
+        it from an audio request sent to the beginning.
+        """
         return self.line.line_speech_line.add_request(
             {'text': request['text']})
 
     def add_self_speech_request(self, request):
+        """
+        Send text request to my speech line, to turn into a response to me.
+        """
         return self.speech.add_request({'text': request['text']})
 
     def receive_response(self):
-        """Return the response from my pipeline."""
+        """
+        Get audio chunk from my pipeline. Happens when the audio initially sent
+        by the client has gone through my pipeline and a response is ready.
+        """
         return self.line.receive_response()
 
     def send(self, chunk):
@@ -77,7 +90,7 @@ class Socket:
                  "media": {"payload": payload}}))
 
     async def consumer_handler(self):
-        """Send all responses for my personal speech line to myself."""
+        """Send all responses from my personal speech line to myself."""
         while True:
             response = await self.speech.receive_response()
             await self.send(response['chunk'])
