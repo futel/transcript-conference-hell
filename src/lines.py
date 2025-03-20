@@ -14,31 +14,28 @@ def write_line(line):
     d['timestamp'] = datetime.datetime.now().isoformat()
     util.log(str(line), 'lines')
 
+def get_lines():
+    try:
+        return open('/tmp/lines', 'r').readlines()
+    except FileNotFoundError:
+        return []
+
+def line_from_str(text):
+    (_timestamp, text) = text.split(maxsplit=1)
+    return Line(**json.loads(text))
+
 def read_lines():
     counter = itertools.count()
     def ordinaler(line):
         line.ordinal = next(counter)
         return line
+    lines = get_lines()
     try:
-        with open('/tmp/lines', 'r') as f:
-            lines = f.readlines()
-            try:
-                return [
-                    ordinaler(line_from_str(line)) for line in lines]
-            except Exception as e:
-                util.log('read_lines exception {}'.format(e))
-                util.log('read_lines lines {}'.format(lines))
-                return []
-    except FileNotFoundError:
+        return [ordinaler(line_from_str(line)) for line in lines]
+    except Exception as e:
+        util.log('read_lines exception {}'.format(e))
+        util.log('read_lines lines {}'.format(lines))
         return []
-
-def line_from_str(text):
-    return Line(**json.loads(text))
-    #(label, content) = text.split(':')
-    #label = label.strip()
-    #content = content.strip()
-    #return Line(label, content, ordinal)
-
 
 class Line():
     """A transcript line."""
