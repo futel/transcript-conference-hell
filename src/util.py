@@ -11,6 +11,8 @@ def write_line(s, logname):
         f.write('\n')
 
 def log(msg, logname=None):
+    if logname:
+        msg = "{} {}".format(logname, msg)
     msg = "{} {}".format(datetime.datetime.now().isoformat(), msg)
     print(msg)
     if logname:

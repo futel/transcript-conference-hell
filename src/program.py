@@ -106,6 +106,7 @@ class ChatProgram(Program):
                 return [chat_line]
         return []
 
+
 class ArithmeticProgram(Program):
     intro_string = (
         "Welcome to the arithmetic challenge! "
