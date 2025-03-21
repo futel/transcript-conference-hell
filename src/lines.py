@@ -21,7 +21,6 @@ def get_lines():
         return []
 
 def line_from_str(text):
-    (_timestamp, text) = text.split(maxsplit=1)
     return Line(**json.loads(text))
 
 def read_lines():

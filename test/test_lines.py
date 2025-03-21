@@ -20,14 +20,12 @@ class TestLines(unittest.IsolatedAsyncioTestCase):
 class TestClient(unittest.IsolatedAsyncioTestCase):
 
     async def test_line_from_str(self):
-        timestamp = "2025-03-19T18:36:23.990689"
         ln = lines.Line("label", "content")
         ln = str(ln)
-        l = f"{timestamp} {ln}"
-        self.assertEqual(str(lines.line_from_str(l)), ln)
+        self.assertEqual(str(lines.line_from_str(ln)), ln)
 
     async def test_line_from_str_bot(self):
-        s = """2025-03-19T18:36:23.990689 {"label": "Franz", "content": "We don't have enough people.", "ordinal": null, "bot": true}"""
+        s = """{"label": "Franz", "content": "We don't have enough people.", "ordinal": null, "bot": true}"""
         l = lines.line_from_str(s)
         self.assertTrue(hasattr(l, "bot"))
 

@@ -11,11 +11,13 @@ def write_line(s, logname):
         f.write('\n')
 
 def log(msg, logname=None):
+    log_msg = msg
     if logname:
-        msg = "{} {}".format(logname, msg)
-    msg = "{} {}".format(datetime.datetime.now().isoformat(), msg)
-    print(msg)
+        log_msg = "{} {}".format(logname, log_msg)
+    log_msg = "{} {}".format(datetime.datetime.now().isoformat(), log_msg)
+    print(log_msg)
     if logname:
+        # Also write a line to the given transcript file.
         return write_line(msg, logname)
 
 def wav_to_chunk(b):
