@@ -56,6 +56,10 @@ class HumanPipeline():
     """
 
     def __init__(self, socket):
+        """
+        Set up my line. Receives audio chunk requests, transcribes, turns
+        to speech, sends audio chunk responses.
+        """
         # Line for text to audio chunks which transcribes.
         self.line_speech_line = Composer(
             lines.Client(socket), speech.Client())
@@ -109,6 +113,7 @@ class ReplicantPipeline():
 class BotPipeline():
     """
     Container for a pipeline for string requests and chunk responses.
+    Used by a bot socket to recieve text requests and send speech responses.
     """
     # This container is unnecessary, because we only call the methods
     # which are directly passed to the composer.

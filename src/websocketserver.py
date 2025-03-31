@@ -54,7 +54,7 @@ class Socket:
     def add_request(self, request):
         """
         Add audio chunk to my pipeline.
-        Called by the server when the client has sent a media message, the
+        Called by the server when this client has sent a media message, the
         request contains the chunk.
         """
         return self.line.add_request({'chunk': request['chunk']})
@@ -81,7 +81,9 @@ class Socket:
         return self.line.receive_response()
 
     def send(self, chunk):
-        """Send chunk to websocket in a media message."""
+        """
+        Send chunk to websocket in a media message, to be played for the client.
+        """
         payload = base64.b64encode(chunk).decode()
         return self.websocket.send(
             json.dumps(
@@ -97,7 +99,10 @@ class Socket:
 
 
 class FakeSocket:
-    """Object to hold a line and a stream_sid identifier."""
+    """
+    Holds a BotPipeline to receive bot chat lines, and a stream_sid identifier.
+    Send chat to this for bot speech responses that can be sent to sockets.
+    """
     # This is not a real stream SID. We have no stream. The real sockets
     # re-use this as a label in the transcript.
     stream_sid = chat.chat_label
@@ -142,9 +147,13 @@ class Server:
         """
         util.log("websocket server starting")
 
+        # Set up the fake bot socket to send speech.
         await self.fake_handler()
+        # Set up the task to send periodic text lines to the fake bot socket.
         await self.bot_line_task()
+        # Set up the taks to check for and respond to victory conditions.
         await self.victory_task()
+        # We are ready, start the server by declaring the handler.
         self.server = await websockets.serve(self.handler, port=port)
         util.log("websocket server started")
 
@@ -158,7 +167,7 @@ class Server:
         """
         Return a task to periodically check for and send bot text lines to our
         chat_socket.
-        """
+       """
         async def f():
             while True:
                 # This try/except should be handled around the task run?
@@ -240,7 +249,7 @@ class Server:
 
     async def producer_handler(self, socket):
         """
-        Iterate over messages from socket's line, and send them to
+        Iterate over messages received from socket's line, and send them to
         the other websockets.
         """
         while True:
@@ -255,8 +264,8 @@ class Server:
 
     async def handler(self, websocket):
         """
-        Set up, run, and tear down consumer and producer tasks
-        for this websocket connection.
+        Set up, run, then tear down consumer and producer tasks
+        for this websocket connection. Called when a new connection opens.
         """
         util.log("websocket connection opened")
         socket = Socket(websocket)
@@ -275,12 +284,13 @@ class Server:
         population = len(self.sockets)
         util.log("websocket connections: {}".format(population))
         if not population:
+            # Nobody is connected, change the program.
             await self.change_program(next(program_cycle))
 
     async def fake_handler(self):
         """
         Set up a FakeSocket on our chat_socket attribute, where it can receive
-        bot text lines. Run a producer task for it to send chunks to
+        bot text lines. Run a producer task for it to send speech chunks to
         the client sockets.
         """
         # This isn't really a handler, because there is no consumer
