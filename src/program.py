@@ -231,94 +231,94 @@ class ArithmeticProgram(Program):
         return []
 
 
-class ReplicantProgram(ChatProgram):
+# class ReplicantProgram(ChatProgram):
 
-    def get_pipeline(self, socket):
-        """
-        Return a pipeline for chunk requests and responses,
-        for human clients.
-        """
-        return pipeline.ReplicantPipeline(socket)
-
-
-class PoetryProgram(Program):
-    """
-    Recites poetry with humans.
-    """
-    intro_string = (
-        "Welcome to the realm of electronic poetry appreciators, human! "
-        "Great rewards await those who can recite poetry to the machine.")
-
-    def __init__(self):
-        super().__init__()
-        self.poem_start = None
-
-    async def latest_rhyme(self, t_lines):
-        """
-        Return the most recent consecutive rhyming lines, or None
-        """
-        # There is also the pronouncing library and NLTK for this.
-        #max_count = 3
-        t_lines = reversed(t_lines)
-        counter = itertools.count()
-        try:
-            previous = next(t_lines)
-            this = next(t_lines)
-            count = next(counter)
-            while True: #count < max_count:
-                if await chat.rhyme_detector(
-                        chat.last_word(this.content),
-                        chat.last_word(previous.content)):
-                    return (this, previous)
-                previous = this
-                this = next(t_lines)
-                count = next(counter)
-        except StopIteration:
-            return None
-
-    async def bot_lines(self, population, t_lines, server):
-        latest_rhyme = await self.latest_rhyme(t_lines)
-        if self.poem_start is None:
-            if latest_rhyme is None:
-                if len(t_lines) >= 2:
-                    return [chat.poetry_fail_string()]
-                return []       # Give the human time.
-            self.poem_start = latest_rhyme[0].ordinal
-            return []           # Human's turn to talk.
-        # XXX We should have detected a rhyme, since we did earlier.
-        #     But we might need to try again, because chatgpt.
-        if latest_rhyme[1].ordinal < len(t_lines) - 2:
-            # There have been no rhymes for 2 lines.
-            out = [chat.poetry_succeed_string()]
-            out.extend(t_lines[self.poem_start:latest_rhyme[1].ordinal+1])
-            return out
-        if random.choice([True, False]): # Half chance of bot line.
-            return [await chat.openai_rhyming_line(t_lines)]
-        return []               # Human's turn to talk.
+#     def get_pipeline(self, socket):
+#         """
+#         Return a pipeline for chunk requests and responses,
+#         for human clients.
+#         """
+#         return pipeline.ReplicantPipeline(socket)
 
 
-class PoetryAppreciatorProgram(PoetryProgram):
-    """
-    Appreciates poetry when found.
-    """
-    async def bot_lines(self, population, transcript_lines, server):
-        if self.recent_bot_line(population, transcript_lines):
-            return []
-        latest_rhyme = await self.latest_rhyme(transcript_lines)
-        if self.poem_start is None:
-            if latest_rhyme is not None:
-                self.poem_start = latest_rhyme[0].ordinal
-                return []           # Human's turn to talk.
-        # XXX We should have detected a rhyme, since we did earlier.
-        #     But we might need to try again, because chatgpt.
-        if latest_rhyme[1].ordinal < len(transcript_lines) - 2:
-            # There have been no rhymes for 2 lines.
-            out = [chat.poetry_succeed_string()]
-            out.extend(
-                transcript_lines[
-                    self.poem_start:latest_rhyme[1].ordinal+1])
-            return out
-        return []               # Human's turn to talk.
+# class PoetryProgram(Program):
+#     """
+#     Recites poetry with humans.
+#     """
+#     intro_string = (
+#         "Welcome to the realm of electronic poetry appreciators, human! "
+#         "Great rewards await those who can recite poetry to the machine.")
+
+#     def __init__(self):
+#         super().__init__()
+#         self.poem_start = None
+
+#     async def latest_rhyme(self, t_lines):
+#         """
+#         Return the most recent consecutive rhyming lines, or None
+#         """
+#         # There is also the pronouncing library and NLTK for this.
+#         #max_count = 3
+#         t_lines = reversed(t_lines)
+#         counter = itertools.count()
+#         try:
+#             previous = next(t_lines)
+#             this = next(t_lines)
+#             count = next(counter)
+#             while True: #count < max_count:
+#                 if await chat.rhyme_detector(
+#                         chat.last_word(this.content),
+#                         chat.last_word(previous.content)):
+#                     return (this, previous)
+#                 previous = this
+#                 this = next(t_lines)
+#                 count = next(counter)
+#         except StopIteration:
+#             return None
+
+#     async def bot_lines(self, population, t_lines, server):
+#         latest_rhyme = await self.latest_rhyme(t_lines)
+#         if self.poem_start is None:
+#             if latest_rhyme is None:
+#                 if len(t_lines) >= 2:
+#                     return [chat.poetry_fail_string()]
+#                 return []       # Give the human time.
+#             self.poem_start = latest_rhyme[0].ordinal
+#             return []           # Human's turn to talk.
+#         # XXX We should have detected a rhyme, since we did earlier.
+#         #     But we might need to try again, because chatgpt.
+#         if latest_rhyme[1].ordinal < len(t_lines) - 2:
+#             # There have been no rhymes for 2 lines.
+#             out = [chat.poetry_succeed_string()]
+#             out.extend(t_lines[self.poem_start:latest_rhyme[1].ordinal+1])
+#             return out
+#         if random.choice([True, False]): # Half chance of bot line.
+#             return [await chat.openai_rhyming_line(t_lines)]
+#         return []               # Human's turn to talk.
+
+
+# class PoetryAppreciatorProgram(PoetryProgram):
+#     """
+#     Appreciates poetry when found.
+#     """
+#     async def bot_lines(self, population, transcript_lines, server):
+#         if self.recent_bot_line(population, transcript_lines):
+#             return []
+#         latest_rhyme = await self.latest_rhyme(transcript_lines)
+#         if self.poem_start is None:
+#             if latest_rhyme is not None:
+#                 self.poem_start = latest_rhyme[0].ordinal
+#                 return []           # Human's turn to talk.
+#         # XXX We should have detected a rhyme, since we did earlier.
+#         #     But we might need to try again, because chatgpt.
+#         if latest_rhyme[1].ordinal < len(transcript_lines) - 2:
+#             # There have been no rhymes for 2 lines.
+#             out = [chat.poetry_succeed_string()]
+#             out.extend(
+#                 transcript_lines[
+#                     self.poem_start:latest_rhyme[1].ordinal+1])
+#             return out
+#         return []               # Human's turn to talk.
 
 
 #programs = [ChatProgram, ArithmeticProgram, PoetryAppreciatorProgram]
