@@ -101,7 +101,8 @@ class ChatProgram(Program):
                     return [chat.nag_string()]
             # We didn't nag, return a chat line.
             #util.log('bot returning chat line')
-            chat_line = await chat.openai_chat_line(self.prompt, transcript_lines)
+            chat_line = await chat.openai_chat_line(
+                self.prompt, transcript_lines)
             if chat_line:
                 return [chat_line]
         return []

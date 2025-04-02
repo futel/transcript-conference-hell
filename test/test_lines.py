@@ -15,7 +15,12 @@ class TestLines(unittest.IsolatedAsyncioTestCase):
         line = lines.Line("label", "content", foo="foo")
         self.assertEqual(
             str(line),
-            '{"label": "label", "content": "content", "ordinal": null, "foo": "foo"}')
+            '{"label": "label", "content": "content", "ordinal": null, '
+            '"foo": "foo"}')
+    async def test__name(self):
+        line = lines.Line("label", "content")
+        self.assertEqual(line._name(), 'Matthew')
+
 
 class TestClient(unittest.IsolatedAsyncioTestCase):
 

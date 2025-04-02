@@ -36,6 +36,7 @@ def read_lines():
         util.log('read_lines lines {}'.format(lines))
         return []
 
+
 class Line():
     """A transcript line."""
     def __init__(self, label, content, ordinal=None, **attributes):
@@ -51,9 +52,26 @@ class Line():
     def __str__(self):
         return self.__repr__()
 
+    def _name(self):
+        """Return a consistent human name from my label."""
+        names = [
+            'Abigail', 'Alice', 'Beatrice', 'Bob', 'Catherine', 'Charlie',
+            'David',
+            'Dorothy', 'Eleanor', 'Eve', 'Fiona', 'Frank', 'George', 'Gloria',
+            'Hannah', 'Harry', 'Irene', 'Isabella', 'Jack', 'James', 'Jane',
+            'Jill',
+            'Joan', 'John', 'Joseph', 'Jude', 'Julia', 'Karen', 'Katherine',
+            'Larry', 'Lillian', 'Luke', 'Margaret', 'Mark', 'Martha', 'Mary',
+            'Matthew', 'Molly', 'Nancy', 'Natalie', 'Olivia', 'Oscar', 'Paul',
+            'Peggy', 'Penelope', 'Peter', 'Quincy', 'Quinn', 'Ralph', 'Rebecca',
+            'Sally', 'Sarah', 'Simon', 'Tiffany', 'Tom', 'Ursula',
+            'Vicki', 'Victoria', 'Walter', 'Wendy', 'Xanthe', 'Xavier', 'Xena',
+            'Xenia', 'Yolanda', 'Yvonne', 'Zach', 'Zara']
+        return names[sum(ord(c) for c in self.label) % len(names)]
+
     def prompt_str(self):
         """Return a string suitable for a chat prompt."""
-        return '{}: {}'.format(self.label, self.content)
+        return '{}: {}'.format(self._name, self.content)
 
 
 class Client():
