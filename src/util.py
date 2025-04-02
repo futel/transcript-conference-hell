@@ -10,7 +10,7 @@ def write_line(s, logname):
         f.write(s)
         f.write('\n')
 
-def clear_lines(s, logname):
+def clear_lines():
     """Clear log file."""
     logfile = '/tmp/' + 'lines'
     open(logfile, 'w').close()
