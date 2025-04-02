@@ -88,26 +88,29 @@ def openai_retry(f):
             return None
     return wrapper
 
-@openai_retry
-async def openai_completion(prompt):
-    # Completion only allows the davinci model? Are there others?
-    response = await openai.Completion.acreate(
-        model="text-davinci-003",
-        prompt=prompt,
-        temperature=0.6)
-    if response:
-        return response.choices[0].text
-    return None
+# @openai_retry
+# async def openai_completion(prompt):
+#     # Completion only allows the davinci model? Are there others?
+#     response = await openai.Completion.acreate(
+#         model="text-davinci-003",
+#         prompt=prompt,
+#         temperature=0.6)
+#     if response:
+#         return response.choices[0].text
+#     return None
 
 @openai_retry
 async def openai_chat_completion(messages):
     # ChatCompletion allows "gpt-4" "gpt-3.5-turbo" "text-davinci-003"?
+    util.log("openai_chat_completion messages: {}".format(messages))
     response = await openai.ChatCompletion.acreate(
         model="gpt-3.5-turbo",
         messages=messages,
         temperature=0.9)
     if response:
-        return response.choices[0]['message']['content']
+        response = response.choices[0]['message']['content']
+        util.log("openai_chat_completion response: {}".format(response))
+        return response
     return None
 
 def clean_punct_whitespace(l):

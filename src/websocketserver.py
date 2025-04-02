@@ -167,14 +167,14 @@ class Server:
         """
         Return a task to periodically check for and send bot text lines to our
         chat_socket.
-       """
+        """
         async def f():
             while True:
                 # This try/except should be handled around the task run?
                 try:
                     population = len(self.sockets)
                     if population:
-                        # Send a chat line if we have one.
+                        # If the program has lines to send, send them.
                         transcript_lines = lines.read_lines()
                         for line in await self.program.bot_lines(
                                 population, transcript_lines, self):
