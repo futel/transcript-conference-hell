@@ -20,11 +20,11 @@ class TestLines(unittest.IsolatedAsyncioTestCase):
 
     async def test_prompt_str(self):
         line = lines.Line("label", "content")
-        self.assertEqual(line.prompt_str(), 'Matthew: content')
+        self.assertEqual(line.prompt_str(), 'Katherine: content')
 
     async def test__name(self):
         line = lines.Line("label", "content")
-        self.assertEqual(line._name(), 'Matthew')
+        self.assertEqual(line._name(), 'Katherine')
 
 
 class TestClient(unittest.IsolatedAsyncioTestCase):

@@ -57,7 +57,8 @@ class Line():
         names = [
             'Abigail', 'Alice', 'Beatrice', 'Bob', 'Catherine', 'Charlie',
             'David',
-            'Dorothy', 'Eleanor', 'Eve', 'Fiona', 'Frank', 'George', 'Gloria',
+            'Dorothy', 'Eleanor', 'Eve', 'Fiona', 'Frank', 'Franz',
+            'George', 'Gloria',
             'Hannah', 'Harry', 'Irene', 'Isabella', 'Jack', 'James', 'Jane',
             'Jill',
             'Joan', 'John', 'Joseph', 'Jude', 'Julia', 'Karen', 'Katherine',
@@ -67,6 +68,8 @@ class Line():
             'Sally', 'Sarah', 'Simon', 'Tiffany', 'Tom', 'Ursula',
             'Vicki', 'Victoria', 'Walter', 'Wendy', 'Xanthe', 'Xavier', 'Xena',
             'Xenia', 'Yolanda', 'Yvonne', 'Zach', 'Zara']
+        if self.label in names:
+            return self.label
         return names[sum(ord(c) for c in self.label) % len(names)]
 
     def prompt_str(self):
