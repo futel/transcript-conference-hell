@@ -13,8 +13,11 @@ def write_line(s, logname):
 def log(msg, logname=None):
     log_msg = msg
     if logname:
-        log_msg = "{} {}".format(logname, log_msg)
-    log_msg = "{} {}".format(datetime.datetime.now().isoformat(), log_msg)
+        msg_name = logname
+    else:
+        msg_name = 'log'
+    log_msg = "{} {} {}".format(
+        datetime.datetime.now().isoformat(), msg_name, log_msg)
     print(log_msg)
     if logname:
         # Also write a line to the given transcript file.
