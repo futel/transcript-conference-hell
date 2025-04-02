@@ -71,7 +71,7 @@ class Line():
 
     def prompt_str(self):
         """Return a string suitable for a chat prompt."""
-        return '{}: {}'.format(self._name, self.content)
+        return '{}: {}'.format(self._name(), self.content)
 
 
 class Client():

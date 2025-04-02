@@ -17,6 +17,11 @@ class TestLines(unittest.IsolatedAsyncioTestCase):
             str(line),
             '{"label": "label", "content": "content", "ordinal": null, '
             '"foo": "foo"}')
+
+    async def test_prompt_str(self):
+        line = lines.Line("label", "content")
+        self.assertEqual(line.prompt_str(), 'Matthew: content')
+
     async def test__name(self):
         line = lines.Line("label", "content")
         self.assertEqual(line._name(), 'Matthew')
