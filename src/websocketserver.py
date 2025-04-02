@@ -178,7 +178,7 @@ class Server:
                         transcript_lines = lines.read_lines()
                         for line in await self.program.bot_lines(
                                 population, transcript_lines, self):
-                            util.log('sent bot line {}'.format(line))
+                            #util.log('sent bot line {}'.format(line))
                             self.chat_socket.add_request({'text': line})
                 except Exception as e:
                     util.log('bot line task exception {}'.format(e))
@@ -258,8 +258,8 @@ class Server:
             for s in self.sockets:
                 if s != socket:
                     await s.send(chunk)
-                    util.log("sent chunk from {} to {}".format(
-                        socket.stream_sid, s.stream_sid))
+                    #util.log("sent chunk from {} to {}".format(
+                    #    socket.stream_sid, s.stream_sid))
             # We could do the bot response here instead of periodically.
 
     async def handler(self, websocket):
