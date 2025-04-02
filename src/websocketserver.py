@@ -306,6 +306,9 @@ class Server:
 
     async def change_program(self, prog_class):
         """Replace program, and all pipelines with appropriate ones."""
+        util.log("changing program to {}".format(prog_class))
+        util.log("lines: {}".format(lines.read_lines())
+        util.clear_lines()
         self.program = prog_class()
         self.chat_socket.stop()
         await self.chat_socket.start()
