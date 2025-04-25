@@ -1,5 +1,8 @@
+import boto3
 import datetime
 import os
+
+transcript_bucket_name = 'transcript-conference-hell'
 
 
 def write_line(s, logname):
@@ -12,7 +15,8 @@ def write_line(s, logname):
 
 def clear_lines():
     """Clear log file."""
-    logfile = '/tmp/' + 'lines'
+    logname = 'lines'
+    logfile = '/tmp/' + logname
     open(logfile, 'w').close()
 
 def log(msg, logname=None):
@@ -55,3 +59,20 @@ def cred_kluge():
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'google_creds.json'
     with open('google_creds.json', 'w') as f:
         f.write(os.environ['GOOGLE_CREDS_JSON'])
+
+def _s3_transcript_key():
+    """ Return a unique s3 key name. """
+    return "transcript_{}".format(datetime.datetime.now().isoformat())
+
+def write_lines_s3():
+    """Write the transcript file to an S3 bucket."""
+    # Get S3 resource with creds in env.
+    #s3 = boto3.resource('s3')
+    s3_client = boto3.client('s3')
+    key_name = _s3_transcript_key()
+    log_file_name = 'lines'
+    log_file_path = '/tmp/' + log_file_name
+    s3_client.upload_file(log_file_path, transcript_bucket_name, key_name)
+    #s3.Bucket(BUCKET).upload_file(logfile, key_name)
+    #s3.Bucket(bucket_name).put_object(Key=key_name, Body=data)
+    print('Wrote transcript to {}'.format(key_name))

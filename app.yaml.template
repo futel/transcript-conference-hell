@@ -40,6 +40,12 @@ services:
   - key: GOOGLE_CREDS_JSON
     scope: RUN_AND_BUILD_TIME
     value: '{GOOGLE_CREDS_JSON}'
+  - key: AWS_ACCESS_KEY_ID
+    scope: RUN_AND_BUILD_TIME
+    value: '{AWS_ACCESS_KEY_ID}'
+  - key: AWS_SECRET_ACCESS_KEY
+    scope: RUN_AND_BUILD_TIME
+    value: '{AWS_SECRET_ACCESS_KEY}'
   - key: OPENAI_API_KEY
     scope: RUN_AND_BUILD_TIME
     value: '{OPENAI_API_KEY}'

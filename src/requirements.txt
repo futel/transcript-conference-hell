@@ -1,4 +1,4 @@
-anthropic
+boto3
 google-cloud-speech==2.19.0
 google-cloud-texttospeech==2.14.1
 openai==0.27.8

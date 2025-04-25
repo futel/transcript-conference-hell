@@ -2,6 +2,7 @@
 
 Services used:
 
+- Amazon AWS S3
 - DigitalOcean Networking, App Platform
 - Twilio Programmable Voice
 - Twilio Calls API
@@ -24,6 +25,8 @@ Repo should be on GitHub
 DigitalOcean GitHub app should be installed
 - https://github.com/apps/digitalocean/
 - add permissions for futel/transcript-conference-hell repository
+
+AWS should be set up as described in aws.md.
 
 Twilio should be set up as described in twilio.md.
 

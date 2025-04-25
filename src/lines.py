@@ -10,9 +10,10 @@ import util
 
 def write_line(line):
     """Format and log the line."""
+    logfile = 'lines'
     d = copy.copy(line.__dict__)
     d['timestamp'] = datetime.datetime.now().isoformat()
-    util.log(str(line), 'lines')
+    util.log(str(line), logfile)
 
 def get_lines():
     try:

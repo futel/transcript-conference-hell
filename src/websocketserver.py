@@ -308,11 +308,15 @@ class Server:
         """Replace program, and all pipelines with appropriate ones."""
         util.log("changing program to {}".format(prog_class))
         util.log("lines: {}".format(lines.read_lines()))
+        # Send transcript logfile to s3, then clear it.
+        util.write_lines_s3()
         util.clear_lines()
+        # Change the program.
         self.program = prog_class()
         self.chat_socket.stop()
         await self.chat_socket.start()
         succeed_str = chat.general_succeed_string()
+        # Send speech to all clients to say we are changing programs.
         for socket in self.sockets:
             socket.stop()
             await socket.start(self.program)
