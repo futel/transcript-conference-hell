@@ -15,6 +15,9 @@ Create AWS user
  - user groups s3-writers
    - this has s3-get-put-delete, s3 list-bucket-content
 
+Update .env with the attributes of the user:
+- AWS_ACCESS_KEY_ID
+- AWS_SECRET_ACCESS_KEY
 
 XXX
 
@@ -28,15 +31,19 @@ groups:
 
 ## Create transcript-conference-hell S3 bucket
 
-XXX with the web console?
+Use the S3 web console.
 
-XXX principal, what else?
-
+type: general purpose
 name: transcript-conference-hell
 aws region: us-west-2
 object ownership: acls disabled
-block public access settings: allow all
-bucket policy:
+block public access settings: block all public access off
+
+XXX I edited this in the console, not accurate anymore?
+
+Update permissions and add a bucket policy. Use the ARN of the created transcript-conference-hell user.
+
+```
 {
 	"Version": "2012-10-17",
 	"Statement": [
@@ -63,3 +70,4 @@ bucket policy:
 		}
 	]
 }
+```
