@@ -17,7 +17,7 @@ class Program:
     pipelines for bots and humans.
     """
     intro_string = "Welcome to transcription hell, human!"
-    num_human_lines = 3         # Human lines before bot talks.
+    num_human_lines = 1         # Human lines before bot talks.
 
     def __init__(self):
         util.log('Initializing program {}'.format(
@@ -73,10 +73,8 @@ class Program:
         """Return True if the bot should talk."""
         if self.recent_bot_line(population, transcript_lines):
             return False
-        # Half chance of bot line.
-        if random.choice([True, False]):
-            return True
-        return False
+        # Two thirds chance of bot line.
+        return random.choice([True, True, False])
 
     # async def bot_lines(self, population, transcript_lines, server):
     #     """

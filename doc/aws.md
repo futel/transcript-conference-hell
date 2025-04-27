@@ -39,8 +39,6 @@ aws region: us-west-2
 object ownership: acls disabled
 block public access settings: block all public access off
 
-XXX I edited this in the console, not accurate anymore?
-
 Update permissions and add a bucket policy. Use the ARN of the created transcript-conference-hell user.
 
 ```
@@ -66,7 +64,10 @@ Update permissions and add a bucket policy. Use the ARN of the created transcrip
 				"AWS": "*"
 			},
 			"Action": "s3:GetObject",
-			"Resource": "arn:aws:s3:::transcript-conference-hell/*"
+			"Resource": [
+                 "arn:aws:s3:::transcript-conference-hell/*",
+                 "arn:aws:s3:::transcript-conference-hell"
+            ]
 		}
 	]
 }
