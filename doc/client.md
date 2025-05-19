@@ -1,35 +1,22 @@
+# SIP client setup
+
+# Requirements
+
+## Set up SIP client on Twilio
+
+SIP client should be set up as listed in twilio.md.
+
+# Set up Polycom SoundPoint IP 501
+
+See client.md on twilio-sip-server.
+
 # Set up Grandstream HT701
 
-basic settings
-telnet server: no
-
-advanced settings
-admin password:
-firmware server path: blank
-config server path: blank
-automatic upgrade: no
-always skip the firmware check: selected
-
-fxs port
-account active: yes
-primary sip server: futel-conference.sip.twilio.com
-nat traversal: keep-alive
-sip user id: <extension>
-authenticate id: <extension>
-authenticate password: <password>
-sip registration: yes
-unregister on reboot: no
-outgoing call without registration: yes
-Disable Call-Waiting: yes
-Disable Call-Waiting Caller ID: yes
-Disable Call-Waiting Tone: yes
-Use # As Dial Key: no
-Offhook Auto-Dial: 1
-Offhook Auto-Dial Delay: 0
-Hook Flash Timing: minimum: 500 maximum: 500
- 
+See client.md on twilio-sip-server.
 
 # Test
+
+XXX update
 
 # Setup
 
