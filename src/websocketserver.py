@@ -31,7 +31,6 @@ class Socket:
     def __init__(self, websocket):
         # Websocket to send and receive messages to/from the client.
         self.websocket = websocket
-        self.line = None
         # Client to send speech directly to myself.
         self.speech = speech.Client()
         self.stream_sid = None
@@ -135,6 +134,7 @@ class Server:
         self.server = None
         self.sockets = set()
         self.chat_socket = None
+        self.latest_stream_sid = None
         # Start with an arbitrary program.
         self.program = program.ArithmeticProgram()
 
@@ -218,9 +218,11 @@ class Server:
         util.log("websocket connection opened")
         async for message in socket.websocket:
             message = json.loads(message)
-            if message["event"] == "connected":
-                pass
-            elif message["event"] == "start":
+            # if message["event"] == "connected":
+            #     pass
+            # elif message["event"] == "mark":
+            #     pass
+            if message["event"] == "start":
                 # New client enter message. Set up socket, send
                 # intro requests.
                 socket.stream_sid = message['streamSid']
@@ -243,17 +245,22 @@ class Server:
                 # Send text for socket to speak to other clients.
                 socket.add_speech_request({'text':request})
                 break
-            elif message["event"] == "mark":
-                pass
+            elif message["event"] == "dtmf":
+                # dtmf.digit
+                util.log('dtmf message {}'.format(message))
+                util.log('latest_stream_sid {}'.format(self.latest_stream_sid))
         util.log("websocket connection closed")
 
     async def producer_handler(self, socket):
         """
-        Iterate over messages received from socket's line, and send them to
-        the other websockets.
+        Iterate over messages received from socket's line, and send their chunks
+        to the other websockets.
         """
         while True:
             chunk = await socket.receive_response()
+            # The socket is now the most recent which has sent audio.
+            self.latest_stream_sid = socket.stream_sid
+            # We assume that every message has a chunk.
             chunk = chunk['chunk']
             for s in self.sockets:
                 if s != socket:

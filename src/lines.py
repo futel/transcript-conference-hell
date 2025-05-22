@@ -99,7 +99,7 @@ class Client():
         and pass to response.
         """
         text = request['text']
-        # This is where we log the trasncript of all text which turns to speech,
+        # This is where we log the transcript of all text which turns to speech,
         # whether transcribed from human speech or from a line sent to a bot.
         write_line(Line(self.socket.stream_sid, text, **self.attributes))
         self.recv_queue.put_nowait(text)
