@@ -58,7 +58,7 @@ class Line():
         names = [
             'Abigail', 'Alice', 'Beatrice', 'Bob', 'Catherine', 'Charlie',
             'David',
-            'Dorothy', 'Eleanor', 'Eve', 'Fiona', 'Frank', 'Franz',
+            'Dorothy', 'Eleanor', 'Eve', 'Fiona', 'Frank',
             'George', 'Gloria',
             'Hannah', 'Harry', 'Irene', 'Isabella', 'Jack', 'James', 'Jane',
             'Jill',
