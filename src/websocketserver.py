@@ -246,8 +246,7 @@ class Server:
                 socket.add_speech_request({'text':request})
                 break
             elif message["event"] == "dtmf":
-                # dtmf.digit
-                util.log('dtmf message {}'.format(message))
+                util.log('dtmf message {}'.format(message['dtmf']['digit']))
                 util.log('latest_stream_sid {}'.format(self.latest_stream_sid))
         util.log("websocket connection closed")
 
