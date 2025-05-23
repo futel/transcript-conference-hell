@@ -120,10 +120,9 @@ class ArithmeticProgram(Program):
 
     def word_to_integer(self, w):
         """Return the integer corresponding to w, or None."""
-        # This doesn't include integers above ten, to do so,
-        # we need to do arithmetic.
         if w.isdigit():
             return int(w)
+        # This might not be necessary in practice, and we get false positives.
         word_integer = {
             'zero': 0,
             'one': 1,
