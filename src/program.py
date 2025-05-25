@@ -25,14 +25,6 @@ class Program:
         self.prompt = next(prompt_cycle)
         self.victory = False
 
-    # XXX websocket server needs the line to stay the same
-    # def get_pipeline(self, socket):
-    #     """
-    #     Return a pipeline for chunk requests and responses,
-    #     for human clients.
-    #     """
-    #     return pipeline.HumanPipeline(socket)
-
     def intro_text(self, socket):
         return self.intro_string
 
@@ -92,6 +84,7 @@ class ChatProgram(Program):
     Chats with humans.
     """
     async def bot_lines(self, population, transcript_lines, server):
+        """Possibly return a string for the bot to say."""
         if self.should_bot_line(population, transcript_lines):
             if self.nag_line(population):
                 # Half chance of nag line.
@@ -194,7 +187,9 @@ class ArithmeticProgram(Program):
         return [i for i in ints if i is not None]
 
     async def bot_lines(self, population, transcript_lines, server):
-        """Return a line from the bot."""
+        """
+        Check and set victory or possibly return a string for the bot to say.
+        """
         # Has a human spoken the number since the last bot line?
         # If true, say victory.
         # If false, prompt.
@@ -226,16 +221,6 @@ class ArithmeticProgram(Program):
                 # Half again chance of failure notification.
                 return [chat.arithmetic_fail_string()]
         return []
-
-
-# class ReplicantProgram(ChatProgram):
-
-#     def get_pipeline(self, socket):
-#         """
-#         Return a pipeline for chunk requests and responses,
-#         for human clients.
-#         """
-#         return pipeline.ReplicantPipeline(socket)
 
 
 # class PoetryProgram(Program):
