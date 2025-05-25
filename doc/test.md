@@ -1,11 +1,11 @@
 # Unit test
 
-- source env/bin/activate
+- source venv/bin/activate
 - pytest test
 
 # Smoke integration test
 
-- source env/bin/activate
+- source venv/bin/activate
 - itest/itest.py
 - itest/test_chat.py
 - itest/test_pipeline.py
