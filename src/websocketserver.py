@@ -151,7 +151,7 @@ class Server:
         await self.fake_handler()
         # Set up the task to send periodic text lines to the fake bot socket.
         await self.bot_line_task()
-        # Set up the taks to check for and respond to victory conditions.
+        # Set up the task to check for and respond to victory conditions.
         await self.victory_task()
         # We are ready, start the server by declaring the handler.
         self.server = await websockets.serve(self.handler, port=port)
@@ -178,7 +178,6 @@ class Server:
                         transcript_lines = lines.read_lines()
                         for line in await self.program.bot_lines(
                                 population, transcript_lines, self):
-                            #util.log('sent bot line {}'.format(line))
                             self.chat_socket.add_request({'text': line})
                 except Exception as e:
                     util.log('bot line task exception {}'.format(e))
@@ -248,6 +247,10 @@ class Server:
             elif message["event"] == "dtmf":
                 util.log('dtmf message {}'.format(message['dtmf']['digit']))
                 util.log('latest_stream_sid {}'.format(self.latest_stream_sid))
+                for line in self.program.handle_dtmf(
+                        message, self.latest_stream_sid):
+                    self.chat_socket.add_request({'text': line})
+
         util.log("websocket connection closed")
 
     async def producer_handler(self, socket):

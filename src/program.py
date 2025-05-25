@@ -78,13 +78,16 @@ class Program:
     #             return [bot_line]
     #     return []
 
+    def handle_dtmf(self, message, latest_stream_sid):
+        return []
+
 
 class ChatProgram(Program):
     """
     Chats with humans.
     """
     async def bot_lines(self, population, transcript_lines, server):
-        """Possibly return a string for the bot to say."""
+        """Possibly return a list of strings for the bot to say."""
         if self.should_bot_line(population, transcript_lines):
             if self.nag_line(population):
                 # Half chance of nag line.
@@ -96,6 +99,24 @@ class ChatProgram(Program):
                 self.prompt, transcript_lines)
             if chat_line:
                 return [chat_line]
+        return []
+
+
+class ReplicatorProgram(Program):
+
+    def handle_dtmf(self, message, latest_stream_sid):
+        """
+        Handle DTMF message. Check and set victory or possibly return a list of
+        strings for the bot to say.
+        """
+        if False:               # latest_stream_sid is replaced with a bot
+            # set victory
+            # return announce string
+            return []
+        if False:                # latest_stream_sid is a bot facilitator
+            # bot should hassle
+            # return announce string
+            return []
         return []
 
 
@@ -188,7 +209,8 @@ class ArithmeticProgram(Program):
 
     async def bot_lines(self, population, transcript_lines, server):
         """
-        Check and set victory or possibly return a string for the bot to say.
+        Check and set victory or possibly return a list of strings for the bot
+        to say.
         """
         # Has a human spoken the number since the last bot line?
         # If true, say victory.

@@ -46,6 +46,10 @@ class TestProgram(unittest.IsolatedAsyncioTestCase):
         t_lines.append(lines.Line('label', 'content'))
         self.assertEqual(prog.recent_bot_line(2, t_lines), False)
 
+    def test_handle_dtmf(self):
+        prog = program.Program()
+        self.assertEqual(prog.handle_dtmf({}, 'latest_stream_sid'), [])
+
 
 class TestArithmeticProgram(unittest.IsolatedAsyncioTestCase):
 
