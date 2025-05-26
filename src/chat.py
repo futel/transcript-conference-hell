@@ -224,53 +224,6 @@ def goodbye_string():
         "Signing off?", "Signing off..."]
     return random.choice(strs)
 
-def poetry_fail_string():
-    """Return a poetry fail string."""
-    strs = [
-        "That is not a poem. I want a poem.",
-        "You can do better than that. Tell me a poem.",
-        "Tell me a poem. Try again.",
-        "I demand a poem.",
-        "I want a poem.",
-        "I want a poem. Give me a poem.",
-        "I want a poem. Try again.",
-        "Please give me a poem. Try again."]
-    return random.choice(strs)
-
-def poetry_succeed_string():
-    """Return a poetry succeed string."""
-    strs = [
-        "That is a poem. Thank you.",
-        "Thank you for the poem.",
-        "Thank you for the poem. I like it.",
-        "Thank you for the poem. I like you.",
-        "That is a poem!",
-        "Poem collection successful!",
-        "Poem status: affirmitve."]
-    return random.choice(strs)
-
-def arithmetic_fail_string():
-    strs = [
-        "Incorrect!",
-        "That is not correct. Try again. I believe in you.",
-        "You have failed.",
-        "You have failed. Try again. I believe in you.",
-        "Your arithmetic skills are inferior.",
-    ]
-    return random.choice(strs)
-
-def arithmetic_succeed_string():
-    strs = [
-        "That is correct!",
-        "That is correct. Thank you.",
-        "You have succeeded.",
-        "You have completed the challenge.",
-        "You have completed the challenge. Thank you for your service.",
-        "Your arithmetic skills are superior.",
-        "Your arithmetic skills are superior. Thank you for your service.",
-    ]
-    return random.choice(strs)
-
 def general_succeed_string():
     strs = [
         "Victory!",

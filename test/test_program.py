@@ -10,8 +10,8 @@ class TestProgram(unittest.IsolatedAsyncioTestCase):
 
     def test_next_program(self):
         program_cycle = program.next_program()
+        self.assertEqual(next(program_cycle), program.ReplicantProgram)
         self.assertEqual(next(program_cycle), program.ChatProgram)
-        self.assertEqual(next(program_cycle), program.ArithmeticProgram)
 
     async def test_recent_bot_line(self):
         prog = program.Program()
@@ -48,8 +48,11 @@ class TestProgram(unittest.IsolatedAsyncioTestCase):
 
     def test_handle_dtmf(self):
         prog = program.Program()
-        self.assertEqual(prog.handle_dtmf({}, 'latest_stream_sid'), [])
-
+        self.assertEqual(prog.handle_dtmf({}, 'socket', 'latest_socket'), [])
+        self.assertEqual(prog.handle_dtmf({}, 'socket', 'latest_socket'), [])
+        prog = program.ReplicantProgram()
+        self.assertEqual(prog.handle_dtmf({}, 'socket', 'latest_socket'),
+                         ['Someone has falsely accused a human.'])
 
 class TestArithmeticProgram(unittest.IsolatedAsyncioTestCase):
 

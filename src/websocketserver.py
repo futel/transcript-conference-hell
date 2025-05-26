@@ -245,10 +245,18 @@ class Server:
                 socket.add_speech_request({'text':request})
                 break
             elif message["event"] == "dtmf":
+                # DTMF message from client.
                 util.log('dtmf message {}'.format(message['dtmf']['digit']))
                 util.log('latest_stream_sid {}'.format(self.latest_stream_sid))
+                # Find the latest socket that sent audio.
+                latest_socket = next(
+                    (s for s in self.sockets
+                     if s.stream_sid == self.latest_stream_sid),
+                    None)
+                # Have the program perform any DTMF reaction, and send any
+                # strings it returns to the chat socket to speak.
                 for line in self.program.handle_dtmf(
-                        message, self.latest_stream_sid):
+                        message, socket, latest_socket):
                     self.chat_socket.add_request({'text': line})
 
         util.log("websocket connection closed")

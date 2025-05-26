@@ -78,7 +78,7 @@ class Program:
     #             return [bot_line]
     #     return []
 
-    def handle_dtmf(self, message, latest_stream_sid):
+    def handle_dtmf(self, message, socket, latest_socket):
         return []
 
 
@@ -102,22 +102,46 @@ class ChatProgram(Program):
         return []
 
 
-class ReplicatorProgram(Program):
+class ReplicantProgram(Program):
 
-    def handle_dtmf(self, message, latest_stream_sid):
+    intro_string = (
+        "Welcome to the replicant challenge! "
+        "We need at least three humans.")
+
+    def succeed_string(self):
+        strs = [
+            "You have succeeded in identifying the replicant.",
+            "Victory! You have identified the replicant."]
+        return random.choice(strs)
+
+    def fail_human_string(self):
+        strs = [
+            "Someone has falsely accused a human."]
+        return random.choice(strs)
+
+    def fail_bot_string(self):
+        strs = [
+            "Someone accused me. You always knew I was the bot, I don't count."]
+        return random.choice(strs)
+
+    def handle_dtmf(self, message, socket, latest_socket):
         """
         Handle DTMF message. Check and set victory or possibly return a list of
         strings for the bot to say.
         """
-        if False:               # latest_stream_sid is replaced with a bot
-            # set victory
-            # return announce string
-            return []
-        if False:                # latest_stream_sid is a bot facilitator
-            # bot should hassle
-            # return announce string
-            return []
-        return []
+        announcements = []
+        if False:               # latest_socket was replaced with a bot.
+            self.victory = True
+            # if latest_socket == socket:
+            #     # Socket successfully accused itself, special announce
+            #     #announcements.append(
+            #     #    "You have correctly accused yourself of being a bot.")
+            announcements.append(self.succeed_string())
+        elif latest_socket == None: # latest_socket is the bot facilitator.
+            announcements.append(self.fail_bot_string())
+        else:                   # latest_socket is a human.
+            announcements.append(self.fail_human_string())
+        return announcements
 
 
 class ArithmeticProgram(Program):
@@ -126,6 +150,28 @@ class ArithmeticProgram(Program):
         "Each human has an integer. "
         "To succeed, state the sum of all the integers.")
     num_human_lines = 1
+
+    def fail_string(self):
+        strs = [
+            "Incorrect!",
+            "That is not correct. Try again. I believe in you.",
+            "You have failed.",
+            "You have failed. Try again. I believe in you.",
+            "Your arithmetic skills are inferior.",
+        ]
+        return random.choice(strs)
+
+    def succeed_string(self):
+        strs = [
+            "That is correct!",
+            "That is correct. Thank you.",
+            "You have succeeded.",
+            "You have completed the challenge.",
+            "You have completed the challenge. Thank you for your service.",
+            "Your arithmetic skills are superior.",
+            "Your arithmetic skills are superior. Thank you for your service.",
+        ]
+        return random.choice(strs)
 
     def intro_text(self, socket):
         out = "Your integer is {}.".format(
@@ -222,7 +268,7 @@ class ArithmeticProgram(Program):
                 ints, self.magic_integer(server))
             if check is True:
                 self.victory = True
-                return [chat.arithmetic_succeed_string()]
+                return [self.succeed_string()]
             if self.should_bot_line(population, transcript_lines):
                 # Just notify about the last one.
                 return [
@@ -241,7 +287,7 @@ class ArithmeticProgram(Program):
                 return [await chat.openai_chat_line(self.prompt, transcript_lines)]
             if random.choice([True, False]):
                 # Half again chance of failure notification.
-                return [chat.arithmetic_fail_string()]
+                return [self.fail_string()]
         return []
 
 
@@ -256,6 +302,31 @@ class ArithmeticProgram(Program):
 #     def __init__(self):
 #         super().__init__()
 #         self.poem_start = None
+
+# def poetry_fail_string():
+#     """Return a poetry fail string."""
+#     strs = [
+#         "That is not a poem. I want a poem.",
+#         "You can do better than that. Tell me a poem.",
+#         "Tell me a poem. Try again.",
+#         "I demand a poem.",
+#         "I want a poem.",
+#         "I want a poem. Give me a poem.",
+#         "I want a poem. Try again.",
+#         "Please give me a poem. Try again."]
+#     return random.choice(strs)
+
+# def poetry_succeed_string():
+#     """Return a poetry succeed string."""
+#     strs = [
+#         "That is a poem. Thank you.",
+#         "Thank you for the poem.",
+#         "Thank you for the poem. I like it.",
+#         "Thank you for the poem. I like you.",
+#         "That is a poem!",
+#         "Poem collection successful!",
+#         "Poem status: affirmitve."]
+#     return random.choice(strs)
 
 #     async def latest_rhyme(self, t_lines):
 #         """
@@ -325,8 +396,7 @@ class ArithmeticProgram(Program):
 #         return []               # Human's turn to talk.
 
 
-#programs = [ChatProgram, ArithmeticProgram, PoetryAppreciatorProgram]
-programs = [ChatProgram, ArithmeticProgram]
+programs = [ReplicantProgram, ChatProgram, ArithmeticProgram]
 
 def next_program():
     """Yield programs."""
