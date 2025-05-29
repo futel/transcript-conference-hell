@@ -48,11 +48,12 @@ class TestProgram(unittest.IsolatedAsyncioTestCase):
 
     def test_handle_dtmf(self):
         prog = program.Program()
-        self.assertEqual(prog.handle_dtmf({}, 'socket', 'latest_socket'), [])
-        self.assertEqual(prog.handle_dtmf({}, 'socket', 'latest_socket'), [])
+        self.assertEqual(prog.handle_dtmf({}, 'socket', 'latest_socket', 1), [])
+        self.assertEqual(prog.handle_dtmf({}, 'socket', 'latest_socket', 1), [])
         prog = program.ReplicantProgram()
-        self.assertEqual(prog.handle_dtmf({}, 'socket', 'latest_socket'),
-                         ['Someone has falsely accused a human.'])
+        self.assertEqual(
+            prog.handle_dtmf({}, 'socket', 'latest_socket', 1),
+            ['We need at least three humans to start. Press any key when you are ready.'])
 
 class TestArithmeticProgram(unittest.IsolatedAsyncioTestCase):
 
