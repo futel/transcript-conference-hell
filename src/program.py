@@ -78,7 +78,7 @@ class Program:
     #             return [bot_line]
     #     return []
 
-    def handle_dtmf(self, message, socket, latest_socket):
+    def handle_dtmf(self, message, socket, latest_socket, population):
         return []
 
 
@@ -108,10 +108,15 @@ class ReplicantProgram(Program):
         "Welcome to the replicant challenge! "
         "We need at least three humans.")
 
+    def __init__(self):
+        super().__init__()
+        self.started = False
+
     def succeed_string(self):
         strs = [
-            "You have succeeded in identifying the replicant.",
-            "Victory! You have identified the replicant."]
+            "You have succeeded in identifying the bot.",
+            "You have identified the bot. Victory!",
+            "Victory! You have identified the bot."]
         return random.choice(strs)
 
     def fail_human_string(self):
@@ -124,24 +129,45 @@ class ReplicantProgram(Program):
             "Someone accused me. You always knew I was the bot, I don't count."]
         return random.choice(strs)
 
-    def handle_dtmf(self, message, socket, latest_socket):
+    def handle_dtmf(self, message, socket, latest_socket, population):
         """
         Handle DTMF message. Check and set victory or possibly return a list of
         strings for the bot to say.
         """
+        if not self.started:
+            if population >= 3:
+                self.started = True
+                # XXX replace a human
+                return [
+                    "One human has been replaced with a bot. "
+                    "Press any key when the bot is speaking to identify it. "
+                    "Don't falsely accuse a human!"]
+            else:
+                return [
+                    "We need at least three humans to start. "
+                    "Press any key when you are ready."]
+
         announcements = []
-        if False:               # latest_socket was replaced with a bot.
+        if False:
+            # latest_socket was replaced with a bot,
+            # the user chose correctly.
             self.victory = True
-            # if latest_socket == socket:
-            #     # Socket successfully accused itself, special announce
-            #     #announcements.append(
-            #     #    "You have correctly accused yourself of being a bot.")
+            if latest_socket == socket:
+                # Socket successfully accused itself, special announce
+                announcements.append("The bot has correctly accused itself.")
             announcements.append(self.succeed_string())
         elif latest_socket == None: # latest_socket is the bot facilitator.
             announcements.append(self.fail_bot_string())
         else:                   # latest_socket is a human.
             announcements.append(self.fail_human_string())
         return announcements
+
+    async def bot_lines(self, population, transcript_lines, server):
+        """
+        Check and set victory or possibly return a list of strings for the bot
+        to say.
+        """
+        return []
 
 
 class ArithmeticProgram(Program):
