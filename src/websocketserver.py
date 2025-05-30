@@ -228,8 +228,7 @@ class Server:
                 # Send text to socket to speak to itself.
                 population = len(self.sockets)
                 socket.add_self_speech_request(
-                    {'text': self.program.intro_text(socket, population)},
-                    population)
+                    {'text': self.program.intro_text(socket, population)})
                 # Send text for socket to speak to other clients.
                 request = chat.hello_string()
                 socket.add_speech_request({'text':request})
