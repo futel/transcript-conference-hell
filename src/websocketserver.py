@@ -318,9 +318,11 @@ class Server:
         socket = FakeSocket()
         await socket.start()
         self.chat_socket = socket
-        # Start the producer task so that when the chat_socket gets text, it
-        # sends chunks to the client sockets.
-        # We don't clean this up, we should do that in stop().
+        # Start a task with the producer_handler just like our websockets do
+        # when they connect, so that when the chat_socket gets text, it
+        # sends chunks to all the other client sockets.
+        # We don't clean this up, we should do that in stop(), but we don't
+        # expect that to actually happen.
         asyncio.create_task(self.producer_handler(socket))
 
     async def change_program(self, prog_class):

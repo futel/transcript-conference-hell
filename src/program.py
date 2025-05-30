@@ -134,7 +134,7 @@ class ReplicantProgram(Program):
 
     def fail_bot_string(self):
         strs = [
-            "Someone accused me. You always knew I was the bot, I don't count."]
+            "Someone accused me. You always knew I was a bot, I don't count."]
         return random.choice(strs)
 
     def handle_dtmf(self, _message, socket, latest_socket, population):
