@@ -226,8 +226,9 @@ class Server:
                 # intro requests.
                 socket.stream_sid = message['streamSid']
                 # Send text to socket to speak to itself.
+                population = len(self.sockets)
                 socket.add_self_speech_request(
-                    {'text': self.program.intro_text(socket)})
+                    {'text': self.program.intro_text(socket)}, population)
                 # Send text for socket to speak to other clients.
                 request = chat.hello_string()
                 socket.add_speech_request({'text':request})
@@ -335,9 +336,10 @@ class Server:
         await self.chat_socket.start()
         succeed_str = chat.general_succeed_string()
         # Send speech to all clients to say we are changing programs.
+        population = len(self.sockets)
         for socket in self.sockets:
             socket.stop()
             await socket.start(self.program)
             socket.add_self_speech_request({'text': succeed_str})
             socket.add_self_speech_request(
-                {'text': self.program.intro_text(socket)})
+                {'text': self.program.intro_text(socket)}, population)

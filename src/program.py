@@ -16,7 +16,6 @@ class Program:
     Holds methods and attributes relevant to bot interaction and
     pipelines for bots and humans.
     """
-    intro_string = "Welcome to transcription hell, human!"
     num_human_lines = 1         # Human lines before bot talks.
 
     def __init__(self):
@@ -25,8 +24,8 @@ class Program:
         self.prompt = next(prompt_cycle)
         self.victory = False
 
-    def intro_text(self, socket):
-        return self.intro_string
+    def intro_text(self, socket, population):
+        return "Welcome to transcription hell, human!"
 
     def nag_line(self, population):
         """Retrn a nag line or None."""
@@ -78,7 +77,7 @@ class Program:
     #             return [bot_line]
     #     return []
 
-    def handle_dtmf(self, message, socket, latest_socket, population):
+    def handle_dtmf(self, _message, _socket, _latest_socket, _population):
         return []
 
 
@@ -104,13 +103,22 @@ class ChatProgram(Program):
 
 class ReplicantProgram(Program):
 
-    intro_string = (
-        "Welcome to the replicant challenge! "
-        "We need at least three humans.")
-
     def __init__(self):
         super().__init__()
         self.started = False
+
+    def intro_text(self, socket, population):
+        out = "Welcome to the replicant challenge! "
+        if self.started:
+            out += (
+                "One human has been replaced with a bot. "
+                "Press any key when the bot is speaking to identify it. "
+                "Don't falsely accuse a human!")
+        else:
+            if population <= 3:
+                out += "We need at least three humans to start. "
+            out += "Press any key when you are ready. "
+        return out
 
     def succeed_string(self):
         strs = [
@@ -129,7 +137,7 @@ class ReplicantProgram(Program):
             "Someone accused me. You always knew I was the bot, I don't count."]
         return random.choice(strs)
 
-    def handle_dtmf(self, message, socket, latest_socket, population):
+    def handle_dtmf(self, _message, socket, latest_socket, population):
         """
         Handle DTMF message. Check and set victory or possibly return a list of
         strings for the bot to say.
@@ -138,14 +146,7 @@ class ReplicantProgram(Program):
             if population >= 3:
                 self.started = True
                 # XXX replace a human
-                return [
-                    "One human has been replaced with a bot. "
-                    "Press any key when the bot is speaking to identify it. "
-                    "Don't falsely accuse a human!"]
-            else:
-                return [
-                    "We need at least three humans to start. "
-                    "Press any key when you are ready."]
+            return self.intro_text(socket, population)
 
         announcements = []
         if False:
@@ -171,10 +172,6 @@ class ReplicantProgram(Program):
 
 
 class ArithmeticProgram(Program):
-    intro_string = (
-        "Welcome to the arithmetic challenge! "
-        "Each human has an integer. "
-        "To succeed, state the sum of all the integers.")
     num_human_lines = 1
 
     def fail_string(self):
@@ -199,10 +196,14 @@ class ArithmeticProgram(Program):
         ]
         return random.choice(strs)
 
-    def intro_text(self, socket):
+    def intro_text(self, socket, population):
+        intro_string = (
+            "Welcome to the arithmetic challenge! "
+            "Each human has an integer. "
+            "To succeed, state the sum of all the integers.")
         out = "Your integer is {}.".format(
             self.sid_to_integer(socket.stream_sid))
-        return self.intro_string + out
+        return intro_string + out
 
     def word_to_integer(self, w):
         """Return the integer corresponding to w, or None."""

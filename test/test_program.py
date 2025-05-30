@@ -49,11 +49,6 @@ class TestProgram(unittest.IsolatedAsyncioTestCase):
     def test_handle_dtmf(self):
         prog = program.Program()
         self.assertEqual(prog.handle_dtmf({}, 'socket', 'latest_socket', 1), [])
-        self.assertEqual(prog.handle_dtmf({}, 'socket', 'latest_socket', 1), [])
-        prog = program.ReplicantProgram()
-        self.assertEqual(
-            prog.handle_dtmf({}, 'socket', 'latest_socket', 1),
-            ['We need at least three humans to start. Press any key when you are ready.'])
 
 class TestArithmeticProgram(unittest.IsolatedAsyncioTestCase):
 
@@ -107,8 +102,17 @@ class TestArithmeticProgram(unittest.IsolatedAsyncioTestCase):
         socket.stream_sid = "abc1d23ef4g"
         prog = program.ArithmeticProgram()
         self.assertEqual(
-            prog.intro_text(socket),
+            prog.intro_text(socket, "population"),
             "Welcome to the arithmetic challenge! Each human has an integer. To succeed, state the sum of all the integers.Your integer is 4.")
+
+
+class TestReplicantProgram(unittest.IsolatedAsyncioTestCase):
+
+    def test_handle_dtmf(self):
+        prog = program.ReplicantProgram()
+        for i in range(10):
+            self.assertTrue(
+                prog.handle_dtmf({}, 'socket', 'latest_socket', i))
 
 
 if __name__ == '__main__':
