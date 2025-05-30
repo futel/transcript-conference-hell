@@ -344,4 +344,4 @@ class Server:
             await socket.start(self.program)
             socket.add_self_speech_request({'text': succeed_str})
             socket.add_self_speech_request(
-                {'text': self.program.intro_text(socket)}, population)
+                {'text': self.program.intro_text(socket, population)})
