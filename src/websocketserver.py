@@ -258,7 +258,7 @@ class Server:
                 # Have the program perform any DTMF reaction, and send any
                 # strings it returns to the chat socket to speak.
                 for line in self.program.handle_dtmf(
-                        message, socket, latest_socket, self.sockets:
+                        message, socket, latest_socket, self.sockets):
                     self.chat_socket.add_request({'text': line})
 
         util.log("websocket connection closed")

@@ -110,9 +110,11 @@ class TestReplicantProgram(unittest.IsolatedAsyncioTestCase):
 
     def test_handle_dtmf(self):
         prog = program.ReplicantProgram()
-        for i in range(10):
-            self.assertTrue(
-                prog.handle_dtmf({}, 'socket', 'latest_socket', i))
+        self.assertTrue(
+            prog.handle_dtmf({}, 'socket', 'latest_socket', ['socket']))
+        self.assertTrue(
+            prog.handle_dtmf(
+                {}, 'socket', 'latest_socket', ['socket', 'socket', 'socket']))
 
 
 if __name__ == '__main__':
