@@ -36,6 +36,7 @@ class Socket:
         self.stream_sid = None
         # Pipeline to receive my audio chunks and send responses to the server.
         self.line = pipeline.HumanPipeline(self)
+        self.attrs = {}
 
     async def start(self, prog):
         # XXX we have to handle replacing the pipeline to do this
@@ -256,9 +257,8 @@ class Server:
                     None)
                 # Have the program perform any DTMF reaction, and send any
                 # strings it returns to the chat socket to speak.
-                population = len(self.sockets)
                 for line in self.program.handle_dtmf(
-                        message, socket, latest_socket, population):
+                        message, socket, latest_socket, self.sockets:
                     self.chat_socket.add_request({'text': line})
 
         util.log("websocket connection closed")

@@ -77,7 +77,7 @@ class Program:
     #             return [bot_line]
     #     return []
 
-    def handle_dtmf(self, _message, _socket, _latest_socket, _population):
+    def handle_dtmf(self, _message, _socket, _latest_socket, _sockets):
         return []
 
 
@@ -137,12 +137,13 @@ class ReplicantProgram(Program):
             "Someone accused me. You always knew I was a bot, I don't count."]
         return random.choice(strs)
 
-    def handle_dtmf(self, _message, socket, latest_socket, population):
+    def handle_dtmf(self, _message, socket, latest_socket, sockets):
         """
         Handle DTMF message. Check and set victory or possibly return a list of
         strings for the bot to say.
         """
         if not self.started:
+            population = len(sockets)
             if population >= 3:
                 self.started = True
                 # XXX replace a human
