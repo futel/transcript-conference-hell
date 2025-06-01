@@ -146,13 +146,14 @@ class ReplicantProgram(Program):
             population = len(sockets)
             if population >= 3:
                 self.started = True
-                # XXX replace a human
+                # Mark a human as a bot.
+                socket = random.choice(sockets)
+                socket.attrs['bot'] = True
             return self.intro_text(socket, population)
 
         announcements = []
-        if False:
-            # latest_socket was replaced with a bot,
-            # the user chose correctly.
+        if getattr(latest_socket, 'bot', False):
+            # Latest_socket was marked as a bot, the user chose correctly.
             self.victory = True
             if latest_socket == socket:
                 # Socket successfully accused itself, special announce

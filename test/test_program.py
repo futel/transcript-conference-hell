@@ -4,6 +4,7 @@ from unittest import mock
 
 import lines
 import program
+import websocketserver
 
 
 class TestProgram(unittest.IsolatedAsyncioTestCase):
@@ -110,11 +111,12 @@ class TestReplicantProgram(unittest.IsolatedAsyncioTestCase):
 
     def test_handle_dtmf(self):
         prog = program.ReplicantProgram()
+        socket = websocketserver.Socket('websocket')
         self.assertTrue(
-            prog.handle_dtmf({}, 'socket', 'latest_socket', ['socket']))
+            prog.handle_dtmf({}, 'socket', 'latest_socket', [socket]))
         self.assertTrue(
             prog.handle_dtmf(
-                {}, 'socket', 'latest_socket', ['socket', 'socket', 'socket']))
+                {}, 'socket', 'latest_socket', [socket, socket, socket]))
 
 
 if __name__ == '__main__':
