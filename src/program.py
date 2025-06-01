@@ -149,7 +149,7 @@ class ReplicantProgram(Program):
                 # Mark a human as a bot.
                 socket = random.choice(sockets)
                 socket.attrs['bot'] = True
-            return self.intro_text(socket, population)
+            return [self.intro_text(socket, population)]
 
         announcements = []
         if getattr(latest_socket, 'bot', False):
