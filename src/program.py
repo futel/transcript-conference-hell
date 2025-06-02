@@ -142,7 +142,9 @@ class ReplicantProgram(Program):
         Handle DTMF message. Check and set victory or possibly return a list of
         strings for the bot to say.
         """
-        util.log('xxx sockets{}'.format([s.__dict__ for s in sockets]))
+        # XXX The bot human may have quit. We could restart here and kluge in
+        #     another bot for next time.
+        util.log('xxx sockets {}'.format([s.__dict__ for s in sockets]))
         if not self.started:
             population = len(sockets)
             if population >= 3:
@@ -153,7 +155,7 @@ class ReplicantProgram(Program):
             return [self.intro_text(socket, population)]
 
         announcements = []
-        if getattr(latest_socket, 'bot', False):
+        if getattr(latest_socket.attrs, 'bot', False):
             # Latest_socket was marked as a bot, the user chose correctly.
             self.victory = True
             if latest_socket == socket:
