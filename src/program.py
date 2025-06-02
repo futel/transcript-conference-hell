@@ -147,7 +147,7 @@ class ReplicantProgram(Program):
             if population >= 3:
                 self.started = True
                 # Mark a human as a bot.
-                socket = random.choice(sockets)
+                socket = random.choice(list(sockets))
                 socket.attrs['bot'] = True
             return [self.intro_text(socket, population)]
 
