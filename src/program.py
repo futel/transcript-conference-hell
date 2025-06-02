@@ -155,15 +155,15 @@ class ReplicantProgram(Program):
             return [self.intro_text(socket, population)]
 
         announcements = []
-        if getattr(latest_socket.attrs, 'bot', False):
+        if latest_socket == None: # latest_socket is the bot facilitator.
+            announcements.append(self.fail_bot_string())
+        elif getattr(latest_socket.attrs, 'bot', False):
             # Latest_socket was marked as a bot, the user chose correctly.
             self.victory = True
             if latest_socket == socket:
                 # Socket successfully accused itself, special announce
                 announcements.append("The bot has correctly accused itself.")
             announcements.append(self.succeed_string())
-        elif latest_socket == None: # latest_socket is the bot facilitator.
-            announcements.append(self.fail_bot_string())
         else:                   # latest_socket is a human.
             announcements.append(self.fail_human_string())
         return announcements
