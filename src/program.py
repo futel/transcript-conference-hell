@@ -142,6 +142,7 @@ class ReplicantProgram(Program):
         Handle DTMF message. Check and set victory or possibly return a list of
         strings for the bot to say.
         """
+        util.log('xxx sockets{}'.format(s.__dict__ for s in sockets))
         if not self.started:
             population = len(sockets)
             if population >= 3:
