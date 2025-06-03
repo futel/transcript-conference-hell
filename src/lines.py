@@ -99,10 +99,11 @@ class Client():
         and pass to response.
         """
         text = request['text']
-        # This is where we log the transcript of all text which turns to speech,
-        # whether transcribed from human speech or from a line sent to a bot.
-        write_line(Line(self.socket.stream_sid, text, **self.attributes))
-        self.recv_queue.put_nowait(text)
+        if text:
+            # This is where we log the transcript of all text which turns to speech,
+            # whether transcribed from human speech or from a line sent to a bot.
+            write_line(Line(self.socket.stream_sid, text, **self.attributes))
+            self.recv_queue.put_nowait(text)
     async def receive_response(self):
         """When we receive text, format and return."""
         return {'text': await self.recv_queue.get()}

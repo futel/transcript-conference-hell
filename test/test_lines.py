@@ -51,6 +51,15 @@ class TestClient(unittest.IsolatedAsyncioTestCase):
         client.stop()
         self.assertEqual(response, {'text': "foo"})
 
+    @mock.patch.object(
+        lines, 'util', new_callable=mock.Mock)
+    async def test_client_add_empty(self, mock_util):
+        client = lines.Client('socket')
+        await client.start()
+        client.add_request({'text': ""})
+        client.stop()
+        # XXX Should test that no receive_response is called.
+
 
 if __name__ == '__main__':
     unittest.main()
