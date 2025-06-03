@@ -255,7 +255,7 @@ class Server:
                     (s for s in self.sockets
                      if s.stream_sid == self.latest_stream_sid),
                     None)
-                util.log('xxx latest_socket {}'.format(getattr, latest_socket, '__dict__', None))
+                util.log('xxx latest_socket {}'.format(getattr(latest_socket, '__dict__', None)))
                 # Have the program perform any DTMF reaction, and send any
                 # strings it returns to the chat socket to speak.
                 for line in self.program.handle_dtmf(
