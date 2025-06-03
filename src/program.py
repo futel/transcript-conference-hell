@@ -157,7 +157,7 @@ class ReplicantProgram(Program):
         announcements = []
         if latest_socket == None: # latest_socket is the bot facilitator.
             announcements.append(self.fail_bot_string())
-        elif getattr(latest_socket.attrs, 'bot', False):
+        elif latest_socket.attrs.get('bot'):
             # Latest_socket was marked as a bot, the user chose correctly.
             self.victory = True
             if latest_socket == socket:
