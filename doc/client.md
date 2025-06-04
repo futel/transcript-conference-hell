@@ -10,9 +10,13 @@ SIP client should be set up as listed in twilio.md.
 
 See client.md on twilio-sip-server.
 
-# Set up Grandstream HT701
+XXX primary-sip-server conference-hell-dev.sip.twilio.com
+
+# Set up Grandstream HT701 etc
 
 See client.md on twilio-sip-server.
+
+XXX primary-sip-server conference-hell-dev.sip.twilio.com
 
 # Test
 
