@@ -164,6 +164,9 @@ class ReplicantProgram(Program):
                 # Socket successfully accused itself, special announce
                 announcements.append("The bot has correctly accused itself.")
             announcements.append(self.succeed_string())
+            # Remove all bot attributes from the humans.
+            for socket in sockets:
+                socket.attrs['bot'] = False
         else:                   # latest_socket is a human.
             announcements.append(self.fail_human_string())
         return announcements

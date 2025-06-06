@@ -98,6 +98,8 @@ class Client():
         text = await self.recv_queue.get()
 
         if self.socket.attrs.get('bot'):
+            util.log('replacing text with bot response')
+            util.log('original text: {}'.format(text))
             # Replace the text with a generated response.
             name = util.label_to_name(self.socket.stream_sid)
             prompt = self.replicant_prompt.format(name)

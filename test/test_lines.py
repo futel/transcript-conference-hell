@@ -38,8 +38,6 @@ class TestClient(unittest.IsolatedAsyncioTestCase):
     @mock.patch.object(
         lines, 'util', new_callable=mock.Mock)
     async def test_client_add_request_one_no_bot(self, mock_util):
-        # XXX mock
-        raise NotImplementedError
         socket = mock.Mock()
         socket.attrs = {}
         socket.stream_sid = "stream_sid"
@@ -52,9 +50,10 @@ class TestClient(unittest.IsolatedAsyncioTestCase):
 
     @mock.patch.object(
         lines, 'util', new_callable=mock.Mock)
-    async def test_client_add_request_one_bot(self, mock_util):
-        # XXX mock
-        raise NotImplementedError
+    @mock.patch.object(
+        lines, 'chat', new_callable=mock.Mock)
+    async def test_client_add_request_one_bot(self, mock_chat, mock_util):
+        mock_chat.openai_chat_line = mock.AsyncMock(return_value="foo")
         socket = mock.Mock()
         socket.attrs = {'bot': True}
         socket.stream_sid = "stream_sid"
