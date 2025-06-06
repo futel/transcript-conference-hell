@@ -22,10 +22,6 @@ class TestLines(unittest.IsolatedAsyncioTestCase):
         line = lines.Line("label", "content")
         self.assertEqual(line.prompt_str(), 'Matthew: content')
 
-    async def test__name(self):
-        line = lines.Line("label", "content")
-        self.assertEqual(line._name(), 'Matthew')
-
 
 class TestClient(unittest.IsolatedAsyncioTestCase):
 

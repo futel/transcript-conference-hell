@@ -40,6 +40,7 @@ def read_lines():
 
 class Line():
     """A transcript line."""
+
     def __init__(self, label, content, ordinal=None, **attributes):
         self.label = label
         self.content = content
@@ -53,29 +54,9 @@ class Line():
     def __str__(self):
         return self.__repr__()
 
-    def _name(self):
-        """Return a consistent human name from my label."""
-        names = [
-            'Abigail', 'Alice', 'Beatrice', 'Bob', 'Catherine', 'Charlie',
-            'David',
-            'Dorothy', 'Eleanor', 'Eve', 'Fiona', 'Frank',
-            'George', 'Gloria',
-            'Hannah', 'Harry', 'Irene', 'Isabella', 'Jack', 'James', 'Jane',
-            'Jill',
-            'Joan', 'John', 'Joseph', 'Jude', 'Julia', 'Karen', 'Katherine',
-            'Larry', 'Lillian', 'Luke', 'Margaret', 'Mark', 'Martha', 'Mary',
-            'Matthew', 'Molly', 'Nancy', 'Natalie', 'Olivia', 'Oscar', 'Paul',
-            'Peggy', 'Penelope', 'Peter', 'Quincy', 'Quinn', 'Ralph', 'Rebecca',
-            'Sally', 'Sarah', 'Simon', 'Tiffany', 'Tom', 'Ursula',
-            'Vicki', 'Victoria', 'Walter', 'Wendy', 'Xanthe', 'Xavier', 'Xena',
-            'Xenia', 'Yolanda', 'Yvonne', 'Zach', 'Zara']
-        if self.label in names:
-            return self.label
-        return names[sum(ord(c) for c in self.label) % len(names)]
-
     def prompt_str(self):
         """Return a string suitable for a chat prompt."""
-        return '{}: {}'.format(self._name(), self.content)
+        return '{}: {}'.format(util.label_to_name(self.label), self.content)
 
 
 class Client():
@@ -83,16 +64,23 @@ class Client():
     Client to write transcript lines with text given in request,
     and pass text to the response.
     """
+
+    replicant_prompt_line = (
+        'Complete this dialog by adding one line of dialog, spoken by "{}". '
+        'Add only one line of dialog.')
+
     def __init__(self, socket, **attributes):
         # We only want the stream_sid, but we have to store the socket
         # because it doesn't have it yet.
         self.socket = socket
         self.recv_queue = asyncio.Queue()
         self.attributes = attributes
+
     async def start(self):
         pass
     def stop(self):
         pass
+
     def add_request(self, request):
         """
         Extract text from websocket message, write to transcript,
@@ -100,10 +88,32 @@ class Client():
         """
         text = request['text']
         if text:
-            # This is where we log the transcript of all text which turns to speech,
-            # whether transcribed from human speech or from a line sent to a bot.
+            # This is where we log the transcript of all text which turns to
+            # speech, whether transcribed from human speech or from a line sent
+            # to a bot.
             write_line(Line(self.socket.stream_sid, text, **self.attributes))
             self.recv_queue.put_nowait(text)
+
     async def receive_response(self):
         """When we receive text, format and return."""
-        return {'text': await self.recv_queue.get()}
+        text = await self.recv_queue.get()
+
+        if False: #self.socket.attrs.get('bot'):
+            # Replace the text with a generated response.
+            name = util.label_to_name(self.socket.stream_id)
+            prompt = self.prompt.format(name)
+            transcript_lines = read_lines()
+
+            chat_line = await chat.openai_chat_line(
+                prompt, transcript_lines)
+            if chat_line:
+                text = chat_line
+                # Log the transcript.
+                # XXX We should indicate that it was a bot replacement.
+                write_line(Line(self.socket.stream_sid, text, **self.attributes))
+            else:
+                # We didn't get a chat line,
+                # should use something canned instead?
+                pass
+
+        return {'text': text}

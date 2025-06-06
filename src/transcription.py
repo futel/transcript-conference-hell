@@ -53,8 +53,8 @@ class Client:
     def __init__(self):
         self._send_queue = asyncio.Queue() # Bytes to send to server.
         self._recv_queue = asyncio.Queue() # Text received from server.
-        self.client = None
-        self.response_task = None
+        self.client = None                 # Speech to text client.
+        self.response_task = None          # Task to keep response_iter running.
 
     async def start(self):
         """
@@ -95,10 +95,11 @@ class Client:
 
     async def request_generator(self):
         """
-        Yield streaming recognize requests. The first contains the config, the remainder contain
-        audio.
+        Yield streaming recognize requests.
+        The first contains the config, the remainder contain audio.
         """
-        yield speech_v1.StreamingRecognizeRequest(streaming_config=streaming_config)
+        yield speech_v1.StreamingRecognizeRequest(
+            streaming_config=streaming_config)
         async for content in self.audio_generator():
             yield speech_v1.StreamingRecognizeRequest(audio_content=content)
 

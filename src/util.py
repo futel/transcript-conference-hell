@@ -74,3 +74,23 @@ def write_lines_s3():
     response = s3_client.upload_file(
         log_file_path, transcript_bucket_name, key_name)
     print('Wrote transcript to {}'.format(key_name))
+
+def label_to_name(label):
+    """Return a consistent human name from label."""
+    names = [
+        'Abigail', 'Alice', 'Beatrice', 'Bob', 'Catherine', 'Charlie',
+        'David',
+        'Dorothy', 'Eleanor', 'Eve', 'Fiona', 'Frank',
+        'George', 'Gloria',
+        'Hannah', 'Harry', 'Irene', 'Isabella', 'Jack', 'James', 'Jane',
+        'Jill',
+        'Joan', 'John', 'Joseph', 'Jude', 'Julia', 'Karen', 'Katherine',
+        'Larry', 'Lillian', 'Luke', 'Margaret', 'Mark', 'Martha', 'Mary',
+        'Matthew', 'Molly', 'Nancy', 'Natalie', 'Olivia', 'Oscar', 'Paul',
+        'Peggy', 'Penelope', 'Peter', 'Quincy', 'Quinn', 'Ralph', 'Rebecca',
+        'Sally', 'Sarah', 'Simon', 'Tiffany', 'Tom', 'Ursula',
+        'Vicki', 'Victoria', 'Walter', 'Wendy', 'Xanthe', 'Xavier', 'Xena',
+        'Xenia', 'Yolanda', 'Yvonne', 'Zach', 'Zara']
+    if label in names:
+        return label
+    return names[sum(ord(c) for c in label) % len(names)]
