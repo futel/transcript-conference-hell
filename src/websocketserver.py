@@ -271,6 +271,7 @@ class Server:
         """
         while True:
             chunk = await socket.receive_response()
+            util.log("XXX producer_handler received {}".format(socket.stream_sid))
             # The socket is now the most recent which has sent audio.
             self.latest_stream_sid = socket.stream_sid
             # We assume that every message has a chunk.
@@ -278,8 +279,8 @@ class Server:
             for s in self.sockets:
                 if s != socket:
                     await s.send(chunk)
-                    #util.log("sent chunk from {} to {}".format(
-                    #    socket.stream_sid, s.stream_sid))
+                    util.log("XXX sent chunk from {} to {}".format(
+                        socket.stream_sid, s.stream_sid))
             # We could do the bot response here instead of periodically.
 
     async def handler(self, websocket):

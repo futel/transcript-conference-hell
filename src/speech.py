@@ -115,7 +115,7 @@ class Client:
 
     async def receive_response(self):
         response = await self._recv_queue.get()
-        util.log("XXX speech receive_response {}".format(response))
+        util.log("XXX speech receive_response")
         qsize = self._recv_queue.qsize()
         if qsize >= recv_qsize_log:
             util.log(f"speech recv queue size {qsize}")
