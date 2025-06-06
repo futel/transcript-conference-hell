@@ -37,8 +37,26 @@ class TestClient(unittest.IsolatedAsyncioTestCase):
 
     @mock.patch.object(
         lines, 'util', new_callable=mock.Mock)
-    async def test_client_add_request_one(self, mock_util):
+    async def test_client_add_request_one_no_bot(self, mock_util):
+        # XXX mock
+        raise NotImplementedError
         socket = mock.Mock()
+        socket.attrs = {}
+        socket.stream_sid = "stream_sid"
+        client = lines.Client(socket)
+        await client.start()
+        client.add_request({'text': "foo"})
+        response = await client.receive_response()
+        client.stop()
+        self.assertEqual(response, {'text': "foo"})
+
+    @mock.patch.object(
+        lines, 'util', new_callable=mock.Mock)
+    async def test_client_add_request_one_bot(self, mock_util):
+        # XXX mock
+        raise NotImplementedError
+        socket = mock.Mock()
+        socket.attrs = {'bot': True}
         socket.stream_sid = "stream_sid"
         client = lines.Client(socket)
         await client.start()

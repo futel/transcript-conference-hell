@@ -1,7 +1,6 @@
-# We don't have real packages.
-#import sys
-#sys.path.append('../src')
-
+"""
+Download all transcripts from the S3 bucket.
+"""
 import boto3
 #import util
 

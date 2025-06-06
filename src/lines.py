@@ -6,6 +6,7 @@ import datetime
 import itertools
 import json
 
+import chat
 import util
 
 def write_line(line):
@@ -65,13 +66,11 @@ class Client():
     and pass text to the response.
     """
 
-    replicant_prompt_line = (
+    replicant_prompt = (
         'Complete this dialog by adding one line of dialog, spoken by "{}". '
         'Add only one line of dialog.')
 
     def __init__(self, socket, **attributes):
-        # We only want the stream_sid, but we have to store the socket
-        # because it doesn't have it yet.
         self.socket = socket
         self.recv_queue = asyncio.Queue()
         self.attributes = attributes
@@ -98,10 +97,10 @@ class Client():
         """When we receive text, format and return."""
         text = await self.recv_queue.get()
 
-        if False: #self.socket.attrs.get('bot'):
+        if self.socket.attrs.get('bot'):
             # Replace the text with a generated response.
-            name = util.label_to_name(self.socket.stream_id)
-            prompt = self.prompt.format(name)
+            name = util.label_to_name(self.socket.stream_sid)
+            prompt = self.replicant_prompt.format(name)
             transcript_lines = read_lines()
 
             chat_line = await chat.openai_chat_line(
