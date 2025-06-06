@@ -85,6 +85,7 @@ class Client():
         Extract text from websocket message, write to transcript,
         and pass to response.
         """
+        util.log('xxx lines.Client.add_request {}'.format(request))
         text = request['text']
         if text:
             # This is where we log the transcript of all text which turns to
@@ -96,6 +97,7 @@ class Client():
     async def receive_response(self):
         """When we receive text, format and return."""
         text = await self.recv_queue.get()
+        util.log('xxx lines.Client.receive_response {}'.format(text))
 
         if self.socket.attrs.get('bot'):
             util.log('replacing text with bot response')

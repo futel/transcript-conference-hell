@@ -120,6 +120,7 @@ class FakeSocket:
         self.line.stop()
 
     def receive_response(self):
+        util.log("XXX fakesocket receive_response")
         return self.line.receive_response()
 
 
@@ -326,6 +327,7 @@ class Server:
         # We don't clean this up, we should do that in stop(), but we don't
         # expect that to actually happen.
         asyncio.create_task(self.producer_handler(socket))
+        util.log("xxx created fakesocket producer handler task")
 
     async def change_program(self, prog_class):
         """Replace program, and all pipelines with appropriate ones."""
