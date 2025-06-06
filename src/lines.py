@@ -85,9 +85,9 @@ class Client():
         Extract text from websocket message, write to transcript,
         and pass to response.
         """
-        util.log('xxx lines.Client.add_request {}'.format(request))
         text = request['text']
         if text:
+            util.log('xxx lines.Client.add_request {}'.format(text))
             # This is where we log the transcript of all text which turns to
             # speech, whether transcribed from human speech or from a line sent
             # to a bot.

@@ -271,6 +271,7 @@ class Server:
         to the other websockets.
         """
         while True:
+            util.log("XXX producer_handler loop {}".format(socket.stream_sid))
             chunk = await socket.receive_response()
             util.log("XXX producer_handler received {}".format(socket.stream_sid))
             # The socket is now the most recent which has sent audio.
