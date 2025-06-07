@@ -260,7 +260,8 @@ class Server:
                 import data     # XXX
                 #chunk = base64.b64decode(data.dtmfa)[44:]
                 #chunk = base64.b64decode(data.dtmfa)[45:]
-                chunk = base64.b64decode(data.dtmfa)[58:]
+                #chunk = base64.b64decode(data.dtmfa)[58:]
+                chunk = base64.b64decode(data.dtmfa)[41:]
                 for s in self.sockets:
                     await s.send(chunk)
                 # Have the program perform any DTMF reaction, and send any
