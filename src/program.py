@@ -144,7 +144,6 @@ class ReplicantProgram(Program):
         """
         # XXX The bot human may have quit. We could restart here and kluge in
         #     another bot for next time.
-        util.log('xxx sockets {}'.format([s.__dict__ for s in sockets]))
         if not self.started:
             population = len(sockets)
             if population >= 3:

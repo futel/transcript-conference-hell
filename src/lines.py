@@ -87,7 +87,6 @@ class Client():
         """
         text = request['text']
         if text:
-            util.log('xxx lines.Client.add_request {}'.format(text))
             # This is where we log the transcript of all text which turns to
             # speech, whether transcribed from human speech or from a line sent
             # to a bot.
@@ -97,7 +96,6 @@ class Client():
     async def receive_response(self):
         """When we receive text, format and return."""
         text = await self.recv_queue.get()
-        util.log('xxx lines.Client.receive_response {}'.format(text))
 
         if self.socket.attrs.get('bot'):
             util.log('replacing text with bot response')

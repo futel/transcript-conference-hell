@@ -121,7 +121,6 @@ class FakeSocket:
         self.line.stop()
 
     def receive_response(self):
-        util.log("XXX fakesocket receive_response")
         return self.line.receive_response()
 
 
@@ -257,7 +256,6 @@ class Server:
                     (s for s in self.sockets
                      if s.stream_sid == self.latest_stream_sid),
                     None)
-                util.log('xxx latest_socket {}'.format(getattr(latest_socket, '__dict__', None)))
                 # Have the program perform any DTMF reaction, and send any
                 # strings it returns to the chat socket to speak.
                 for line in self.program.handle_dtmf(
@@ -272,9 +270,7 @@ class Server:
         to the other websockets.
         """
         while True:
-            util.log("XXX producer_handler loop {}".format(socket.stream_sid))
             chunk = await socket.receive_response()
-            util.log("XXX producer_handler received {}".format(socket.stream_sid))
             # The socket is now the most recent which has sent audio.
             self.latest_stream_sid = socket.stream_sid
             # We assume that every message has a chunk.
@@ -282,8 +278,6 @@ class Server:
             for s in self.sockets:
                 if s != socket:
                     await s.send(chunk)
-                    util.log("XXX sent chunk from {} to {}".format(
-                        socket.stream_sid, s.stream_sid))
             # We could do the bot response here instead of periodically.
 
     async def handler(self, websocket):
@@ -329,7 +323,6 @@ class Server:
         # We don't clean this up, we should do that in stop(), but we don't
         # expect that to actually happen.
         asyncio.create_task(self.producer_handler(socket))
-        util.log("xxx created fakesocket producer handler task")
 
     async def change_program(self, prog_class):
         """Replace program, and all pipelines with appropriate ones."""

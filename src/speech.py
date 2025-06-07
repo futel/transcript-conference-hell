@@ -115,7 +115,6 @@ class Client:
 
     async def receive_response(self):
         response = await self._recv_queue.get()
-        util.log("XXX speech receive_response")
         qsize = self._recv_queue.qsize()
         if qsize >= recv_qsize_log:
             util.log(f"speech recv queue size {qsize}")
@@ -123,7 +122,6 @@ class Client:
 
     def add_request(self, request):
         """Add text to the processing queue."""
-        util.log("XXX speech add_request {}".format(request))
         self._send_queue.put_nowait(request['text'])
         qsize = self._send_queue.qsize()
         if qsize >= send_qsize_log:
