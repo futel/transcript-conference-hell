@@ -258,7 +258,8 @@ class Server:
                     None)
                 # Send a tone to all the sockets.
                 import data     # XXX
-                chunk = base64.b64decode(data.dtmfa)[45:]
+                #chunk = base64.b64decode(data.dtmfa)[45:]
+                chunk = base64.b64decode(data.dtmfa)[44:]
                 for s in self.sockets:
                     await s.send(chunk)
                 # Have the program perform any DTMF reaction, and send any
