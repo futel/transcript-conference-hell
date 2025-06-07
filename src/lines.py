@@ -103,14 +103,22 @@ class Client():
             # Replace the text with a generated response.
             name = util.label_to_name(self.socket.stream_sid)
             prompt = self.replicant_prompt.format(name)
+            # We are assuming that the transcript has not been added to since
+            # the speech was inputted, which might not be true. A better
+            # alternative would be to send it in the pipeline message, although
+            # it would go multiple times since the speech is chunked.
             transcript_lines = read_lines()
+            # Remove the last line, which is the one we are replacing.
+            transcript_lines.pop()
 
             chat_line = await chat.openai_chat_line(
                 prompt, transcript_lines)
             if chat_line:
                 text = chat_line
+                util.log('replacement text: {}'.format(text))
                 # Log the transcript.
-                # XXX We should indicate that it was a bot replacement.
+                attributes = self.attributes
+                attributes['bot'] = True
                 write_line(Line(self.socket.stream_sid, text, **self.attributes))
             else:
                 # We didn't get a chat line,

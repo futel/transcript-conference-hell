@@ -10,10 +10,10 @@ class TestChat(unittest.IsolatedAsyncioTestCase):
         prompt_cycle = chat.next_prompt()
         p1 = next(prompt_cycle)
         dummy1 = next(prompt_cycle)
-        dummy2 = next(prompt_cycle)
+        #dummy2 = next(prompt_cycle)
         p2 = next(prompt_cycle)
         self.assertNotEqual(p1, dummy1)
-        self.assertNotEqual(p1, dummy2)
+        #self.assertNotEqual(p1, dummy2)
         self.assertEqual(p1, p2)
 
     def test_line_to_bool(self):

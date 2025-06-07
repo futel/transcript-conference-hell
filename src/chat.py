@@ -14,9 +14,9 @@ import util
 chat_label = "Franz"
 
 prompts = [
-    ('You are writing a script for a play about people who need to know their darkest secrets. '
-     'Complete this dialog by adding a line of dialog, spoken by "{}". '
-     'Add only one line of dialog.').format(chat_label),
+    #('You are writing a script for a play about people who need to know their darkest se#crets. '
+    # 'Complete this dialog by adding a line of dialog, spoken by "{}". '
+    # 'Add only one line of dialog.').format(chat_label),
     ('You are writing a script for a play. '
      'Complete this dialog by adding a line of dialog, spoken by "{}". '
      'Add only one line of dialog.').format(chat_label),
