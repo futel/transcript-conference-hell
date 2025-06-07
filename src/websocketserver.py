@@ -256,6 +256,11 @@ class Server:
                     (s for s in self.sockets
                      if s.stream_sid == self.latest_stream_sid),
                     None)
+                # Send a tone to all the sockets.
+                import data     # XXX
+                chunk = base64.b64decode(data.dtmfa)[45:]
+                for s in self.sockets:
+                    await s.send(chunk)
                 # Have the program perform any DTMF reaction, and send any
                 # strings it returns to the chat socket to speak.
                 for line in self.program.handle_dtmf(
@@ -270,6 +275,8 @@ class Server:
         to the other websockets.
         """
         while True:
+            # Wait for a response from the socket, which we assume is is audio
+            # produced from its pipeline.
             chunk = await socket.receive_response()
             # The socket is now the most recent which has sent audio.
             self.latest_stream_sid = socket.stream_sid
