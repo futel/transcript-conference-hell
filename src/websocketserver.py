@@ -109,6 +109,7 @@ class FakeSocket:
 
     def __init__(self):
         self.line = pipeline.BotPipeline(self)
+        self.attrs = {}
 
     async def start(self):
         await self.line.start()
