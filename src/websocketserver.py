@@ -269,7 +269,7 @@ class Server:
                 #chunk = base64.b64decode(data.dtmfa)[58:]
                 #chunk = base64.b64decode(data.dtmfa)[40:]
                 #chunk = base64.b64decode(data.dtmfa)[43:]
-                chunk = data.dtmfa[43:]
+                chunk = data.dtmfa[42:]
                 # XXX We only want to send this once no matter how many
                 #     keypresses happened. Queue something up.
                 for s in self.sockets:
