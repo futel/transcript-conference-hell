@@ -103,12 +103,15 @@ def openai_retry(f):
 async def openai_chat_completion(messages):
     # ChatCompletion allows "gpt-4" "gpt-3.5-turbo" "text-davinci-003"?
     util.log("openai_chat_completion messages: {}".format(messages))
-    response = await openai.ChatCompletion.acreate(
-        model="gpt-3.5-turbo",
+    client = openai.AsyncOpenAI()
+    #model = "gpt-3.5-turbo"
+    model = "gpt-4.1"
+    response = await client.chat.completions.create(
+        model=model,
         messages=messages,
         temperature=0.9)
     if response:
-        response = response.choices[0]['message']['content']
+        response = response.choices[0].message.content
         util.log("openai_chat_completion response: {}".format(response))
         return response
     return None
