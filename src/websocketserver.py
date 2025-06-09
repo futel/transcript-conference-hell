@@ -246,6 +246,12 @@ class Server:
                 request = chat.goodbye_string()
                 # Send text for socket to speak to other clients.
                 socket.add_speech_request({'text':request})
+                if socket.attrs.get('bot'):
+                    # The replicant left. Change the program.
+                    self.program.victory = True
+                    socket.add_speech_request(
+                        {'text':
+                         'I was the bot, and I just quit. Hail humanity.'})
                 break
             elif message["event"] == "dtmf":
                 # DTMF message from client.
@@ -257,13 +263,15 @@ class Server:
                      if s.stream_sid == self.latest_stream_sid),
                     None)
                 # Send a tone to all the sockets.
-                #import data     # XXX
+                import data     # XXX
                 #chunk = base64.b64decode(data.dtmfa)[44:]
                 #chunk = base64.b64decode(data.dtmfa)[45:]
                 #chunk = base64.b64decode(data.dtmfa)[58:]
-                #chunk = base64.b64decode(data.dtmfa)[41:]
-                #for s in self.sockets:
-                #    await s.send(chunk)
+                chunk = base64.b64decode(data.dtmfa)[40:]
+                # XXX We only want to send this once no matter how many
+                #     keypresses happened. Queue something up.
+                for s in self.sockets:
+                    await s.send(chunk)
                 # Have the program perform any DTMF reaction, and send any
                 # strings it returns to the chat socket to speak.
                 for line in self.program.handle_dtmf(

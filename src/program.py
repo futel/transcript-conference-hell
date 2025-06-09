@@ -430,7 +430,8 @@ class ArithmeticProgram(Program):
 #         return []               # Human's turn to talk.
 
 
-programs = [ReplicantProgram, ChatProgram, ArithmeticProgram]
+#programs = [ReplicantProgram, ChatProgram, ArithmeticProgram]
+programs = [ReplicantProgram, ChatProgram]
 
 def next_program():
     """Yield programs."""
