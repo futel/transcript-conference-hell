@@ -110,7 +110,6 @@ class Client:
         async for request in self.request_generator():
             response = await self._client.synthesize_speech(
                 request=request)
-            util.log('xxx audio_content {}'.format(repr(response.audio_content)))
             chunk = util.wav_to_chunk(response.audio_content)
             self._recv_queue.put_nowait(chunk)
 
