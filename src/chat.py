@@ -104,7 +104,6 @@ async def openai_chat_completion(messages):
     # ChatCompletion allows "gpt-4" "gpt-3.5-turbo" "text-davinci-003"?
     util.log("openai_chat_completion messages: {}".format(messages))
     client = openai.AsyncOpenAI()
-    #model = "gpt-3.5-turbo"
     model = "gpt-4.1"
     response = await client.chat.completions.create(
         model=model,
@@ -114,6 +113,13 @@ async def openai_chat_completion(messages):
         response = response.choices[0].message.content
         util.log("openai_chat_completion response: {}".format(response))
         return response
+
+    # response = client.responses.create(
+    #     model="gpt-4.1",
+    #     input="Write a one-sentence bedtime story about a unicorn."
+    # )
+    # print(response.output_text)
+
     return None
 
 def clean_punct_whitespace(l):
