@@ -271,7 +271,7 @@ class Server:
                 chunk = base64.b64decode(data.dtmfa[60:])
                 # XXX We only want to send this once no matter how many
                 #     keypresses happened. Queue something up.
-                util.log('xxx audio_content {}'.format(repr(chunk))
+                util.log('xxx audio_content {}'.format(repr(chunk)))
                 for s in self.sockets:
                     await s.send(chunk)
                 # Have the program perform any DTMF reaction, and send any
@@ -295,7 +295,7 @@ class Server:
             self.latest_stream_sid = socket.stream_sid
             # We assume that every message has a chunk.
             chunk = chunk['chunk']
-            util.log('xxx audio_content speech {}'.format(repr(chunk))
+            util.log('xxx audio_content speech {}'.format(repr(chunk)))
             for s in self.sockets:
                 if s != socket:
                     await s.send(chunk)
