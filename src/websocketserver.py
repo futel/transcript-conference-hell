@@ -263,17 +263,16 @@ class Server:
                      if s.stream_sid == self.latest_stream_sid),
                     None)
                 # Send a tone to all the sockets.
-                import data     # XXX
+                #import data     # XXX
                 #chunk = base64.b64decode(data.dtmfa)[44:]
                 #chunk = base64.b64decode(data.dtmfa)[45:]
                 #chunk = base64.b64decode(data.dtmfa)[58:]
                 #chunk = base64.b64decode(data.dtmfa)[40:]
-                chunk = base64.b64decode(data.dtmfa[60:])
+                #chunk = base64.b64decode(data.dtmfa[60:])
                 # XXX We only want to send this once no matter how many
                 #     keypresses happened. Queue something up.
-                util.log('xxx audio_content {}'.format(repr(chunk)))
-                for s in self.sockets:
-                    await s.send(chunk)
+                #for s in self.sockets:
+                #    await s.send(chunk)
                 # Have the program perform any DTMF reaction, and send any
                 # strings it returns to the chat socket to speak.
                 for line in self.program.handle_dtmf(
@@ -295,7 +294,6 @@ class Server:
             self.latest_stream_sid = socket.stream_sid
             # We assume that every message has a chunk.
             chunk = chunk['chunk']
-            util.log('xxx audio_content speech {}'.format(repr(chunk)))
             for s in self.sockets:
                 if s != socket:
                     await s.send(chunk)
