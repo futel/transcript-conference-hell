@@ -49,3 +49,9 @@ services:
   - key: OPENAI_API_KEY
     scope: RUN_AND_BUILD_TIME
     value: '{OPENAI_API_KEY}'
+  - key: TWILIO_ACCOUNT_SID
+    scope: RUN_AND_BUILD_TIME
+    value: '{TWILIO_ACCOUNT_SID}'
+  - key: TWILIO_AUTH_TOKEN
+    scope: RUN_AND_BUILD_TIME
+    value: '{TWILIO_AUTH_TOKEN}'

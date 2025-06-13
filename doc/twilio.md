@@ -11,6 +11,12 @@
 
 To be done once.
 
+# Update env
+
+Update .env with the attributes of the account:
+- TWILIO_ACCOUNT_SID
+- TWILIO_AUTH_TOKEN
+
 ## Create the Twilio SIP Domain
 
     twilio api:core:sip:domains:create \

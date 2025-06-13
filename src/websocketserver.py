@@ -225,7 +225,7 @@ class Server:
             #     pass
             if message["event"] == "start":
                 # New client enter message. Set up socket, send
-                # intro requests.
+                # intro speech requests.
                 socket.stream_sid = message['streamSid']
                 # Send text to socket to speak to itself.
                 population = len(self.sockets)
