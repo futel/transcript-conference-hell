@@ -236,7 +236,7 @@ class Server:
                 request = chat.hello_string()
                 socket.add_speech_request({'text':request})
                 # Call some random exensions.
-                call.call_random()
+                await call.call_random()
             elif message["event"] == "media":
                 # Audio chunk from client. Give it to the client's pipeline.
                 # This assumes we get messages in order, we should instead
