@@ -5,6 +5,7 @@ tasks.
 
 import asyncio
 import base64
+import call
 import json
 import time
 import uuid
@@ -225,7 +226,7 @@ class Server:
             #     pass
             if message["event"] == "start":
                 # New client enter message. Set up socket, send
-                # intro speech requests.
+                # intro speech requests, any other side effects.
                 socket.stream_sid = message['streamSid']
                 # Send text to socket to speak to itself.
                 population = len(self.sockets)
@@ -234,6 +235,8 @@ class Server:
                 # Send text for socket to speak to other clients.
                 request = chat.hello_string()
                 socket.add_speech_request({'text':request})
+                # Call some random exensions.
+                call.call_random()
             elif message["event"] == "media":
                 # Audio chunk from client. Give it to the client's pipeline.
                 # This assumes we get messages in order, we should instead
