@@ -265,6 +265,10 @@ class Server:
                     (s for s in self.sockets
                      if s.stream_sid == self.latest_stream_sid),
                     None)
+                # XXX We only want to send these audio effects once no matter
+                # how many keypresses happened. Queue something up somehow.
+                # Could just have the bot chat socket drop requests if has last
+                # spoken like in Program.should_bot_line?
                 # Send a tone to all the sockets.
                 #import data     # XXX
                 #chunk = base64.b64decode(data.dtmfa)[44:]
@@ -272,8 +276,6 @@ class Server:
                 #chunk = base64.b64decode(data.dtmfa)[58:]
                 #chunk = base64.b64decode(data.dtmfa)[40:]
                 #chunk = base64.b64decode(data.dtmfa[60:])
-                # XXX We only want to send this once no matter how many
-                #     keypresses happened. Queue something up.
                 #for s in self.sockets:
                 #    await s.send(chunk)
                 # Have the program perform any DTMF reaction, and send any
