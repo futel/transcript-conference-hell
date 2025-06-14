@@ -53,10 +53,7 @@ to_addresses_futel_extensions = [
 
 client = Client(account_sid, auth_token)
 
-async def call(to_address):
-    # Ring timeout in seconds, about 5s/ring.
-    #timeout = 15
-    timeout = random.randint(1, 19)
+async def call(to_address, timeout):
     # URL to render twiml for callee to experience.
     # Top URL which the sip domains send callers to.
     url = "https://ws.conference-hell-dev.phu73l.net/index.xml",
@@ -71,9 +68,13 @@ async def call(to_address):
 async def call_random():
     """Call random destinations and connect to the conference hell."""
     for i in range(2):
+        # Ring timeout in seconds, about 5s/ring.
+        timeout = random.randint(1, 19)
         to_address = random.choice(to_addresses_extensions)
-        asyncio.create_task(call(to_address))
+        asyncio.create_task(call(to_address, timeout))
         await asyncio.sleep(1)
     for i in range(10):
+        # Ring timeout in seconds, about 5s/ring.
+        timeout = random.randint(15, 29)
         to_address = random.choice(to_addresses_futel_extensions)
-        asyncio.create_task(call(to_address))
+        asyncio.create_task(call(to_address, timeout))
