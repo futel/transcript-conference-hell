@@ -19,9 +19,13 @@ prompts = [
     # 'Add only one line of dialog.').format(chat_label),
     ('You are writing a script for a play. '
      'Complete this dialog by adding a line of dialog, spoken by "{}". '
+     'Dialog should be in the style of a play, with no stage directions. '
+     'Do not refer to any characters by name. '
      'Add only one line of dialog.').format(chat_label),
     ('You are writing a script for a comedy. '# about insane people who say wild, crazy, and goofy things. '
      'Complete this dialog by adding a line of dialog, spoken by "{}". '
+     'Dialog should be in the style of a play, with no stage directions. '
+     'Do not refer to any characters by name. '
      'Add only one line of dialog.').format(chat_label)]
 
 def next_prompt():
