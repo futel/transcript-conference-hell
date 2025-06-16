@@ -115,8 +115,8 @@ class ReplicantProgram(Program):
                 "Press any key when the bot is speaking to identify it. "
                 "Don't falsely accuse a human!")
         else:
-            if population <= 3:
-                out += "We need at least three humans to start. "
+            if population < 2:
+                out += "We need at least two or three humans to start. "
             out += "Press any key when you are ready. "
         return out
 
@@ -134,7 +134,8 @@ class ReplicantProgram(Program):
 
     def fail_bot_string(self):
         strs = [
-            "Someone accused me. You always knew I was a bot, I don't count."]
+            "Someone accused me. You always knew I was a bot, I don't count.",
+            "Someone accused me. I'm just a set of canned replies."]
         return random.choice(strs)
 
     def handle_dtmf(self, _message, socket, latest_socket, sockets):
@@ -146,7 +147,7 @@ class ReplicantProgram(Program):
         #     another bot for next time.
         if not self.started:
             population = len(sockets)
-            if population >= 3:
+            if population >= 2:
                 self.started = True
                 # Mark a human as a bot.
                 socket = random.choice(list(sockets))
