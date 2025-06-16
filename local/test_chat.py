@@ -10,14 +10,15 @@ import dotenv
 import os
 from unittest import mock
 
+dotenv.load_dotenv('.env')
+# I don't know why this is needed, but openai doesn't get the env var.
+
 import chat
 import lines
 import program
 import util
 import websocketserver
 
-dotenv.load_dotenv('.env')
-# I don't know why this is needed, but openai doesn't get the env var.
 import openai
 openai.api_key = os.environ['OPENAI_API_KEY']
 util.cred_kluge()
@@ -55,8 +56,12 @@ async def test_socket():
 
 async def test_chat():
     p = program.ChatProgram()
-    #c_lines = await p.bot_lines(
-    #    666, t_lines, 'server')
+    c_lines = await chat.openai_chat_line(p.prompt, t_lines)
+    print(c_lines)
+    print()
+
+    # Do it again for another prompt cycle.
+    p = program.ChatProgram()
     c_lines = await chat.openai_chat_line(p.prompt, t_lines)
     print(c_lines)
 
