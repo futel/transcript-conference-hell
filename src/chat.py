@@ -20,7 +20,7 @@ prompts = [
     ('You are writing a script for a play. '
      'Complete this dialog by adding a line of dialog, spoken by "{}". '
      'Add only one line of dialog.').format(chat_label),
-    ('You are writing a script for a comedy about insane people who say wild, crazy, and goofy things. '
+    ('You are writing a script for a comedy. '# about insane people who say wild, crazy, and goofy things. '
      'Complete this dialog by adding a line of dialog, spoken by "{}". '
      'Add only one line of dialog.').format(chat_label)]
 
