@@ -67,13 +67,15 @@ async def call(to_address, timeout):
 
 async def call_random():
     """Call random destinations and connect to the conference hell."""
-    for i in range(2):
+    # Ring 1-4 extensions.
+    for i in range(4):
         # Ring timeout in seconds, about 5s/ring.
         timeout = random.randint(1, 19)
         to_address = random.choice(to_addresses_extensions)
         asyncio.create_task(call(to_address, timeout))
         await asyncio.sleep(1)
-    for i in range(10):
+    # Ring 1-16 Futel extensions.
+    for i in range(16):
         # Ring timeout in seconds, about 5s/ring.
         timeout = random.randint(15, 29)
         to_address = random.choice(to_addresses_futel_extensions)
