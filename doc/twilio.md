@@ -17,6 +17,15 @@ Update .env with the attributes of the account:
 - TWILIO_ACCOUNT_SID
 - TWILIO_AUTH_TOKEN
 
+## Create TwiML app
+
+    twilio api:core:applications:create \
+        --voice-method GET \
+        --voice-url https://ws.conference-hell-dev.phu73l.net/index.xml \
+        --friendly-name "transcript-conference-hell"
+
+Note that we are not setting "--public-application-connect-enabled false", because that is causing an error. This may allow other Twilio customers to call this method, which could cause side effects or reveal information about our AWS components or content.
+
 ## Create the Twilio SIP Domain
 
     twilio api:core:sip:domains:create \
@@ -49,27 +58,16 @@ Visit the GUI for the SIP Domain and add the same "conference" credential list t
 
 There doesn't seem to be any other way to do this.
 
----
-
-# Set Up Incoming Twilio
-
-## Create Twilio Application Resources (TwiML apps)
-
-    twilio api:core:applications:create \
-        --voice-method GET \
-        --voice-url 'https://ws.conference-hell-dev.phu73l.net/index.xml' \
-        --friendly-name "conference-hell-dev"
-
 ## Create a phone number
 
 Use the web GUI; the APIs may allow us to do this, but maybe not.
 
 Create new phone number
-- friendly name: conference-hell-dev
+- friendly name: transcript-conference-hell
 - emergency calling: (not registered)
 - voice configuration:
     - configure with: TwiML App
-    - TwiML App: conference-hell-dev
+    - TwiML App: transcript-conference-hell
 - messaging configuation:
     - a message comes in: webhook
     - URL: blank
