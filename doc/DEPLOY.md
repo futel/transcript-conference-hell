@@ -34,6 +34,8 @@ OpenAI should be set up as described in openai.md.
 
 XXX AWS? Metrics/logging?
 
+XXX No certs since we're not using lambda? There's a ws.conference-hell-dev.phu73l.net cert in red sift but it's probably from earlier experiments?
+
 # Requirements
 
 - debian box (trixie, ubuntu 23)
